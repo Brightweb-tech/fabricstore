@@ -334,6 +334,7 @@ window.Webflow.push(() => {
 
   nextButton.addEventListener('click', advanceStep);
 
+  console.log('Loaded');
   addOnClickToTecidoCards();
   addOnClickToCalhaCards();
   addOnClickToTipoCards();
