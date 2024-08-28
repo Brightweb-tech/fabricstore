@@ -1,5 +1,7 @@
 window.Webflow ||= [];
+
 window.Webflow.push(() => {
+  let productsData = {};
   const calhaSizes = {
     5000: {
       branco: {
@@ -40,6 +42,16 @@ window.Webflow.push(() => {
       },
     },
   };
+  const selectedColors = [];
+
+  const simulatorHeadings = {
+    step1: document.getElementById('simulator-heading-1'),
+    step2: document.getElementById('simulator-heading-2'),
+    step3: document.getElementById('simulator-heading-3'),
+    step4: document.getElementById('simulator-heading-4'),
+    step5: document.getElementById('simulator-heading-5'),
+  };
+
   const selectors = {
     inicio: document.getElementById('inicio-selector'),
     // Selectors
@@ -106,107 +118,149 @@ window.Webflow.push(() => {
     contacto: '',
   };
 
-  const calculateTotalWidth = (width, tipo) => {
-    switch (tipo) {
-      case 'Franzido':
-        return (width * 2.5) / 100;
-      case 'Ondas':
-        return (width * 2.7) / 100;
-      case 'Macho Juntos':
-        return (width * 3) / 100;
-      case 'Pregas':
-        return (width * 2.5) / 100;
-    }
+  const MANUFACTURING_CONSTANTS = {
+    usedWidths: [
+      { name: 'Franzido', widthRatio: 2.5 },
+      { name: 'Ondas', widthRatio: 2.7 },
+      { name: 'Macho Juntos', widthRatio: 3 },
+      { name: 'Pregas', widthRatio: 2.5 },
+    ],
+    manufacturingPrices: [
+      {
+        name: 'Franzido',
+        blackout: 9,
+        normal: 8,
+      },
+      {
+        name: 'Ondas',
+        blackout: 8.5,
+        normal: 7.5,
+      },
+      {
+        name: 'Macho Juntos',
+        normal: 13.5,
+      },
+      {
+        name: 'Pregas',
+        normal: 13.5,
+      },
+    ],
+    maxWindowWidth: 6,
+    maxWindowHeight: 3,
+    measuresCheckPrice: 30,
+    instalation: [
+      { maxWidth: 300, price: 30 },
+      { maxWidth: 400, price: 40 },
+      { maxWidth: 500, price: 45 },
+      { maxWidth: 600, price: 50 },
+    ],
   };
 
-  const calculateMaterialPrice = (pricePerMeter, width) => {
-    return pricePerMeter * width;
+  const calculateUsedWidth = (window) => {
+    const usedWidth = MANUFACTURING_CONSTANTS.usedWidths.find((usedWidth) => {
+      return window.tipo === usedWidth.name;
+    });
+    if (usedWidth) {
+      const width = window.medidas ? parseInt(window.medidas.split(' X ')[0]) : 0;
+      return width * usedWidth.widthRatio;
+    }
+    return 0;
   };
 
-  const calculateManufacturingPrice = (tipo, tecido, width, pricePerMeter) => {
-    switch (tipo) {
-      case 'Franzido':
-        if (tecido === 'Blackout') return width * 9;
-        return width * 8;
-      case 'Ondas':
-        if (tecido === 'Blackout') return width * 8.5;
-        return width * 7.5;
-      case 'Macho Juntos':
-        return width * 13.5;
-      case 'Pregas':
-        return width * 13.5;
+  const getProductPrice = (window) => {
+    let productPrice = 0.0,
+      calhaPrice = 0.0,
+      reference = '';
+
+    const productDetails = window.tecido.split('-');
+    const product = productDetails[0];
+    const color = productDetails[1];
+    const calhaDetails = window.calha ? window.calha.split(' - ') : null;
+    const calha = calhaDetails ? calhaDetails[0] : null;
+    const calhaColor = calhaDetails ? calhaDetails[1] : null;
+    const width = window.medidas ? window.medidas.split(' X ')[0] : 0;
+
+    if (window.inicio === 'Cortina') {
+      reference = `${product}${color}`;
     }
+
+    if (window.inicio === 'Estore') {
+      const height = window.medidas ? window.medidas.split(' X ')[1] : 0;
+      reference = `${product}${height}${width}${color}`;
+    }
+    productPrice =
+      typeof productsData[reference].price === 'string'
+        ? parseFloat(productsData[reference].price)
+        : productsData[reference].price;
+
+    const calhaReference = `${calha}${width}${calhaColor}`;
+    calhaPrice = calhaSizes[calhaReference] ? calhaSizes[calhaReference] : 0;
+    return { product: productPrice, calha: calhaPrice };
   };
 
-  const calculateMeasuresCheckPrice = (instalacao) => {
-    return instalacao ? 0 : 30;
+  const calculateMaterialPrice = (window, usedWidth) => {
+    const width = window.medidas.split(' X ')[0];
+    let productPrice = 0.0,
+      calhaPrice = 0.0;
+    const prices = getProductPrice(window);
+
+    if (window.inicio === 'Cortina') {
+      productPrice = prices.product * (usedWidth / 100);
+    }
+    calhaPrice = prices.calha * (width / 100);
+    return productPrice && calhaPrice
+      ? productPrice + calhaPrice
+      : productPrice
+        ? productPrice
+        : calhaPrice
+          ? calhaPrice
+          : 0;
   };
 
-  const calculateInstallationPrice = (instalacao, medidas) => {
-    if (!instalacao) return 0;
-    const largura = medidas.split(' X ')[0];
-    if (largura < 300) {
-      return 30;
+  const calculateManufacturingPrice = (window, usedWidth) => {
+    if (window.inicio === 'Estore') {
+      return 0;
     }
-    if (largura < 400) {
-      return 40;
+    const manufacturingPrice = MANUFACTURING_CONSTANTS.manufacturingPrices.find(
+      (price) => window.tipo === price.name
+    );
+    if (manufacturingPrice) {
+      return window.tecido.startsWith('101')
+        ? manufacturingPrice.blackout * (usedWidth / 100)
+        : manufacturingPrice.normal * (usedWidth / 100);
     }
-    if (largura < 500) {
-      return 45;
-    }
-    if (largura < 600) {
-      return 50;
-    }
+
+    return 0;
   };
 
-  const calculateCalhaPrice = (calha, medidas) => {
-    const largura = medidas.split(' X ')[0] / 100;
-    // const calhaModel = calha.split(' - ')[0];
-    // const calhaColor = calha.split(' - ')[1];
+  const calculateMeasuresCheckPrice = (window) => {
+    return !window.correcao
+      ? 0
+      : window.instalacao
+        ? 0
+        : MANUFACTURING_CONSTANTS.measuresCheckPrice;
+  };
 
-    let selectedCalhaPrice = null;
-
-    const sortedCalhaSizes = Object.keys(calhaSizes[5000].branco).sort((a, b) => a - b);
-
-    for (let i = 0; i < sortedCalhaSizes.length; i++) {
-      if (largura < sortedCalhaSizes[i]) {
-        selectedCalhaPrice = calhaSizes[5000].branco[sortedCalhaSizes[i]];
-        break;
-      }
+  const calculateInstalationPrice = (window) => {
+    if (!window.instalacao) {
+      return 0;
     }
-    return selectedCalhaPrice;
-    // Object.keys(calhaSizes[5000].branco)
-    //   .sort((a, b) => a - b)
-    //   .forEach((size) => {
-    //     if (largura < size) {
-    //       return calhaSizes[5000].branco[size];
-    //     }
-    //   });
+    const largura = parseInt(window.medidas.split(' X ')[0]);
+
+    const instalationPrice = MANUFACTURING_CONSTANTS.instalation.find(
+      (price) => largura < price.maxWidth
+    );
+    return instalationPrice ? instalationPrice.price : 0;
   };
 
   const calculateWindowPrice = (window) => {
-    const totalWidth = calculateTotalWidth(window.medidas.split(' X ')[0], window.tipo);
-    const materialPrice = calculateMaterialPrice(10, totalWidth);
-    const manufacturingPrice = calculateManufacturingPrice(
-      window.tipo,
-      window.tecido,
-      totalWidth,
-      10
-    );
-    const measuresCheckPrice = calculateMeasuresCheckPrice(window.correcao) || 0;
-    const installationPrice = calculateInstallationPrice(window.instalacao, window.medidas) || 0;
-    const calhaPrice = calculateCalhaPrice(window.calha, window.medidas) || 0;
-    const result =
-      materialPrice + manufacturingPrice + measuresCheckPrice + installationPrice + calhaPrice;
+    const totalWidth = calculateUsedWidth(window);
+    const materialPrice = calculateMaterialPrice(window, totalWidth);
+    const manufacturingPrice = calculateManufacturingPrice(window, totalWidth);
+    const measuresCheckPrice = calculateMeasuresCheckPrice(window);
+    const instalationPrice = calculateInstalationPrice(window);
+    const result = materialPrice + manufacturingPrice + measuresCheckPrice + instalationPrice;
     return result;
-  };
-
-  const calculateCheckoutPrice = (windows) => {
-    let total = 0;
-    windows.forEach((window) => {
-      total += calculateWindowPrice(window);
-    });
-    return total;
   };
 
   const changeSelectorVisibility = (selector, visible) => {
@@ -252,6 +306,7 @@ window.Webflow.push(() => {
         ? 'c/Baínha de Chumbo'
         : 's/Baínha de Chumbo';
   };
+
   const markStepAsActive = (step) => {
     steps[step].classList.remove('next');
     steps[step].classList.add('active');
@@ -275,7 +330,9 @@ window.Webflow.push(() => {
         if (validateSelector('tecido')) {
           markStepAsCompleted('tecido');
           markStepAsActive('tipo');
+          changeSelectorVisibility(simulatorHeadings.step1, false);
           changeSelectorVisibility(selectors.tecido, false);
+          changeSelectorVisibility(simulatorHeadings.step2, true);
           changeSelectorVisibility(selectors.tipo, true);
           currentStep = 'tipo';
         }
@@ -292,7 +349,9 @@ window.Webflow.push(() => {
         if (validateSelector('bainha')) {
           markStepAsCompleted('tipo');
           markStepAsActive('medidas');
+          changeSelectorVisibility(simulatorHeadings.step2, false);
           changeSelectorVisibility(selectors.bainha, false);
+          changeSelectorVisibility(simulatorHeadings.step3, true);
           changeSelectorVisibility(selectors.medidas, true);
           currentStep = 'medidas';
         }
@@ -312,7 +371,9 @@ window.Webflow.push(() => {
       case 'correcao':
         markStepAsCompleted('medidas');
         markStepAsActive('calha');
+        changeSelectorVisibility(simulatorHeadings.step3, false);
         changeSelectorVisibility(selectors.correcao, false);
+        changeSelectorVisibility(simulatorHeadings.step4, true);
         changeSelectorVisibility(selectors.calha, true);
         currentStep = 'calha';
         break;
@@ -320,7 +381,9 @@ window.Webflow.push(() => {
         if (validateSelector('calha')) {
           markStepAsCompleted('calha');
           markStepAsActive('instalacao');
+          changeSelectorVisibility(simulatorHeadings.step4, false);
           changeSelectorVisibility(selectors.calha, false);
+          changeSelectorVisibility(simulatorHeadings.step5, true);
           changeSelectorVisibility(selectors.instalacao, true);
           currentStep = 'instalacao';
         }
@@ -328,7 +391,9 @@ window.Webflow.push(() => {
       case 'instalacao':
         populateCheckoutChoices();
         markStepAsCompleted('instalacao');
+        changeSelectorVisibility(simulatorHeadings.step5, false);
         changeSelectorVisibility(selectors.instalacao, false);
+        storeValues();
         navigateToCheckout();
         break;
     }
@@ -342,10 +407,32 @@ window.Webflow.push(() => {
   const navigateFromCheckoutToStep = (step) => {
     checkoutContain.style.display = 'none';
     simContainer.style.display = 'flex';
+
     if (step === 'largura' || step === 'altura') {
       step = 'medidas';
     }
-    changeSelectorVisibility(selectors[step], true);
+    switch (step) {
+      case 'tecido':
+        changeSelectorVisibility(simulatorHeadings.step1, true);
+        changeSelectorVisibility(selectors.tecido, true);
+        break;
+      case 'tipo':
+        changeSelectorVisibility(simulatorHeadings.step2, true);
+        changeSelectorVisibility(selectors.tipo, true);
+        break;
+      case 'medidas':
+        changeSelectorVisibility(simulatorHeadings.step3, true);
+        changeSelectorVisibility(selectors.medidas, true);
+        break;
+      case 'calha':
+        changeSelectorVisibility(simulatorHeadings.step4, true);
+        changeSelectorVisibility(selectors.calha, true);
+        break;
+      case 'instalacao':
+        changeSelectorVisibility(simulatorHeadings.step5, true);
+        changeSelectorVisibility(selectors.instalacao, true);
+        break;
+    }
     currentStep = step;
     markStepAsActive(step);
   };
@@ -363,7 +450,28 @@ window.Webflow.push(() => {
     const cards = document.querySelectorAll("[id^='tecido-card']");
     cards.forEach((card) => {
       card.addEventListener('click', () => {
-        updateSelectorValue(selectors.tecido, card.getElementsByTagName('h1')[0].textContent);
+        const text = card.getElementsByTagName('h1')[0].textContent;
+        const existingSelection = selectedColors.find((color) => color.product === text);
+        if (existingSelection) {
+          return selectorValues.inicio === 'Cortina'
+            ? updateSelectorValue(
+                selectors.tecido,
+                `${existingSelection.color.substring(0, 6)}-${existingSelection.color.substring(6)}`
+              )
+            : updateSelectorValue(selectors.tecido, existingSelection.color);
+        }
+        const img = card.getElementsByTagName('img')[0].src;
+        const productPart1 = text.substring(0, 3);
+        const productPart2 = text.substring(3);
+        const color = img
+          .split(`${productPart1}-${productPart2}`)[1]
+          .split('-')
+          .filter((str) => str.length === 3)[0];
+        return updateSelectorValue(selectors.tecido, `${productPart1}${productPart2}-${color}`);
+
+        // img.split(`${text.substring(0,3)}-${text.substring(3)}`)[1].split('-').filter(str => str.length === 3)
+        // updateSelectorValue(selectors.tecido, card.getElementsByTagName('h1')[0].textContent);
+        // updateSelectorValue(selectors.tecido, card.getElementsByTagName('h1')[0].textContent);
       });
     });
   };
@@ -398,17 +506,23 @@ window.Webflow.push(() => {
   const addOnClickColor = () => {
     document.querySelectorAll('.tecido_color').forEach((color) => {
       color.addEventListener('click', (event) => {
-        // get selected color
         const selectedDiv = event.currentTarget;
         const selectedColor = selectedDiv.id;
+        const product = selectedColor ? selectedColor.split('-')[0] : '';
+        const color = selectedColor ? selectedColor.split('-')[1] : '';
+        const latestSelection = selectedColors.find((color) => color.product === product);
 
-        // get thumbnail image div to replace image for the selected color
+        if (latestSelection) {
+          latestSelection.color = `${product}${color}`;
+        } else {
+          selectedColors.push({ product: product, color: `${product}${color}` });
+        }
+
         const cardThumbnailImage =
           selectedDiv.parentElement.parentElement.parentElement.parentElement.getElementsByClassName(
             'tecido_image'
           )[0];
 
-        // get corresponding image from colors hidden cms
         const colorsThumbnailImages = document.querySelectorAll("[id^='color-thumbnail-image']");
 
         for (let i = 0; i < colorsThumbnailImages.length; i++) {
@@ -462,7 +576,6 @@ window.Webflow.push(() => {
 
   const addOnClickNoWindow = () => {
     noWindowButton.addEventListener('click', () => {
-      // storeValues();
       resetValues();
       newWindowContain.style.display = 'none';
       checkoutFormContain.style.display = 'flex';
@@ -470,6 +583,8 @@ window.Webflow.push(() => {
   };
   const storeValues = () => {
     const newWindow = {
+      inicio: selectorValues.inicio,
+      bainha: selectorValues.bainha,
       tecido: selectorValues.tecido,
       tipo: selectorValues.tipo,
       medidas: selectorValues.medidas,
@@ -481,9 +596,8 @@ window.Webflow.push(() => {
   };
 
   const createWindow = () => {
-    storeValues();
     resetValues();
-    navigateFromCheckoutToStep('tecido');
+    navigateFromCheckoutToStep('inicio');
   };
 
   const generateAndDownloadPdf = () => {
@@ -548,7 +662,6 @@ window.Webflow.push(() => {
     // doc.text(`Aceita ser contactado: ${contacto}`, x, y);
     // Save the PDF and trigger the download
     doc.save('generated.pdf');
-    getCalhas();
   };
 
   const createDummyWindows = () => {
@@ -556,41 +669,50 @@ window.Webflow.push(() => {
     for (let i = 0; i < 5; i++) {
       windowWidth = 125 + i * 125;
       windows.push({
-        tecido: '105 102',
+        inicio: 'Cortina',
+        tecido: '101015-003',
         tipo: 'Ondas',
         medidas: `${windowWidth} X 250`,
         correcao: i % 2 === 0 ? false : true,
-        calha: '5000 - Branco',
+        calha: '5000-Branco',
         instalacao: i % 2 === 0 ? true : false,
       });
     }
   };
 
-  const getCalhas = () => {
+  const fetchProducts = () => {
+    // 'https://docs.google.com/spreadsheets/d/1rLeS62q8uY3PPSRZSEokJY7q5uS4Qh9aNx8VFPg2cF8/export?format=csv'
+    // `https://docs.google.com/spreadsheets/d/1acI1UfB7ukEPc2r4Sf_s4pax0um2IsVvlGDGaiMSNIU/export?format=csv&gid=2133468022`
+    // `https://docs.google.com/spreadsheets/d/1BeQJvMh5moFM9ELRQG7QsDUa_CLfiqZ9/export?format=csv&gid=2133468022`
     fetch(
-      'https://docs.google.com/spreadsheets/d/1rLeS62q8uY3PPSRZSEokJY7q5uS4Qh9aNx8VFPg2cF8/export?format=csv'
+      `https://docs.google.com/spreadsheets/d/1acI1UfB7ukEPc2r4Sf_s4pax0um2IsVvlGDGaiMSNIU/export?format=csv&gid=2133468022`
     )
       .then((response) => response.text())
       .then((csvData) => {
-        // You can parse the CSV data here
-        debugger;
-        console.log(csvData);
+        const lines = csvData.trim().split('\n');
+        const headers = lines[0].split(',');
+        const data = lines.slice(1).map((line) => line.split(','));
+        // Create the JSON structure
+        const jsonData = {};
+
+        data.forEach((row) => {
+          const [id, price] = row;
+          if (!jsonData[id]) {
+            jsonData[id] = { id: id, price: parseFloat(price) };
+          }
+        });
+
+        productsData = jsonData;
       })
       .catch((error) => console.error('Error fetching CSV data:', error));
-    //     const apiKey = 'AIzaSyBWzwRG36cNOjAIGb8TyJ4-6fBB1PIRky8'; // Replace with your actual API key
-    //     const sheetId = '1rLeS62q8uY3PPSRZSEokJY7q5uS4Qh9aNx8VFPg2cF8'; // Sheet ID you provided
-    //     const range = 'Sheet1!A10:H42'; // Specify the range to cover your table (adjust based on your data)
-    //     const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`;
-    // 'https://sheets.googleapis.com/v4/spreadsheets/1rLeS62q8uY3PPSRZSEokJY7q5uS4Qh9aNx8VFPg2cF8/values/Sheet1!A10:H42?key=AIzaSyBWzwRG36cNOjAIGb8TyJ4'
-    //     fetch(url)
-    //       .then((response) => response.json())
-    //       .then((data) => {
-    //         console.log(data);
-    //       });
   };
 
-  nextButton.addEventListener('click', advanceStep);
+  const addOnClickNextButton = () => {
+    nextButton.addEventListener('click', advanceStep);
+  };
 
+  fetchProducts();
+  addOnClickNextButton();
   addOnClickToInicioCards();
   addOnClickToTecidoCards();
   addOnClickToCalhaCards();
