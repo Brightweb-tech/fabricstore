@@ -1,6 +1,8 @@
 window.Webflow ||= [];
-
 window.Webflow.push(() => {
+  // ----------------------------
+  //           SWIPER
+  // ----------------------------
   const swiperConfiguration = {
     spaceBetween: 12,
     allowTouchMove: false,
@@ -33,14 +35,15 @@ window.Webflow.push(() => {
       },
     },
   };
-
   let swiper = new Swiper('.swiper', swiperConfiguration);
-
   const resetSwiper = () => {
     swiper.destroy();
     swiper = new Swiper('.swiper', swiperConfiguration);
   };
 
+  // ----------------------------
+  //         DATA MODELS
+  // ----------------------------
   let productsData = {};
   const calhaColors = {
     Branco: 'B',
@@ -72,7 +75,7 @@ window.Webflow.push(() => {
       '1500-N': [120, 140, 160, 180, 200, 220, 240, 260, 300, 320, 340, 360, 400, 440, 500, 600],
       '1500-CH': [120, 140, 160, 180, 200, 220, 240, 260, 300, 350, 400, 450, 500],
       '9500M': [
-        150, 200, 250, 300, 350, 400, 450, 500, 600, 650, 700, 750, 800, 850, 900, 1000, 1200,
+        150, 200, 250, 300, 350, 400, 450, 500, 600, 650, 700, 750, 800, 850, 900, 1e3, 1200,
       ],
       KS: [160, 200, 240, 300, 400, 500, 600],
       'DSXL-B': [160, 200, 240, 300, 400, 600],
@@ -80,105 +83,9 @@ window.Webflow.push(() => {
       'DSXL-P': [160, 200, 240, 300, 400, 600],
     },
   };
-
   const selectedColors = [];
-
-  const simulatorHeadings = {
-    step1: document.getElementById('simulator-heading-1'),
-    step2: document.getElementById('simulator-heading-2'),
-    step3: document.getElementById('simulator-heading-3'),
-    step4: document.getElementById('simulator-heading-4'),
-    step5: document.getElementById('simulator-heading-5'),
-  };
-
-  const selectors = {
-    inicio: document.getElementById('inicio-selector'), // deactivate inicio cards
-    tecido: document.getElementById('tecido-selector'), // deactivate product cards and colors
-    tipo: document.getElementById('tipo-selector'), // deactivate tipo cards
-    bainha: document.getElementById('bainha-selector'), // uncheck the bainha checkbox
-    medidas: document.getElementById('medidas-selector'), // reset the value of the inputs
-    correcao: document.getElementById('correcao-selector'),
-    suporte: document.getElementById('suporte-selector'),
-    instalacao: document.getElementById('instalacao-selector'), // uncheck the instalacao checkbox
-  };
-
-  const resetInputs = () => {
-    const inicioCards = document.querySelectorAll("[id^='inicio-card']");
-    const tipoCards = document.querySelectorAll("[id^='tipo-card']");
-    const productCards = document.querySelectorAll("[id^='tecido-card']");
-    const productColors = document.querySelectorAll('.tecido_color');
-    inicioCards.forEach((card) => {
-      deactivateCard(card);
-    });
-    tipoCards.forEach((card) => {
-      deactivateCard(card);
-    });
-    productCards.forEach((card) => {
-      deactivateCard(card);
-    });
-    productColors.forEach((color) => {
-      deactivateColor(color);
-    });
-    larguraInput.value = '';
-    alturaInput.value = '';
-    correcaoInput.checked = false;
-    instalacaoInput.checked = false;
-    paredeRadioBtn?.click();
-    bainhaInput.checked = false;
-  };
-
-  // Inputs
-  const larguraInput = document.getElementById('largura-input');
-  const alturaInput = document.getElementById('altura-input');
-  const correcaoInput = document.querySelector('#correcao-switch');
-  const instalacaoInput = document.querySelector('#instalacao-switch');
-  const bainhaInput = document.querySelector('#bainha');
-  const nomeInput = document.getElementById('nome-input');
-  const emailInput = document.getElementById('email-input');
-  const contactoSwitch = document.getElementById('contacto-switch');
-  const cortinaRadioBtn = document.getElementById('cortina-radio-btn');
-  const estoreRadioBtn = document.getElementById('estore-radio-btn');
-  const calhaRadioBtn = document.getElementById('calha-radio-btn');
-
-  const tectoRadioBtn = document.getElementById('tecto-radio-btn');
-  const paredeRadioBtn = document.getElementById('parede-radio-btn');
-
-  // Flow elements
-  const nextButton = document.getElementById('seguinte-btn');
-  const simContainer = document.getElementById('sim-container');
-
-  // Checkout elements
-  const checkoutContain = document.getElementById('checkout-container');
-  const newWindowContain = document.getElementById('new-window-contain');
-  const checkoutFormContain = document.getElementById('checkout-input-contain');
-  const newWindowButton = document.getElementById('new-window-btn');
-  const noWindowButton = document.getElementById('no-window-btn');
-  const enviarButton = document.getElementById('enviar-btn');
-
   const windows = [];
-
-  const steps = {
-    tecido: document.getElementById('step-tecido'),
-    tipo: document.getElementById('step-tipo'),
-    medidas: document.getElementById('step-medidas'),
-    calha: document.getElementById('step-calha'),
-    instalacao: document.getElementById('step-instalacao'),
-  };
-
-  const checkoutChoices = {
-    tecido: document.getElementById('checkout-tecido'),
-    tipo: document.getElementById('checkout-tipo'),
-    bainha: document.getElementById('checkout-bainha'),
-    largura: document.getElementById('checkout-largura'),
-    altura: document.getElementById('checkout-altura'),
-    correcao: document.getElementById('checkout-correcao'),
-    calha: document.getElementById('checkout-calha'),
-    suporte: document.getElementById('checkout-suporte'),
-    instalacao: document.getElementById('checkout-instalacao'),
-  };
-
   let currentStep = 'inicio';
-
   const selectorValues = {
     inicio: '',
     tecido: '',
@@ -193,7 +100,6 @@ window.Webflow.push(() => {
     email: '',
     contacto: '',
   };
-
   const MANUFACTURING_CONSTANTS = {
     usedWidths: [
       { name: 'Franzido', widthRatio: 2.5 },
@@ -248,125 +154,171 @@ window.Webflow.push(() => {
     ],
   };
 
-  const calculateUsedWidth = (window) => {
-    const usedWidth = MANUFACTURING_CONSTANTS.usedWidths.find((usedWidth) => {
-      return window.tipo === usedWidth.name;
-    });
-    // if (usedWidth) {
-    //   const width = window.medidas ? parseInt(window.medidas.split(' X ')[0]) + MANUFACTURING_CONSTANTS.bainhaPrice.widthMargin : 0;
-    //   return width * usedWidth.widthRatio;
-    // }
-    if (usedWidth) {
-      const width = window.medidas ? parseInt(window.medidas.split(' X ')[0]) : 0;
-      return width * usedWidth.widthRatio + MANUFACTURING_CONSTANTS.bainhaPrice.widthMargin;
-    }
-    return 0;
+  // ----------------------------
+  //           ELEMENTS
+  // ----------------------------
+
+  // SIMULATOR ELEMENTS
+  // ------------------
+
+  // Containers
+  const simContainer = document.getElementById('sim-container');
+
+  // Headings
+  const simulatorHeadings = {
+    step1: document.getElementById('simulator-heading-1'),
+    step2: document.getElementById('simulator-heading-2'),
+    step3: document.getElementById('simulator-heading-3'),
+    step4: document.getElementById('simulator-heading-4'),
+    step5: document.getElementById('simulator-heading-5'),
   };
 
-  const getVariableEstoreReference = (product, color, width, height) => {
-    // get closest superior number of width and height from the productSizes for estores
-    const closestWidth = productSizes.estores.width.find((w) => w >= width);
-    const closestHeight = productSizes.estores.height.find((h) => h >= height);
-    return `${product}${closestHeight}${closestWidth}`;
+  // Selectors
+  const selectors = {
+    inicio: document.getElementById('inicio-selector'),
+    tecido: document.getElementById('tecido-selector'),
+    tipo: document.getElementById('tipo-selector'),
+    bainha: document.getElementById('bainha-selector'),
+    medidas: document.getElementById('medidas-selector'),
+    correcao: document.getElementById('correcao-selector'),
+    suporte: document.getElementById('suporte-selector'),
+    instalacao: document.getElementById('instalacao-selector'),
   };
 
-  const getVariableCalhaReference = (product, type, color, width, isWallMounted) => {
-    // get closest superior number of width and height from the productSizes for estores
-    if (product === 'KS') {
-      if (isWallMounted) {
-        const closestWidth = productSizes.calhas[product]?.find((w) => w >= width);
-        return `${product}${type === 'Franzido' ? 'F' : 'O'}${closestWidth}SP`;
-      }
-      const closestWidth = productSizes.calhas[product]?.find((w) => w >= width);
-      return `${product}${type === 'Franzido' ? 'F' : 'O'}${closestWidth}`;
-    }
-    if (product === 'DSXL') {
-      if (isWallMounted) {
-        const closestWidth = productSizes.calhas[`${product}-${color}`]?.find((w) => w >= width);
-        return `${product}${type === 'Franzido' ? 'F' : 'O'}${closestWidth}${color}SP`;
-      }
-      const closestWidth = productSizes.calhas[`${product}-${color}`]?.find((w) => w >= width);
-      return `${product}${type === 'Franzido' ? 'F' : 'O'}${closestWidth}${color}`;
-    }
-    if (product === '9500M') {
-      if (isWallMounted) {
-        const closestWidth = productSizes.calhas[product].find((w) => w >= width);
-        return `${product}${closestWidth}SP`;
-      }
-      const closestWidth = productSizes.calhas[product].find((w) => w >= width);
-      return `${product}${closestWidth}`;
-    }
-    if (isWallMounted) {
-      const closestWidth = productSizes.calhas[`${product}-${color}`].find((w) => w >= width);
-      return `${product}${closestWidth}${color}SP`;
-    }
-    const closestWidth = productSizes.calhas[`${product}-${color}`].find((w) => w >= width);
-    return `${product}${closestWidth}${color}`;
+  // Inputs
+  const larguraInput = document.getElementById('largura-input');
+  const alturaInput = document.getElementById('altura-input');
+  const correcaoInput = document.querySelector('#correcao-switch');
+  const bainhaInput = document.querySelector('#bainha');
+  const tectoRadioBtn = document.getElementById('tecto-radio-btn');
+  const paredeRadioBtn = document.getElementById('parede-radio-btn');
+  const instalacaoInput = document.querySelector('#instalacao-switch');
+
+  // Buttons
+  const nextButton = document.getElementById('seguinte-btn');
+  const steps = {
+    tecido: document.getElementById('step-tecido'),
+    tipo: document.getElementById('step-tipo'),
+    medidas: document.getElementById('step-medidas'),
+    calha: document.getElementById('step-calha'),
+    instalacao: document.getElementById('step-instalacao'),
   };
 
-  const convertCalhaColor = (color) => {
-    return calhaColors[color];
+  // CHECKOUT ELEMENTS
+  // -----------------
+
+  // Inputs
+  const nomeInput = document.getElementById('nome-input');
+  const emailInput = document.getElementById('email-input');
+  const contactoSwitch = document.getElementById('contacto-switch');
+
+  // Containers
+  const checkoutContain = document.getElementById('checkout-container');
+  const newWindowContain = document.getElementById('new-window-contain');
+  const checkoutFormContain = document.getElementById('checkout-input-contain');
+
+  // Buttons
+  const newWindowButton = document.getElementById('new-window-btn');
+  const noWindowButton = document.getElementById('no-window-btn');
+  const enviarButton = document.getElementById('enviar-btn');
+  const checkoutChoices = {
+    tecido: document.getElementById('checkout-tecido'),
+    tipo: document.getElementById('checkout-tipo'),
+    bainha: document.getElementById('checkout-bainha'),
+    largura: document.getElementById('checkout-largura'),
+    altura: document.getElementById('checkout-altura'),
+    correcao: document.getElementById('checkout-correcao'),
+    calha: document.getElementById('checkout-calha'),
+    suporte: document.getElementById('checkout-suporte'),
+    instalacao: document.getElementById('checkout-instalacao'),
   };
 
-  const getProductPrice = (window) => {
-    let productPrice = 0.0,
-      calhaPrice = 0.0,
+  // ----------------------------
+  //    FS CMS FILTER ELEMENTS
+  // ----------------------------
+  const cortinaRadioBtn = document.getElementById('cortina-radio-btn');
+  const estoreRadioBtn = document.getElementById('estore-radio-btn');
+  const calhaRadioBtn = document.getElementById('calha-radio-btn');
+
+  // ----------------------------
+  //          FUNCTIONS
+  // ----------------------------
+
+  // INITIALIZIATION
+  // ---------------
+
+  const initializeEventListeners = () => {
+    addOnClickNextButton();
+    addOnClickToInicioCards();
+    addOnClickToTecidoCards();
+    addOnClickToTipoCards();
+    addOnClickBainha();
+    addOnClickCorrecao();
+    addOnClickInstalacao();
+    addOnClickColor();
+    addOnClickEnviar();
+    addOnClickNewWindow();
+    addOnClickNoWindow();
+    addOnClickCheckoutChoices();
+    addOnClickStep();
+    addOnChangeMedidasInputs();
+    addOnChangeSuporteRadioBtns();
+  };
+
+  const onInit = () => {
+    fetchProducts();
+    initializeEventListeners();
+  };
+
+  // DATA FUNCTIONS
+  // ------------
+
+  const getProductPrice = (window2) => {
+    let productPrice = 0,
+      calhaPrice = 0,
       reference = '';
-
-    const productDetails = window.tecido.split('-');
+    const productDetails = window2.tecido.split('-');
     const product = productDetails[0];
     const color = productDetails[1];
-    const calhaDetails = window.calha ? window.calha.split('-') : null;
+    const calhaDetails = window2.calha ? window2.calha.split('-') : null;
     const calha = calhaDetails ? calhaDetails[0] : null;
     const calhaColor = calhaDetails ? calhaDetails[1] : null;
-    const width = window.medidas ? window.medidas.split(' X ')[0] : 0;
-
-    if (window.inicio === 'Cortina') {
+    const width = window2.medidas ? window2.medidas.split(' X ')[0] : 0;
+    if (window2.inicio === 'Cortina') {
       reference = `${product}${color}`;
     }
-
-    if (window.inicio === 'Estore') {
-      const height = window.medidas ? window.medidas.split(' X ')[1] : 0;
+    if (window2.inicio === 'Estore') {
+      const height = window2.medidas ? window2.medidas.split(' X ')[1] : 0;
       reference = getVariableEstoreReference(product, color, width, height);
     }
     productPrice =
       typeof productsData[reference].price === 'string'
         ? parseFloat(productsData[reference].price)
         : productsData[reference].price;
-
-    if (window.inicio === 'Estore') {
+    if (window2.inicio === 'Estore') {
       return { product: productPrice, calha: 0 };
     }
-
     const calhaMultiplier = ((width / MANUFACTURING_CONSTANTS.maxCalhaWidth) | 0) + 1;
-
     const calhaWidth =
       width <= MANUFACTURING_CONSTANTS.maxCalhaWidth ? width : width / calhaMultiplier;
-
     const calhaReference = getVariableCalhaReference(
       calha,
-      window.tipo,
+      window2.tipo,
       calhaColor,
       calhaWidth,
-      window?.suporte === 'Parede' ? true : false
+      window2?.suporte === 'Parede' ? true : false
     );
-
-    // Preço da referencia da calha
     calhaPrice = !productsData[calhaReference]
       ? 0
       : width < MANUFACTURING_CONSTANTS.maxCalhaWidth
         ? productsData[calhaReference].price
         : productsData[calhaReference].price * calhaMultiplier;
-
-    // Preço da união da calha
     calhaPrice +=
       width > MANUFACTURING_CONSTANTS.maxCalhaWidth
         ? MANUFACTURING_CONSTANTS.prolongadores * calhaMultiplier
         : width > MANUFACTURING_CONSTANTS.uniao.maxLength
           ? MANUFACTURING_CONSTANTS.uniao.price * calhaMultiplier
           : 0;
-
-    // Preço dos roletes de latão da calha
     (calhaReference.startsWith('5000') || calhaReference.startsWith('1500')) &&
       (calhaPrice +=
         width < MANUFACTURING_CONSTANTS.maxCalhaWidth
@@ -375,99 +327,25 @@ window.Webflow.push(() => {
     return { product: productPrice, calha: calhaPrice };
   };
 
-  const calculateMaterialPrice = (window, usedWidth) => {
-    const width = window.medidas.split(' X ')[0];
-    let productPrice = 0.0,
-      calhaPrice = 0.0;
-    const prices = getProductPrice(window);
-
-    if (window.inicio === 'Cortina') {
-      productPrice = prices.product * (usedWidth / 100);
-      calhaPrice = prices.calha;
-    }
-    if (window.inicio === 'Estore') {
-      productPrice = prices.product;
-    }
-    return { product: productPrice, calha: calhaPrice };
-  };
-
-  const calculateManufacturingPrice = (window, usedWidth) => {
-    if (window.inicio === 'Estore') {
-      return 0;
-    }
-    const manufacturingPrice = MANUFACTURING_CONSTANTS.manufacturingPrices.find(
-      (price) => window.tipo === price.name
-    );
-    if (manufacturingPrice) {
-      return window.tecido.startsWith('101')
-        ? manufacturingPrice.blackout * (usedWidth / 100)
-        : manufacturingPrice.normal * (usedWidth / 100);
-    }
-
-    return 0;
-  };
-
-  const calculateBainhaPrice = (window, usedWidth) => {
-    if (
-      window.inicio === 'Cortina' &&
-      (window.tecido.startsWith('120') || window.tecido.startsWith('122'))
-    ) {
-      return 0;
-    }
-    if (window.inicio === 'Estore') {
-      return 0;
-    }
-    if (window.bainha) {
-      return MANUFACTURING_CONSTANTS.bainhaPrice.price * (usedWidth / 100);
-    }
-    return 0;
-  };
-
-  const calculateMeasuresCheckPrice = (window) => {
-    return !window.correcao ? 0 : MANUFACTURING_CONSTANTS.measuresCheckPrice;
-  };
-
-  const calculateInstalationPrice = (window) => {
-    if (!windows[0].instalacao) {
-      return 0;
-    }
-    const largura = parseInt(window.medidas.split(' X ')[0]);
-
-    const instalationPrice = MANUFACTURING_CONSTANTS.instalation.find(
-      (price) => largura <= price.maxWidth
-    );
-    return instalationPrice ? instalationPrice.price : 0;
-  };
-
-  const calculateWindowPrice = (window) => {
-    const totalWidth = calculateUsedWidth(window);
-    const materialPrice = calculateMaterialPrice(window, totalWidth);
-    const manufacturingPrice = calculateManufacturingPrice(window, totalWidth);
-    const bainhaPrice = calculateBainhaPrice(window, totalWidth);
-    // const measuresCheckPrice = calculateMeasuresCheckPrice(window);
-    const instalationPrice = calculateInstalationPrice(window);
-    // const result = materialPrice + manufacturingPrice + instalationPrice;
-    const result =
-      materialPrice.product +
-      manufacturingPrice +
-      bainhaPrice +
-      materialPrice.calha +
-      instalationPrice;
-    window.totalPrice = result;
-    // return result;
-    return {
-      usedWidth: totalWidth,
-      productPrice: materialPrice.product,
-      manufacturingPrice: manufacturingPrice,
-      bainhaPrice: bainhaPrice,
-      calhaPrice: materialPrice.calha,
-      instalationPrice: instalationPrice,
-      windowTotal: result,
-    };
-  };
-
-  const changeSelectorVisibility = (selector, visible) => {
-    selector.style.display = visible ? 'flex' : 'none';
+  const fetchProducts = () => {
+    fetch(
+      `https://docs.google.com/spreadsheets/d/1hkgiYOVj33yY6b--bJaNPZOvHFvQ4klM402z0xp-gjE/export?format=csv&gid=0&single=true`
+    )
+      .then((response) => response.text())
+      .then((csvData) => {
+        const lines = csvData.trim().split('\n');
+        const headers = lines[0].split(',');
+        const data = lines.slice(1).map((line) => line.split(','));
+        const jsonData = {};
+        data.forEach((row) => {
+          const [id, price] = row;
+          if (!jsonData[id]) {
+            jsonData[id] = { id, price: parseFloat(price) };
+          }
+        });
+        productsData = jsonData;
+      })
+      .catch((error) => console.error('Error fetching CSV data:', error));
   };
 
   const updateSelectorValue = (selector, value) => {
@@ -494,6 +372,50 @@ window.Webflow.push(() => {
     selectorValues.instalacao = '';
   };
 
+  const populateSelectorValues = (window) => {
+    if (window.inicio === 'Cortina') {
+      updateSelectorValue(selectors.inicio, 'Cortina');
+      updateSelectorValue(selectors.tecido, window.tecido);
+      updateSelectorValue(selectors.tipo, window.tipo);
+      updateSelectorValue(selectors.bainha, window.bainha);
+      updateSelectorValue(selectors.medidas, window.medidas);
+      updateSelectorValue(selectors.correcao, window.correcao);
+      updateSelectorValue(selectors.calha, window.calha);
+      updateSelectorValue(selectors.suporte, window.suporte);
+      updateSelectorValue(selectors.instalacao, window.instalacao);
+    }
+
+    if (window.inicio === 'Estore') {
+      updateSelectorValue(selectors.inicio, 'Estore');
+      updateSelectorValue(selectors.tecido, window.tecido);
+      updateSelectorValue(selectors.medidas, window.medidas);
+      updateSelectorValue(selectors.correcao, window.correcao);
+      updateSelectorValue(selectors.instalacao, window.instalacao);
+    }
+  };
+
+  const storeValues = () => {
+    const newWindow = {
+      inicio: selectorValues.inicio,
+      bainha: selectorValues.bainha,
+      tecido: selectorValues.tecido,
+      tipo: selectorValues.tipo,
+      medidas: selectorValues.medidas,
+      correcao: selectorValues.correcao,
+      calha: selectorValues.calha,
+      suporte: selectorValues.suporte,
+      instalacao: selectorValues.instalacao,
+    };
+    windows.push(newWindow);
+  };
+
+  const createWindow = () => {
+    updateProductsCMSFilter('Cortina');
+    resetValues();
+    resetInputs();
+    navigateFromCheckoutToStep('inicio');
+  };
+
   const validateSelector = () => {
     switch (currentStep) {
       case 'inicio':
@@ -516,17 +438,17 @@ window.Webflow.push(() => {
         return true;
       case 'medidas':
         if (larguraInput?.value === '' || alturaInput?.value === '') {
-          alert('Preencha valores válidos de largura e altura');
+          alert('Preencha valores v\xE1lidos de largura e altura');
           activateNextBtn(false);
           return false;
         }
         if (parseInt(larguraInput?.value) > MANUFACTURING_CONSTANTS.maxWindowWidth) {
-          alert('Largura máxima excedida');
+          alert('Largura m\xE1xima excedida');
           activateNextBtn(false);
           return false;
         }
         if (parseInt(alturaInput?.value) > MANUFACTURING_CONSTANTS.maxWindowHeight) {
-          alert('Altura máxima excedida');
+          alert('Altura m\xE1xima excedida');
           activateNextBtn(false);
           return false;
         }
@@ -547,77 +469,117 @@ window.Webflow.push(() => {
     return true;
   };
 
-  const resetSteps = () => {
-    Object.keys(steps).forEach((key) => {
-      steps[key].classList.remove('active');
-      steps[key].classList.add('next');
-      steps[key].classList.remove('done');
-      steps[key].getElementsByClassName('step_number')[0].classList.remove('active');
-      steps[key].getElementsByClassName('step_description')[0].textContent = 'Escolha';
-    });
+  // UTILS
+  // -----
+
+  const getVariableEstoreReference = (product, color, width, height) => {
+    const closestWidth = productSizes.estores.width.find((w) => w >= width);
+    const closestHeight = productSizes.estores.height.find((h) => h >= height);
+    return `${product}${closestHeight}${closestWidth}`;
   };
 
-  const markStepAsCompleted = (step) => {
-    steps[step].classList.remove('active');
-    steps[step].classList.remove('next');
-    steps[step].classList.add('done');
-    steps[step].getElementsByClassName('step_number')[0].classList.remove('active');
-    steps[step].getElementsByClassName('step_description')[0].textContent = selectorValues[step];
-    // eslint-disable-next-line prettier/prettier
-    if (step === 'medidas')
-      steps[step].getElementsByClassName('step_description')[0].textContent +=
-        selectorValues.correcao ? 'c/Verificação' : 's/Verificação';
-    // eslint-disable-next-line prettier/prettier
-    if (step === 'tipo')
-      steps[step].getElementsByClassName('step_description')[0].textContent += selectorValues.bainha
-        ? 'c/Baínha de Chumbo'
-        : 's/Baínha de Chumbo';
-  };
-
-  const markStepAsActive = (step) => {
-    steps[step].classList.remove('next');
-    steps[step].classList.add('active');
-    steps[step].getElementsByClassName('step_number')[0].classList.add('active');
-  };
-
-  const markStepAsNext = (step) => {
-    if (steps[step].classList.contains('active')) {
-      steps[step].classList.remove('active');
-      steps[step].getElementsByClassName('step_number')[0].classList.remove('active');
-    }
-    if (steps[step].classList.contains('done')) return markStepAsCompleted(step);
-    steps[step].classList.add('next');
-  };
-
-  const activateNextBtn = (isActive) => {
-    if (isActive) {
-      if (nextButton?.classList.contains('inactive')) {
-        nextButton.classList.remove('inactive');
+  const getVariableCalhaReference = (product, type, color, width, isWallMounted) => {
+    if (product === 'KS') {
+      if (isWallMounted) {
+        const closestWidth3 = productSizes.calhas[product]?.find((w) => w >= width);
+        return `${product}${type === 'Franzido' ? 'F' : 'O'}${closestWidth3}SP`;
       }
+      const closestWidth2 = productSizes.calhas[product]?.find((w) => w >= width);
+      return `${product}${type === 'Franzido' ? 'F' : 'O'}${closestWidth2}`;
     }
-    if (!isActive) {
-      if (!nextButton?.classList.contains('inactive')) {
-        nextButton.classList.add('inactive');
+    if (product === 'DSXL') {
+      if (isWallMounted) {
+        const closestWidth3 = productSizes.calhas[`${product}-${color}`]?.find((w) => w >= width);
+        return `${product}${type === 'Franzido' ? 'F' : 'O'}${closestWidth3}${color}SP`;
       }
+      const closestWidth2 = productSizes.calhas[`${product}-${color}`]?.find((w) => w >= width);
+      return `${product}${type === 'Franzido' ? 'F' : 'O'}${closestWidth2}${color}`;
+    }
+    if (product === '9500M') {
+      if (isWallMounted) {
+        const closestWidth3 = productSizes.calhas[product].find((w) => w >= width);
+        return `${product}${closestWidth3}SP`;
+      }
+      const closestWidth2 = productSizes.calhas[product].find((w) => w >= width);
+      return `${product}${closestWidth2}`;
+    }
+    if (isWallMounted) {
+      const closestWidth2 = productSizes.calhas[`${product}-${color}`].find((w) => w >= width);
+      return `${product}${closestWidth2}${color}SP`;
+    }
+    const closestWidth = productSizes.calhas[`${product}-${color}`].find((w) => w >= width);
+    return `${product}${closestWidth}${color}`;
+  };
+
+  const getColorFromCard = (card) => {
+    const colorText = card.getElementsByClassName('color_name');
+    return colorText.length > 0 ? colorText[0].textContent : null;
+  };
+
+  const getProductFromCard = (card) => {
+    const productText = card.getElementsByClassName('product_name');
+    return productText.length > 0 ? productText[0].textContent : null;
+  };
+
+  const convertStepInStepNumber = (step) => {
+    switch (step) {
+      case 'tecido':
+      case 'inicio':
+        return 'step1';
+      case 'tipo':
+      case 'bainha':
+        return 'step2';
+      case 'medidas':
+      case 'correcao':
+        return 'step3';
+      case 'calha':
+        return 'step4';
+      case 'instalacao':
+        return 'step5';
     }
   };
 
-  const populateSelectorValues = (window) => {
-    Object.keys(window).forEach((key) => {
-      updateSelectorValue(selectors.medidas, window[key]);
-    });
+  // FS CMS FILTER FUNCTIONS
+  // -----------------------
+
+  const updateProductsCMSFilter = (productType) => {
+    if (productType === 'Estore') {
+      estoreRadioBtn?.click();
+    }
+    if (productType === 'Cortina') {
+      cortinaRadioBtn?.click();
+    }
+    if (productType === 'Calha') {
+      calhaRadioBtn?.click();
+    }
   };
 
-  const populateInputValues = (window) => {
-    selectInicio(window.inicio);
-    selectProduct(window.tecido);
-    selectTipo(window.tipo);
-    bainhaInput.checked = window.bainha;
-    larguraInput.value = window.medidas.split(' X ')[0];
-    alturaInput.value = window.medidas.split(' X ')[1];
-    correcaoInput.checked = window.correcao;
-    selectSuporte(window.suporte);
-    instalacaoInput.checked = window.instalacao;
+  // INPUTS HANDLERS
+  // ---------------
+
+  const resetInputs = () => {
+    const inicioCards = document.querySelectorAll("[id^='inicio-card']");
+    const tipoCards = document.querySelectorAll("[id^='tipo-card']");
+    const productCards = document.querySelectorAll("[id^='tecido-card']");
+    const productColors = document.querySelectorAll('.tecido_color');
+    inicioCards.forEach((card) => {
+      deactivateCard(card);
+    });
+    tipoCards.forEach((card) => {
+      deactivateCard(card);
+    });
+    productCards.forEach((card) => {
+      deactivateCard(card);
+    });
+    productColors.forEach((color) => {
+      deactivateColor(color);
+    });
+    larguraInput.value = '';
+    alturaInput.value = '';
+    correcaoInput.checked = false;
+    instalacaoInput.checked = false;
+    paredeRadioBtn?.click();
+    bainhaInput.checked = false;
   };
 
   const selectInicio = (value) => {
@@ -640,6 +602,96 @@ window.Webflow.push(() => {
         deactivateCard(card);
       }
     });
+  };
+
+  const clearSuporteRadioBtns = () => {
+    tectoRadioBtn.checked = false;
+    paredeRadioBtn.checked = false;
+  };
+
+  const createWindowBtnCheckout = () => {
+    const windowBtn = document.querySelector('#checkout-window-btn');
+    const windowbtnsContainer = document.getElementById('window-btns-container');
+    if (windows.length === 1) {
+      windows[0].button = windowBtn;
+      addOnClickToWindowBtn(windows[0]);
+    }
+    if (windows.length > 1) {
+      if (windowBtn) {
+        const clonedBtn = windowBtn.cloneNode(true);
+        clonedBtn.querySelector('h6').textContent = `Janela ${windows.length}`;
+        windows[windows.length - 1].button = clonedBtn;
+        addOnClickToWindowBtn(windows[windows.length - 1]);
+        windowbtnsContainer?.appendChild(clonedBtn);
+      }
+    }
+  };
+
+  // SIMULATOR FUNCTIONS
+  // -------------------
+
+  const populateInputValues = (window) => {
+    if (window.inicio === 'Cortina') {
+      selectInicio(window.inicio);
+      selectProduct(window.tecido);
+      selectTipo(window.tipo);
+      bainhaInput.checked = window.bainha;
+      larguraInput.value = window.medidas.split(' X ')[0];
+      alturaInput.value = window.medidas.split(' X ')[1];
+      correcaoInput.checked = window.correcao;
+      selectSuporte(window.suporte);
+      instalacaoInput.checked = window.instalacao;
+    }
+    if (window.inicio === 'Estore') {
+      selectInicio(window.inicio);
+      selectProduct(window.tecido);
+      larguraInput.value = window.medidas.split(' X ')[0];
+      alturaInput.value = window.medidas.split(' X ')[1];
+      correcaoInput.checked = window.correcao;
+      instalacaoInput.checked = window.instalacao;
+    }
+  };
+
+  const navigateToStep = (step) => {
+    if (step === 'largura' || step === 'altura') {
+      step = 'medidas';
+    }
+    if (step === currentStep) {
+      return;
+    }
+    if (steps[step].classList.contains('done')) {
+      markStepAsNext(currentStep);
+      changeSelectorVisibility(simulatorHeadings[convertStepInStepNumber(currentStep)], false);
+      if (currentStep === 'calha') {
+        changeSelectorVisibility(selectors.tecido, false);
+      } else {
+        changeSelectorVisibility(selectors[currentStep], false);
+      }
+      switch (step) {
+        case 'tecido':
+          changeSelectorVisibility(simulatorHeadings.step1, true);
+          changeSelectorVisibility(selectors.tecido, true);
+          break;
+        case 'tipo':
+          changeSelectorVisibility(simulatorHeadings.step2, true);
+          changeSelectorVisibility(selectors.tipo, true);
+          break;
+        case 'medidas':
+          changeSelectorVisibility(simulatorHeadings.step3, true);
+          changeSelectorVisibility(selectors.medidas, true);
+          break;
+        case 'calha':
+          changeSelectorVisibility(simulatorHeadings.step4, true);
+          changeSelectorVisibility(selectors.tecido, true);
+          break;
+        case 'instalacao':
+          changeSelectorVisibility(simulatorHeadings.step5, true);
+          changeSelectorVisibility(selectors.instalacao, true);
+          break;
+      }
+      currentStep = step;
+      markStepAsActive(step);
+    }
   };
 
   const advanceStep = () => {
@@ -836,58 +888,50 @@ window.Webflow.push(() => {
     }
   };
 
-  const clearSuporteRadioBtns = () => {
-    tectoRadioBtn.checked = false;
-    paredeRadioBtn.checked = false;
-  };
-
-  const createWindowBtnCheckout = () => {
-    const windowBtn = document.querySelector('#checkout-window-btn'); // Select the div you want to duplicate
-    const windowbtnsContainer = document.getElementById('window-btns-container');
-
-    if (windows.length === 1) {
-      windows[0].button = windowBtn;
-      addOnClickToWindowBtn(windows[0]);
-    }
-    if (windows.length > 1) {
-      if (windowBtn) {
-        const clonedBtn = windowBtn.cloneNode(true);
-        clonedBtn.querySelector('h6').textContent = `Janela ${windows.length}`;
-        windows[windows.length - 1].button = clonedBtn;
-        addOnClickToWindowBtn(windows[windows.length - 1]);
-        // Append the cloned div to the parent container
-        windowbtnsContainer?.appendChild(clonedBtn);
-      }
-    }
-  };
-
-  const addOnClickToWindowBtn = (window) => {
-    window.button.addEventListener('click', () => {
-      selectWindow(window);
-    });
-  };
-
-  const selectWindow = (window) => {
-    windows.forEach((w) => {
-      if (w.button) {
-        w.button.classList.remove('active');
-      }
-    });
-    window.button.classList.add('active');
-    populateCheckoutChoices(window);
-  };
-
   const navigateToCheckout = () => {
     simContainer.style.display = 'none';
     selectWindow(windows[windows.length - 1]);
     checkoutContain.style.display = 'flex';
   };
 
+  // CHECKOUT FUNCTIONS
+  // ------------------
+
+  const populateCheckoutChoices = (window2) => {
+    checkoutChoices.tecido.textContent = window2.tecido;
+    checkoutChoices.tipo.textContent = window2.tipo;
+    checkoutChoices.bainha.textContent =
+      window2.tipo === 'Ondas' || windows.tipo === 'Franzido'
+        ? 'Ba\xEDnha de Chumbo inclu\xEDda'
+        : window2.bainha
+          ? 'Com Ba\xEDnha de Chumbo'
+          : 'Sem Ba\xEDnha de Chumbo';
+    checkoutChoices.largura.textContent = window2.medidas.split(' X ')[0] + 'cm Largura';
+    checkoutChoices.altura.textContent = window2.medidas.split(' X ')[1] + 'cm Altura';
+    checkoutChoices.correcao.textContent = windows[0].correcao
+      ? 'Com Verifica\xE7\xE3o'
+      : 'Sem Verifica\xE7\xE3o';
+    checkoutChoices.calha.textContent = window2.calha;
+    checkoutChoices.suporte.textContent = 'Suporte de ' + window2.suporte;
+    checkoutChoices.instalacao.textContent = windows[0].instalacao
+      ? 'Com Instala\xE7\xE3o'
+      : 'Sem Instala\xE7\xE3o';
+  };
+
+  const selectWindow = (window2) => {
+    windows.forEach((w) => {
+      if (w.button) {
+        w.button.classList.remove('active');
+      }
+    });
+    window2.button.classList.add('active');
+    populateCheckoutChoices(window2);
+  };
+
   const navigateFromCheckoutToStep = (step) => {
     checkoutContain.style.display = 'none';
     resetSteps();
     simContainer.style.display = 'flex';
-
     if (step === 'largura' || step === 'altura') {
       step = 'medidas';
     }
@@ -924,6 +968,145 @@ window.Webflow.push(() => {
     markStepAsActive(step);
   };
 
+  const generateAndDownloadPdf = () => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const x = 10;
+    const rightMargin = 190;
+    let y = 10;
+    const lineHeight = 6;
+    let total = 0;
+    doc.setFontSize(12);
+    doc.text('Data: ' + /* @__PURE__ */ new Date().toLocaleDateString(), rightMargin - 40, y);
+    doc.text('Cliente: ' + selectorValues.nome, x, y);
+    y += lineHeight;
+    doc.text('Email: ' + selectorValues.email, x, y);
+    y += lineHeight * 2;
+    windows.forEach((window2, index) => {
+      if (index % 6 === 0 && index !== 0) {
+        doc.addPage();
+        y = 10;
+      }
+      const {
+        usedWidth,
+        productPrice,
+        manufacturingPrice,
+        bainhaPrice,
+        calhaPrice,
+        instalationPrice,
+        windowTotal,
+      } = calculateWindowPrice(window2);
+      total += windowTotal;
+      const windowDescription = `Janela ${index + 1} - ${window2.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(usedWidth).toFixed(2))} CM)`;
+      doc.setFontSize(10);
+      doc.text(windowDescription, x, y);
+      doc.text(`${windowTotal.toFixed(2)}\u20AC`, x + 150, y);
+      y += lineHeight;
+      const subItems = [
+        { label: `Tecido: ${window2.tecido}`, price: productPrice },
+        {
+          label: `Tipo de Cortina: ${window2.tipo}`,
+          price: manufacturingPrice,
+        },
+        {
+          label: `Ba\xEDnha de Chumbo: ${window2.tecido.startsWith('120') || window2.tecido.startsWith('122') ? 'Inclu\xEDda' : window2.bainha ? 'Sim' : 'N\xE3o'}`,
+          price: bainhaPrice,
+        },
+        {
+          label: `Calha: ${window2.calha} - Suporte: Suporte de ${window2.suporte}`,
+          price: calhaPrice,
+        },
+        {
+          label: `Instala\xE7\xE3o: ${windows[0].instalacao ? 'Sim' : 'N\xE3o'}`,
+          price: instalationPrice,
+        },
+      ];
+      subItems.forEach((item) => {
+        doc.setFontSize(8);
+        doc.text(`  - ${item.label}`, x + 5, y);
+        doc.text(`${item.price.toFixed(2)}\u20AC`, x + 150, y);
+        y += lineHeight;
+      });
+      y += lineHeight;
+    });
+    if (!windows.length === 6) {
+      y += lineHeight;
+    }
+    doc.setFontSize(10);
+    doc.text('Corre\xE7\xE3o:', x, y);
+    doc.text(`${windows[0].correcao ? 30 : 0}\u20AC`, x + 150, y);
+    y += lineHeight;
+    y += lineHeight;
+    total += windows[0].correcao ? 30 : 0;
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.setFillColor(240, 240, 240);
+    doc.rect(x, y, 190, lineHeight + 2, 'F');
+    doc.text(`Total:`, x + 120, y + lineHeight - 2);
+    doc.text(`${total.toFixed(2)}\u20AC`, x + 150, y + lineHeight - 2);
+    doc.save('generated.pdf');
+  };
+
+  // UI FUNCTIONS
+  // ------------
+
+  const changeSelectorVisibility = (selector, visible) => {
+    selector.style.display = visible ? 'flex' : 'none';
+  };
+
+  const resetSteps = () => {
+    Object.keys(steps).forEach((key) => {
+      steps[key].classList.remove('active');
+      steps[key].classList.add('next');
+      steps[key].classList.remove('done');
+      steps[key].getElementsByClassName('step_number')[0].classList.remove('active');
+      steps[key].getElementsByClassName('step_description')[0].textContent = 'Escolha';
+    });
+  };
+
+  const markStepAsCompleted = (step) => {
+    steps[step].classList.remove('active');
+    steps[step].classList.remove('next');
+    steps[step].classList.add('done');
+    steps[step].getElementsByClassName('step_number')[0].classList.remove('active');
+    steps[step].getElementsByClassName('step_description')[0].textContent = selectorValues[step];
+    if (step === 'medidas')
+      steps[step].getElementsByClassName('step_description')[0].textContent +=
+        selectorValues.correcao ? 'c/Verifica\xE7\xE3o' : 's/Verifica\xE7\xE3o';
+    if (step === 'tipo')
+      steps[step].getElementsByClassName('step_description')[0].textContent += selectorValues.bainha
+        ? 'c/Ba\xEDnha de Chumbo'
+        : 's/Ba\xEDnha de Chumbo';
+  };
+
+  const markStepAsActive = (step) => {
+    steps[step].classList.remove('next');
+    steps[step].classList.add('active');
+    steps[step].getElementsByClassName('step_number')[0].classList.add('active');
+  };
+
+  const markStepAsNext = (step) => {
+    if (steps[step].classList.contains('active')) {
+      steps[step].classList.remove('active');
+      steps[step].getElementsByClassName('step_number')[0].classList.remove('active');
+    }
+    if (steps[step].classList.contains('done')) return markStepAsCompleted(step);
+    steps[step].classList.add('next');
+  };
+
+  const activateNextBtn = (isActive) => {
+    if (isActive) {
+      if (nextButton?.classList.contains('inactive')) {
+        nextButton.classList.remove('inactive');
+      }
+    }
+    if (!isActive) {
+      if (!nextButton?.classList.contains('inactive')) {
+        nextButton.classList.add('inactive');
+      }
+    }
+  };
+
   const activateColor = (color) => {
     color.classList.add('active');
   };
@@ -948,18 +1131,8 @@ window.Webflow.push(() => {
     imageContain.classList.remove('active');
   };
 
-  const updateProductsCMSFilter = (productType) => {
-    if (productType === 'Estore') {
-      estoreRadioBtn?.click(); // Trigger the click event
-    }
-    if (productType === 'Cortina') {
-      cortinaRadioBtn?.click(); // Trigger the click event
-    }
-    if (productType === 'Calha') {
-      calhaRadioBtn?.click(); // Trigger the click event
-    }
-  };
-
+  // EVENT LISTENERS
+  // ---------------
   const addOnClickToInicioCards = () => {
     const cards = document.querySelectorAll("[id^='inicio-card']");
     cards.forEach((card) => {
@@ -980,22 +1153,13 @@ window.Webflow.push(() => {
 
   const addOnClickToTecidoCards = () => {
     const cards = document.querySelectorAll("[id^='tecido-card']");
-
     const colors = document.querySelectorAll('.tecido_color');
-
-    // activateColor(selectedDiv);
-    // colors.forEach((colorFromList) => {
-    //   if (colorFromList !== selectedDiv) {
-    //     deactivateColor(colorFromList);
-    //   }
-    // });
     cards.forEach((card) => {
       card.addEventListener('click', () => {
         const cardProduct = getProductFromCard(card);
         const cardColor = getColorFromCard(card);
         const existingSelection = selectedColors.find((color) => color.product === cardProduct);
         const cardColors = card.getElementsByClassName('tecido_color');
-
         colors.forEach((color) => deactivateColor(color));
         activateCard(card, selectors.tecido);
         cards.forEach((cardFromList) => {
@@ -1003,11 +1167,9 @@ window.Webflow.push(() => {
             deactivateCard(cardFromList);
           }
         });
-
         if (existingSelection) {
           for (let i = 0; i < cardColors.length; i++) {
             if (cardColors.item(i).id === `${existingSelection.color}`) {
-              // cardColors.item(i).click();
               activateColor(cardColors.item(i));
             }
           }
@@ -1018,7 +1180,6 @@ window.Webflow.push(() => {
             updateCalhaValue(existingSelection.color);
           }
         } else {
-          // cardColors.length > 0 && cardColors[0].click();
           cardColors.length > 0 && activateColor(cardColors[0]);
           if (currentStep === 'tecido' && cardColor !== '') {
             updateSelectorValue(selectors.tecido, `${cardColor}`);
@@ -1027,34 +1188,51 @@ window.Webflow.push(() => {
             updateCalhaValue(cardColor);
           }
         }
-
         if (validateSelector()) activateNextBtn(true);
       });
     });
   };
 
-  const getColorFromCard = (card) => {
-    const colorText = card.getElementsByClassName('color_name');
-    return colorText.length > 0 ? colorText[0].textContent : null;
-  };
-
-  const getProductFromCard = (card) => {
-    const productText = card.getElementsByClassName('product_name');
-    return productText.length > 0 ? productText[0].textContent : null;
-  };
-
-  const addOnClickToCalhaCards = () => {
-    const cards = document.querySelectorAll("[id^='calha-card']");
-    cards.forEach((card) => {
-      card.addEventListener('click', () => {
-        activateCard(card, selectors.calha);
-        cards.forEach((cardFromList) => {
-          if (cardFromList !== card) {
-            deactivateCard(cardFromList);
+  const addOnClickColor = () => {
+    const colors = document.querySelectorAll('.tecido_color');
+    colors.forEach((color) => {
+      color.addEventListener('click', (event) => {
+        const selectedDiv = event.currentTarget;
+        const selectedColor = selectedDiv && selectedDiv.id;
+        activateColor(selectedDiv);
+        colors.forEach((colorFromList) => {
+          if (colorFromList !== selectedDiv) {
+            deactivateColor(colorFromList);
           }
         });
-        updateSelectorValue(selectors.calha, card.getElementsByTagName('h1')[0].textContent);
-        // if (validateSelector()) activateNextBtn(true);
+        const product = selectedColor ? selectedColor.split('-')[0] : '';
+        const latestSelection = selectedColors.find((color2) => color2.product === product);
+        if (latestSelection) {
+          latestSelection.color = `${selectedColor}`;
+        } else {
+          selectedColors.push({ product, color: `${selectedColor}` });
+        }
+        const cardThumbnailImage =
+          selectedDiv.parentElement.parentElement.parentElement.parentElement.getElementsByClassName(
+            'tecido_image'
+          )[0];
+        for (let i = 0; i < colors.length; i++) {
+          if (colors[i].getAttribute('id') === selectedColor) {
+            cardThumbnailImage.setAttribute(
+              'src',
+              colors[i].getElementsByTagName('img')[0].getAttribute('src')
+            );
+            cardThumbnailImage.setAttribute('srcset', '');
+            break;
+          }
+        }
+        if (currentStep === 'calha' && selectedColor !== '') {
+          return updateCalhaValue(selectedColor);
+        }
+        if (currentStep === 'tecido' && selectedColor !== '') {
+          return updateSelectorValue(selectors.tecido, selectedColor);
+        }
+        return console.log('No color was stored');
       });
     });
   };
@@ -1080,199 +1258,7 @@ window.Webflow.push(() => {
       updateSelectorValue(selectors.bainha, bainhaInput.checked);
     });
   };
-  const addOnClickCorrecao = () => {
-    correcaoInput.addEventListener('change', function (event) {
-      updateSelectorValue(selectors.correcao, correcaoInput.checked);
-    });
-  };
 
-  const addOnClickInstalacao = () => {
-    instalacaoInput.addEventListener('change', function (event) {
-      updateSelectorValue(selectors.instalacao, instalacaoInput.checked);
-    });
-  };
-
-  const addOnClickColor = () => {
-    const colors = document.querySelectorAll('.tecido_color');
-    colors.forEach((color) => {
-      color.addEventListener('click', (event) => {
-        const selectedDiv = event.currentTarget;
-        const selectedColor = selectedDiv && selectedDiv.id;
-
-        activateColor(selectedDiv);
-        colors.forEach((colorFromList) => {
-          if (colorFromList !== selectedDiv) {
-            deactivateColor(colorFromList);
-          }
-        });
-
-        const product = selectedColor ? selectedColor.split('-')[0] : '';
-        // const color = selectedColor ? selectedColor.split('-')[1] : '';
-        const latestSelection = selectedColors.find((color) => color.product === product);
-
-        if (latestSelection) {
-          latestSelection.color = `${selectedColor}`;
-        } else {
-          selectedColors.push({ product: product, color: `${selectedColor}` });
-        }
-
-        const cardThumbnailImage =
-          selectedDiv.parentElement.parentElement.parentElement.parentElement.getElementsByClassName(
-            'tecido_image'
-          )[0];
-
-        // const colorsThumbnailImages = document.querySelectorAll("[id^='color-thumbnail-image']");
-
-        // for (let i = 0; i < colorsThumbnailImages.length; i++) {
-        //   if (colorsThumbnailImages[i].textContent === selectedColor) {
-        //     cardThumbnailImage.setAttribute(
-        //       'src',
-        //       colorsThumbnailImages[i].style.backgroundImage.split('"')[1]
-        //     );
-        //     cardThumbnailImage.setAttribute('srcset', '');
-        //     break;
-        //   }
-        // }
-
-        for (let i = 0; i < colors.length; i++) {
-          if (colors[i].getAttribute('id') === selectedColor) {
-            cardThumbnailImage.setAttribute(
-              'src',
-              colors[i].getElementsByTagName('img')[0].getAttribute('src')
-            );
-            cardThumbnailImage.setAttribute('srcset', '');
-            break;
-          }
-        }
-
-        if (currentStep === 'calha' && selectedColor !== '') {
-          return updateCalhaValue(selectedColor);
-        }
-        if (currentStep === 'tecido' && selectedColor !== '') {
-          return updateSelectorValue(selectors.tecido, selectedColor);
-        }
-        return console.log('No color was stored');
-      });
-    });
-  };
-
-  const populateCheckoutChoices = (window) => {
-    checkoutChoices.tecido.textContent = window.tecido;
-    checkoutChoices.tipo.textContent = window.tipo;
-    checkoutChoices.bainha.textContent =
-      window.tipo === 'Ondas' || windows.tipo === 'Franzido'
-        ? 'Baínha de Chumbo incluída'
-        : window.bainha
-          ? 'Com Baínha de Chumbo'
-          : 'Sem Baínha de Chumbo';
-    checkoutChoices.largura.textContent = window.medidas.split(' X ')[0] + 'cm Largura';
-    checkoutChoices.altura.textContent = window.medidas.split(' X ')[1] + 'cm Altura';
-    checkoutChoices.correcao.textContent = windows[0].correcao
-      ? 'Com Verificação'
-      : 'Sem Verificação';
-    checkoutChoices.calha.textContent = window.calha;
-    checkoutChoices.suporte.textContent = 'Suporte de ' + window.suporte;
-    checkoutChoices.instalacao.textContent = windows[0].instalacao
-      ? 'Com Instalação'
-      : 'Sem Instalação';
-  };
-
-  const convertStepInStepNumber = (step) => {
-    switch (step) {
-      case 'tecido':
-      case 'inicio':
-        return 'step1';
-      case 'tipo':
-      case 'bainha':
-        return 'step2';
-      case 'medidas':
-      case 'correcao':
-        return 'step3';
-      case 'calha':
-        return 'step4';
-      case 'instalacao':
-        return 'step5';
-    }
-  };
-
-  const navigateToStep = (step) => {
-    if (step === 'largura' || step === 'altura') {
-      step = 'medidas';
-    }
-    if (step === currentStep) {
-      return;
-    }
-    if (steps[step].classList.contains('done')) {
-      markStepAsNext(currentStep);
-      changeSelectorVisibility(simulatorHeadings[convertStepInStepNumber(currentStep)], false);
-      if (currentStep === 'calha') {
-        changeSelectorVisibility(selectors.tecido, false);
-      } else {
-        changeSelectorVisibility(selectors[currentStep], false);
-      }
-
-      switch (step) {
-        case 'tecido':
-          changeSelectorVisibility(simulatorHeadings.step1, true);
-          changeSelectorVisibility(selectors.tecido, true);
-          break;
-        case 'tipo':
-          changeSelectorVisibility(simulatorHeadings.step2, true);
-          changeSelectorVisibility(selectors.tipo, true);
-          break;
-        case 'medidas':
-          changeSelectorVisibility(simulatorHeadings.step3, true);
-          changeSelectorVisibility(selectors.medidas, true);
-          break;
-        case 'calha':
-          changeSelectorVisibility(simulatorHeadings.step4, true);
-          changeSelectorVisibility(selectors.tecido, true);
-          break;
-        case 'instalacao':
-          changeSelectorVisibility(simulatorHeadings.step5, true);
-          changeSelectorVisibility(selectors.instalacao, true);
-          break;
-      }
-      currentStep = step;
-      markStepAsActive(step);
-    }
-  };
-
-  const addOnClickStep = () => {
-    Object.keys(steps).forEach((key) => {
-      steps[key].addEventListener('click', () => {
-        navigateToStep(key);
-      });
-    });
-  };
-
-  const addOnClickCheckoutChoices = () => {
-    Object.keys(checkoutChoices).forEach((key) => {
-      checkoutChoices[key].addEventListener('click', () => {
-        navigateFromCheckoutToStep(key);
-      });
-    });
-  };
-
-  const addOnClickEnviar = () => {
-    enviarButton.addEventListener('click', () => {
-      selectorValues.nome = nomeInput.value;
-      selectorValues.email = emailInput.value;
-      selectorValues.contacto = contactoSwitch.checked;
-      generateAndDownloadPdf();
-    });
-  };
-
-  const addOnClickNewWindow = () => {
-    newWindowButton.addEventListener('click', createWindow);
-  };
-
-  const addOnClickNoWindow = () => {
-    noWindowButton.addEventListener('click', () => {
-      newWindowContain.style.display = 'none';
-      checkoutFormContain.style.display = 'flex';
-    });
-  };
   const addOnChangeSuporteRadioBtns = () => {
     paredeRadioBtn?.addEventListener('change', (event) => {
       if (paredeRadioBtn?.checked === true || tectoRadioBtn?.checked === true) {
@@ -1280,7 +1266,6 @@ window.Webflow.push(() => {
         if (validateSelector()) activateNextBtn(true);
       }
     });
-
     tectoRadioBtn?.addEventListener('change', (event) => {
       if (paredeRadioBtn?.checked === true || tectoRadioBtn?.checked === true) {
         updateSuporteValue('Tecto');
@@ -1306,13 +1291,7 @@ window.Webflow.push(() => {
       if (!(larguraInput?.value === '') && !(alturaInput?.value === '')) {
         validateSelector() ? activateNextBtn(true) : activateNextBtn(false);
       }
-      // if (larguraInput?.value === '' || alturaInput?.value === '') {
-      //   activateNextBtn(false);
-      // } else {
-      //   activateNextBtn(true);
-      // }
     });
-
     alturaInput?.addEventListener('input', (event) => {
       if (larguraInput?.value === '' && alturaInput?.value === '') {
         return;
@@ -1332,373 +1311,369 @@ window.Webflow.push(() => {
     });
   };
 
-  const storeValues = () => {
-    const newWindow = {
-      inicio: selectorValues.inicio,
-      bainha: selectorValues.bainha,
-      tecido: selectorValues.tecido,
-      tipo: selectorValues.tipo,
-      medidas: selectorValues.medidas,
-      correcao: selectorValues.correcao,
-      calha: selectorValues.calha,
-      suporte: selectorValues.suporte,
-      instalacao: selectorValues.instalacao,
-    };
-    windows.push(newWindow);
-  };
-
-  const createWindow = () => {
-    updateProductsCMSFilter('Cortina');
-    resetValues();
-    resetInputs();
-    navigateFromCheckoutToStep('inicio');
-  };
-  const generateAndDownloadPdf = () => {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    const x = 10; // X-coordinate for text
-    const rightMargin = 190; // Right margin for text (width of the PDF - x)
-    let y = 10; // Y-coordinate for text
-    const lineHeight = 6; // Space between lines
-    let total = 0;
-    doc.setFontSize(12);
-    doc.text('Data: ' + new Date().toLocaleDateString(), rightMargin - 40, y);
-    doc.text('Cliente: ' + selectorValues.nome, x, y);
-    y += lineHeight;
-    doc.text('Email: ' + selectorValues.email, x, y);
-    y += lineHeight * 2;
-
-    // Start of Table
-    windows.forEach((window, index) => {
-      if (index % 6 === 0 && index !== 0) {
-        doc.addPage();
-        y = 10;
-      }
-      const {
-        usedWidth,
-        productPrice,
-        manufacturingPrice,
-        bainhaPrice,
-        calhaPrice,
-        instalationPrice,
-        windowTotal,
-      } = calculateWindowPrice(window);
-      total += windowTotal;
-
-      // Main Row: Window Description
-      const windowDescription = `Janela ${index + 1} - ${window.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(usedWidth).toFixed(2))} CM)`;
-      doc.setFontSize(10);
-      doc.text(windowDescription, x, y);
-      doc.text(`${windowTotal.toFixed(2)}€`, x + 150, y);
-      y += lineHeight;
-
-      // Subitems: Tecido, Tipo - Bainha, Calha - Suporte, Instalação
-      const subItems = [
-        { label: `Tecido: ${window.tecido}`, price: productPrice },
-        {
-          label: `Tipo de Cortina: ${window.tipo}`,
-          price: manufacturingPrice,
-        },
-        {
-          label: `Baínha de Chumbo: ${window.tecido.startsWith('120') || window.tecido.startsWith('122') ? 'Incluída' : window.bainha ? 'Sim' : 'Não'}`,
-          price: bainhaPrice,
-        },
-        {
-          label: `Calha: ${window.calha} - Suporte: Suporte de ${window.suporte}`,
-          price: calhaPrice,
-        },
-        { label: `Instalação: ${windows[0].instalacao ? 'Sim' : 'Não'}`, price: instalationPrice },
-      ];
-
-      subItems.forEach((item) => {
-        doc.setFontSize(8);
-        doc.text(`  - ${item.label}`, x + 5, y); // Indented for subitems
-        doc.text(`${item.price.toFixed(2)}€`, x + 150, y);
-        y += lineHeight;
-      });
-
-      y += lineHeight; // Space between windows
-    });
-    if (!windows.length === 6) {
-      y += lineHeight;
-    }
-    doc.setFontSize(10);
-    doc.text('Correção:', x, y);
-    doc.text(`${windows[0].correcao ? 30 : 0}€`, x + 150, y);
-    y += lineHeight;
-    y += lineHeight;
-    // Highlighted Total Line
-    total += windows[0].correcao ? 30 : 0;
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'bold');
-    doc.setFillColor(240, 240, 240); // Light grey background
-    doc.rect(x, y, 190, lineHeight + 2, 'F'); // Background for the total line
-    doc.text(`Total:`, x + 120, y + lineHeight - 2);
-    doc.text(`${total.toFixed(2)}€`, x + 150, y + lineHeight - 2);
-    doc.save('generated.pdf');
-  };
-
-  const createDummyWindows = () => {
-    let windowWidth = 125;
-    for (let i = 0; i < 5; i++) {
-      windowWidth = 125 + i * 125;
-      windows.push({
-        inicio: 'Cortina',
-        tecido: '101015-003',
-        tipo: 'Ondas',
-        medidas: `${windowWidth} X 250`,
-        correcao: i % 2 === 0 ? false : true,
-        calha: '5000-Branco',
-        instalacao: i % 2 === 0 ? true : false,
-      });
-    }
-  };
-  const createEddieWoodWindows = () => {
-    windows.push({
-      inicio: 'Cortina',
-      tecido: '120100-008',
-      tipo: 'Franzido',
-      medidas: `200 X 250`,
-      correcao: true,
-      calha: '5000-B',
-      instalacao: true,
+  const addOnClickCorrecao = () => {
+    correcaoInput.addEventListener('change', function (event) {
+      updateSelectorValue(selectors.correcao, correcaoInput.checked);
     });
   };
 
-  const createRitaAbreuWindows = () => {
-    const ritaAbreuWindows = [
-      {
-        inicio: 'Cortina',
-        tecido: '120100-008',
-        tipo: 'Ondas',
-        bainha: true,
-        medidas: `285 X 150`,
-        correcao: true,
-        calha: '5000-B',
-        suporte: 'Parede',
-        instalacao: true,
-      },
-      {
-        inicio: 'Cortina',
-        tecido: '120100-008',
-        tipo: 'Ondas',
-        bainha: true,
-        medidas: `348 X 268`,
-        correcao: true,
-        calha: '5000-B',
-        suporte: 'Parede',
-        instalacao: true,
-      },
-      {
-        inicio: 'Cortina',
-        tecido: '120100-008',
-        tipo: 'Ondas',
-        bainha: true,
-        medidas: `240 X 268`,
-        correcao: true,
-        calha: '5000-B',
-        suporte: 'Parede',
-        instalacao: true,
-      },
-      {
-        inicio: 'Cortina',
-        tecido: '120100-008',
-        tipo: 'Ondas',
-        bainha: true,
-        medidas: `285 X 268`,
-        correcao: true,
-        calha: '5000-B',
-        suporte: 'Parede',
-        instalacao: true,
-      },
-      {
-        inicio: 'Cortina',
-        tecido: '120100-008',
-        tipo: 'Ondas',
-        bainha: true,
-        medidas: `280 X 268`,
-        correcao: true,
-        calha: '5000-B',
-        suporte: 'Parede',
-        instalacao: true,
-      },
-      {
-        inicio: 'Cortina',
-        tecido: '120100-008',
-        tipo: 'Ondas',
-        bainha: true,
-        medidas: `285 X 268`,
-        correcao: true,
-        calha: '5000-B',
-        suporte: 'Parede',
-        instalacao: true,
-      },
-    ];
-    emailInput.value = 'ritabreu@test.pt';
-    nomeInput.value = 'Rita Abreu';
-
-    windows.push(...ritaAbreuWindows);
+  const addOnClickInstalacao = () => {
+    instalacaoInput.addEventListener('change', function (event) {
+      updateSelectorValue(selectors.instalacao, instalacaoInput.checked);
+    });
   };
-  const createRitaAbreuWindows2 = () => {
-    const ritaAbreuWindows = [
-      {
-        inicio: 'Cortina',
-        tecido: '118060-024',
-        tipo: 'Ondas',
-        bainha: true,
-        medidas: `285 X 150`,
-        correcao: true,
-        calha: '5000-B',
-        suporte: 'Parede',
-        instalacao: true,
-      },
-      {
-        inicio: 'Cortina',
-        tecido: '118060-024',
-        tipo: 'Ondas',
-        bainha: true,
-        medidas: `348 X 268`,
-        correcao: true,
-        calha: '5000-B',
-        suporte: 'Parede',
-        instalacao: true,
-      },
-      {
-        inicio: 'Cortina',
-        tecido: '118060-024',
-        tipo: 'Ondas',
-        bainha: true,
-        medidas: `240 X 268`,
-        correcao: true,
-        calha: '5000-B',
-        suporte: 'Parede',
-        instalacao: true,
-      },
-      {
-        inicio: 'Cortina',
-        tecido: '118060-024',
-        tipo: 'Ondas',
-        bainha: true,
-        medidas: `285 X 268`,
-        correcao: true,
-        calha: '5000-B',
-        suporte: 'Parede',
-        instalacao: true,
-      },
-      {
-        inicio: 'Cortina',
-        tecido: '118060-024',
-        tipo: 'Ondas',
-        bainha: true,
-        medidas: `280 X 268`,
-        correcao: true,
-        calha: '5000-B',
-        suporte: 'Parede',
-        instalacao: true,
-      },
-      {
-        inicio: 'Cortina',
-        tecido: '118060-024',
-        tipo: 'Ondas',
-        bainha: true,
-        medidas: `285 X 268`,
-        correcao: true,
-        calha: '5000-B',
-        suporte: 'Parede',
-        instalacao: true,
-      },
-    ];
-    emailInput.value = 'ritabreu@test.pt';
-    nomeInput.value = 'Rita Abreu';
 
-    windows.push(...ritaAbreuWindows);
+  const addOnClickStep = () => {
+    Object.keys(steps).forEach((key) => {
+      steps[key].addEventListener('click', () => {
+        navigateToStep(key);
+      });
+    });
   };
-  const createMafaldaCoelhoWindows = () => {
-    const mafaldaCoelhoWindows = [
-      {
-        inicio: 'Cortina',
-        tecido: '120100-008',
-        tipo: 'Ondas',
-        medidas: `360 X 150`,
-        correcao: false,
-        calha: '5000-B',
-        instalacao: false,
-      },
-    ];
-    windows.push(...mafaldaCoelhoWindows);
-  };
-  const createHelderPintoWindows = () => {
-    const helderPintoWindows = [
-      {
-        inicio: 'Cortina',
-        tecido: '120100-008',
-        tipo: 'Ondas',
-        medidas: `350 X 240`,
-        correcao: true,
-        calha: '5000-B',
-        instalacao: true,
-      },
-    ];
-    windows.push(...helderPintoWindows);
-  };
-  const fetchProducts = () => {
-    // 'https://docs.google.com/spreadsheets/d/1rLeS62q8uY3PPSRZSEokJY7q5uS4Qh9aNx8VFPg2cF8/export?format=csv'
-    // `https://docs.google.com/spreadsheets/d/1acI1UfB7ukEPc2r4Sf_s4pax0um2IsVvlGDGaiMSNIU/export?format=csv&gid=2133468022`
-    // `https://docs.google.com/spreadsheets/d/1BeQJvMh5moFM9ELRQG7QsDUa_CLfiqZ9/export?format=csv&gid=2133468022`
-    // `https://docs.google.com/spreadsheets/d/1acI1UfB7ukEPc2r4Sf_s4pax0um2IsVvlGDGaiMSNIU/export?format=csv&gid=2133468022`
-    fetch(
-      `https://docs.google.com/spreadsheets/d/1hkgiYOVj33yY6b--bJaNPZOvHFvQ4klM402z0xp-gjE/export?format=csv&gid=0&single=true`
-    )
-      .then((response) => response.text())
-      .then((csvData) => {
-        const lines = csvData.trim().split('\n');
-        const headers = lines[0].split(',');
-        const data = lines.slice(1).map((line) => line.split(','));
-        // Create the JSON structure
-        const jsonData = {};
 
-        data.forEach((row) => {
-          const [id, price] = row;
-          if (!jsonData[id]) {
-            jsonData[id] = { id: id, price: parseFloat(price) };
-          }
-        });
+  const addOnClickCheckoutChoices = () => {
+    Object.keys(checkoutChoices).forEach((key) => {
+      checkoutChoices[key].addEventListener('click', () => {
+        navigateFromCheckoutToStep(key);
+      });
+    });
+  };
 
-        productsData = jsonData;
-      })
-      .catch((error) => console.error('Error fetching CSV data:', error));
+  const addOnClickToWindowBtn = (window2) => {
+    window2.button.addEventListener('click', () => {
+      selectWindow(window2);
+    });
+  };
+
+  const addOnClickEnviar = () => {
+    enviarButton.addEventListener('click', () => {
+      selectorValues.nome = nomeInput.value;
+      selectorValues.email = emailInput.value;
+      selectorValues.contacto = contactoSwitch.checked;
+      generateAndDownloadPdf();
+    });
+  };
+
+  const addOnClickNewWindow = () => {
+    newWindowButton.addEventListener('click', createWindow);
+  };
+
+  const addOnClickNoWindow = () => {
+    noWindowButton.addEventListener('click', () => {
+      newWindowContain.style.display = 'none';
+      checkoutFormContain.style.display = 'flex';
+    });
   };
 
   const addOnClickNextButton = () => {
     nextButton.addEventListener('click', advanceStep);
   };
 
-  // const addCMSFilterUpdateListener = () => {
-  //   document.addEventListener('renderitems', function () {
-  //     swiper.update();
+  // PRICE CALCULATIONS
+  // ------------------
+  const calculateUsedWidth = (window2) => {
+    const usedWidth = MANUFACTURING_CONSTANTS.usedWidths.find((usedWidth2) => {
+      return window2.tipo === usedWidth2.name;
+    });
+    if (usedWidth) {
+      const width = window2.medidas ? parseInt(window2.medidas.split(' X ')[0]) : 0;
+      return width * usedWidth.widthRatio + MANUFACTURING_CONSTANTS.bainhaPrice.widthMargin;
+    }
+    return 0;
+  };
+
+  const calculateMaterialPrice = (window2, usedWidth) => {
+    const width = window2.medidas.split(' X ')[0];
+    let productPrice = 0,
+      calhaPrice = 0;
+    const prices = getProductPrice(window2);
+    if (window2.inicio === 'Cortina') {
+      productPrice = prices.product * (usedWidth / 100);
+      calhaPrice = prices.calha;
+    }
+    if (window2.inicio === 'Estore') {
+      productPrice = prices.product;
+    }
+    return { product: productPrice, calha: calhaPrice };
+  };
+
+  const calculateManufacturingPrice = (window2, usedWidth) => {
+    if (window2.inicio === 'Estore') {
+      return 0;
+    }
+    const manufacturingPrice = MANUFACTURING_CONSTANTS.manufacturingPrices.find(
+      (price) => window2.tipo === price.name
+    );
+    if (manufacturingPrice) {
+      return window2.tecido.startsWith('101')
+        ? manufacturingPrice.blackout * (usedWidth / 100)
+        : manufacturingPrice.normal * (usedWidth / 100);
+    }
+    return 0;
+  };
+
+  const calculateBainhaPrice = (window2, usedWidth) => {
+    if (
+      window2.inicio === 'Cortina' &&
+      (window2.tecido.startsWith('120') || window2.tecido.startsWith('122'))
+    ) {
+      return 0;
+    }
+    if (window2.inicio === 'Estore') {
+      return 0;
+    }
+    if (window2.bainha) {
+      return MANUFACTURING_CONSTANTS.bainhaPrice.price * (usedWidth / 100);
+    }
+    return 0;
+  };
+
+  const calculateMeasuresCheckPrice = (window2) => {
+    return !window2.correcao ? 0 : MANUFACTURING_CONSTANTS.measuresCheckPrice;
+  };
+
+  const calculateInstalationPrice = (window2) => {
+    if (!windows[0].instalacao) {
+      return 0;
+    }
+    const largura = parseInt(window2.medidas.split(' X ')[0]);
+    const instalationPrice = MANUFACTURING_CONSTANTS.instalation.find(
+      (price) => largura <= price.maxWidth
+    );
+    return instalationPrice ? instalationPrice.price : 0;
+  };
+
+  const calculateWindowPrice = (window2) => {
+    const totalWidth = calculateUsedWidth(window2);
+    const materialPrice = calculateMaterialPrice(window2, totalWidth);
+    const manufacturingPrice = calculateManufacturingPrice(window2, totalWidth);
+    const bainhaPrice = calculateBainhaPrice(window2, totalWidth);
+    const instalationPrice = calculateInstalationPrice(window2);
+    const result =
+      materialPrice.product +
+      manufacturingPrice +
+      bainhaPrice +
+      materialPrice.calha +
+      instalationPrice;
+    window2.totalPrice = result;
+    return {
+      usedWidth: totalWidth,
+      productPrice: materialPrice.product,
+      manufacturingPrice,
+      bainhaPrice,
+      calhaPrice: materialPrice.calha,
+      instalationPrice,
+      windowTotal: result,
+    };
+  };
+
+  // TEST DATA
+
+  // const createDummyWindows = () => {
+  //   let windowWidth = 125;
+  //   for (let i = 0; i < 5; i++) {
+  //     windowWidth = 125 + i * 125;
+  //     windows.push({
+  //       inicio: 'Cortina',
+  //       tecido: '101015-003',
+  //       tipo: 'Ondas',
+  //       medidas: `${windowWidth} X 250`,
+  //       correcao: i % 2 === 0 ? false : true,
+  //       calha: '5000-Branco',
+  //       instalacao: i % 2 === 0 ? true : false,
+  //     });
+  //   }
+  // };
+
+  // const createEddieWoodWindows = () => {
+  //   windows.push({
+  //     inicio: 'Cortina',
+  //     tecido: '120100-008',
+  //     tipo: 'Franzido',
+  //     medidas: `200 X 250`,
+  //     correcao: true,
+  //     calha: '5000-B',
+  //     instalacao: true,
   //   });
   // };
 
-  fetchProducts();
-  addOnClickNextButton();
-  addOnClickToInicioCards();
-  addOnClickToTecidoCards();
-  addOnClickToCalhaCards();
-  addOnClickToTipoCards();
-  addOnClickBainha();
-  addOnClickCorrecao();
-  addOnClickInstalacao();
-  addOnClickColor();
-  addOnClickEnviar();
-  addOnClickNewWindow();
-  addOnClickNoWindow();
-  addOnClickCheckoutChoices();
-  addOnClickStep();
-  addOnChangeMedidasInputs();
-  addOnChangeSuporteRadioBtns();
-  // addCMSFilterUpdateListener();
-  // createEddieWoodWindows();
-  // createRitaAbreuWindows2();
-  // createMafaldaCoelhoWindows();
-  // createHelderPintoWindows();
+  // const createRitaAbreuWindows = () => {
+  //   const ritaAbreuWindows = [
+  //     {
+  //       inicio: 'Cortina',
+  //       tecido: '120100-008',
+  //       tipo: 'Ondas',
+  //       bainha: true,
+  //       medidas: `285 X 150`,
+  //       correcao: true,
+  //       calha: '5000-B',
+  //       suporte: 'Parede',
+  //       instalacao: true,
+  //     },
+  //     {
+  //       inicio: 'Cortina',
+  //       tecido: '120100-008',
+  //       tipo: 'Ondas',
+  //       bainha: true,
+  //       medidas: `348 X 268`,
+  //       correcao: true,
+  //       calha: '5000-B',
+  //       suporte: 'Parede',
+  //       instalacao: true,
+  //     },
+  //     {
+  //       inicio: 'Cortina',
+  //       tecido: '120100-008',
+  //       tipo: 'Ondas',
+  //       bainha: true,
+  //       medidas: `240 X 268`,
+  //       correcao: true,
+  //       calha: '5000-B',
+  //       suporte: 'Parede',
+  //       instalacao: true,
+  //     },
+  //     {
+  //       inicio: 'Cortina',
+  //       tecido: '120100-008',
+  //       tipo: 'Ondas',
+  //       bainha: true,
+  //       medidas: `285 X 268`,
+  //       correcao: true,
+  //       calha: '5000-B',
+  //       suporte: 'Parede',
+  //       instalacao: true,
+  //     },
+  //     {
+  //       inicio: 'Cortina',
+  //       tecido: '120100-008',
+  //       tipo: 'Ondas',
+  //       bainha: true,
+  //       medidas: `280 X 268`,
+  //       correcao: true,
+  //       calha: '5000-B',
+  //       suporte: 'Parede',
+  //       instalacao: true,
+  //     },
+  //     {
+  //       inicio: 'Cortina',
+  //       tecido: '120100-008',
+  //       tipo: 'Ondas',
+  //       bainha: true,
+  //       medidas: `285 X 268`,
+  //       correcao: true,
+  //       calha: '5000-B',
+  //       suporte: 'Parede',
+  //       instalacao: true,
+  //     },
+  //   ];
+  //   emailInput.value = 'ritabreu@test.pt';
+  //   nomeInput.value = 'Rita Abreu';
+  //   windows.push(...ritaAbreuWindows);
+  // };
+
+  // const createRitaAbreuWindows2 = () => {
+  //   const ritaAbreuWindows = [
+  //     {
+  //       inicio: 'Cortina',
+  //       tecido: '118060-024',
+  //       tipo: 'Ondas',
+  //       bainha: true,
+  //       medidas: `285 X 150`,
+  //       correcao: true,
+  //       calha: '5000-B',
+  //       suporte: 'Parede',
+  //       instalacao: true,
+  //     },
+  //     {
+  //       inicio: 'Cortina',
+  //       tecido: '118060-024',
+  //       tipo: 'Ondas',
+  //       bainha: true,
+  //       medidas: `348 X 268`,
+  //       correcao: true,
+  //       calha: '5000-B',
+  //       suporte: 'Parede',
+  //       instalacao: true,
+  //     },
+  //     {
+  //       inicio: 'Cortina',
+  //       tecido: '118060-024',
+  //       tipo: 'Ondas',
+  //       bainha: true,
+  //       medidas: `240 X 268`,
+  //       correcao: true,
+  //       calha: '5000-B',
+  //       suporte: 'Parede',
+  //       instalacao: true,
+  //     },
+  //     {
+  //       inicio: 'Cortina',
+  //       tecido: '118060-024',
+  //       tipo: 'Ondas',
+  //       bainha: true,
+  //       medidas: `285 X 268`,
+  //       correcao: true,
+  //       calha: '5000-B',
+  //       suporte: 'Parede',
+  //       instalacao: true,
+  //     },
+  //     {
+  //       inicio: 'Cortina',
+  //       tecido: '118060-024',
+  //       tipo: 'Ondas',
+  //       bainha: true,
+  //       medidas: `280 X 268`,
+  //       correcao: true,
+  //       calha: '5000-B',
+  //       suporte: 'Parede',
+  //       instalacao: true,
+  //     },
+  //     {
+  //       inicio: 'Cortina',
+  //       tecido: '118060-024',
+  //       tipo: 'Ondas',
+  //       bainha: true,
+  //       medidas: `285 X 268`,
+  //       correcao: true,
+  //       calha: '5000-B',
+  //       suporte: 'Parede',
+  //       instalacao: true,
+  //     },
+  //   ];
+  //   emailInput.value = 'ritabreu@test.pt';
+  //   nomeInput.value = 'Rita Abreu';
+  //   windows.push(...ritaAbreuWindows);
+  // };
+
+  // const createMafaldaCoelhoWindows = () => {
+  //   const mafaldaCoelhoWindows = [
+  //     {
+  //       inicio: 'Cortina',
+  //       tecido: '120100-008',
+  //       tipo: 'Ondas',
+  //       medidas: `360 X 150`,
+  //       correcao: false,
+  //       calha: '5000-B',
+  //       instalacao: false,
+  //     },
+  //   ];
+  //   windows.push(...mafaldaCoelhoWindows);
+  // };
+
+  // const createHelderPintoWindows = () => {
+  //   const helderPintoWindows = [
+  //     {
+  //       inicio: 'Cortina',
+  //       tecido: '120100-008',
+  //       tipo: 'Ondas',
+  //       medidas: `350 X 240`,
+  //       correcao: true,
+  //       calha: '5000-B',
+  //       instalacao: true,
+  //     },
+  //   ];
+  //   windows.push(...helderPintoWindows);
+  // };
+
+  onInit();
 });
