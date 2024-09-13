@@ -139,9 +139,11 @@ window.Webflow.push(() => {
     },
     prolongadores: 3.7,
     roletesPrice: 5,
-    minWindowWidth: 80,
+    minWindowWidthEstores: 80,
+    maxWindowWidthEstores: 300,
+    minWindowHeightEstores: 80,
+    maxWindowHeightEstores: 300,
     maxWindowWidth: 650,
-    minWindowHeight: 80,
     maxWindowHeight: 280,
     maxCalhaWidth: 600,
     measuresCheckPrice: 30,
@@ -153,6 +155,7 @@ window.Webflow.push(() => {
       { maxWidth: 650, price: 55 },
     ],
   };
+  let isNewWindow = true;
 
   // ----------------------------
   //           ELEMENTS
@@ -163,6 +166,8 @@ window.Webflow.push(() => {
 
   // Containers
   const simContainer = document.getElementById('sim-container');
+  const cortinaSteps = document.getElementById('steps-cortina');
+  const estoreSteps = document.getElementById('steps-estore');
 
   // Headings
   const simulatorHeadings = {
@@ -202,6 +207,8 @@ window.Webflow.push(() => {
     medidas: document.getElementById('step-medidas'),
     calha: document.getElementById('step-calha'),
     instalacao: document.getElementById('step-instalacao'),
+    medidasEstore: document.getElementById('step-medidas-estore'),
+    instalacaoEstore: document.getElementById('step-instalacao-estore'),
   };
 
   // CHECKOUT ELEMENTS
@@ -216,6 +223,8 @@ window.Webflow.push(() => {
   const checkoutContain = document.getElementById('checkout-container');
   const newWindowContain = document.getElementById('new-window-contain');
   const checkoutFormContain = document.getElementById('checkout-input-contain');
+  const checkoutInfoEstore = document.getElementById('checkout-info-estore');
+  const checkoutInfoCortina = document.getElementById('checkout-info-cortina');
 
   // Buttons
   const newWindowButton = document.getElementById('new-window-btn');
@@ -231,6 +240,11 @@ window.Webflow.push(() => {
     calha: document.getElementById('checkout-calha'),
     suporte: document.getElementById('checkout-suporte'),
     instalacao: document.getElementById('checkout-instalacao'),
+    estoreProduto: document.getElementById('checkout-produto-estore'),
+    estoreLargura: document.getElementById('checkout-largura-estore'),
+    estoreAltura: document.getElementById('checkout-altura-estore'),
+    estoreCorrecao: document.getElementById('checkout-correcao-estore'),
+    estoreInstalacao: document.getElementById('checkout-instalacao-estore'),
   };
 
   // ----------------------------
@@ -407,6 +421,7 @@ window.Webflow.push(() => {
       instalacao: selectorValues.instalacao,
     };
     windows.push(newWindow);
+    isNewWindow = false;
   };
 
   const createWindow = () => {
@@ -414,6 +429,7 @@ window.Webflow.push(() => {
     resetValues();
     resetInputs();
     navigateFromCheckoutToStep('inicio');
+    isNewWindow = true;
   };
 
   const validateSelector = () => {
@@ -442,16 +458,43 @@ window.Webflow.push(() => {
           activateNextBtn(false);
           return false;
         }
-        if (parseInt(larguraInput?.value) > MANUFACTURING_CONSTANTS.maxWindowWidth) {
-          alert('Largura m\xE1xima excedida');
-          activateNextBtn(false);
-          return false;
+        if (selectorValues.inicio === 'Cortina') {
+          // If Maximum value is exceeded
+          if (
+            parseInt(larguraInput?.value) > MANUFACTURING_CONSTANTS.maxWindowWidth ||
+            parseInt(alturaInput?.value) > MANUFACTURING_CONSTANTS.maxWindowHeight
+          ) {
+            activateNextBtn(false);
+            return false; // Error Maximum value exceeded
+          }
         }
-        if (parseInt(alturaInput?.value) > MANUFACTURING_CONSTANTS.maxWindowHeight) {
-          alert('Altura m\xE1xima excedida');
-          activateNextBtn(false);
-          return false;
+        if (selectorValues.inicio === 'Estore') {
+          // If Minimum value is exceeded
+          if (
+            parseInt(larguraInput?.value) < MANUFACTURING_CONSTANTS.minWindowWidthEstores ||
+            parseInt(alturaInput?.value) < MANUFACTURING_CONSTANTS.minWindowHeightEstores
+          ) {
+            activateNextBtn(false);
+            return false; // Error Minimum value exceeded
+          }
+          if (
+            parseInt(larguraInput?.value) > MANUFACTURING_CONSTANTS.maxWindowWidthEstores ||
+            parseInt(alturaInput?.value) > MANUFACTURING_CONSTANTS.maxWindowHeightEstores
+          ) {
+            activateNextBtn(false);
+            return false; // Error Maximum value exceeded
+          }
         }
+        // if (parseInt(larguraInput?.value) > MANUFACTURING_CONSTANTS.maxWindowWidth) {
+        //   alert('Largura m\xE1xima excedida');
+        //   activateNextBtn(false);
+        //   return false;
+        // }
+        // if (parseInt(alturaInput?.value) > MANUFACTURING_CONSTANTS.maxWindowHeight) {
+        //   alert('Altura m\xE1xima excedida');
+        //   activateNextBtn(false);
+        //   return false;
+        // }
         return true;
       case 'calha':
         if (selectorValues.calha === '') {
@@ -699,8 +742,9 @@ window.Webflow.push(() => {
       switch (currentStep) {
         case 'inicio':
           if (validateSelector()) {
+            toggleSteps('Cortina');
             changeSelectorVisibility(selectors.inicio, false);
-            activateNextBtn(false);
+            if (isNewWindow) activateNextBtn(false);
             changeSelectorVisibility(selectors.tecido, true);
             currentStep = 'tecido';
           }
@@ -710,7 +754,7 @@ window.Webflow.push(() => {
             markStepAsCompleted('tecido');
             markStepAsActive('tipo');
             changeSelectorVisibility(simulatorHeadings.step1, false);
-            activateNextBtn(false);
+            if (isNewWindow) activateNextBtn(false);
             changeSelectorVisibility(selectors.tecido, false);
             changeSelectorVisibility(simulatorHeadings.step2, true);
             changeSelectorVisibility(selectors.tipo, true);
@@ -725,7 +769,7 @@ window.Webflow.push(() => {
               selectorValues.tecido.startsWith('122')
             ) {
               updateSelectorValue(selectors.bainha, true);
-              activateNextBtn(false);
+              if (isNewWindow) activateNextBtn(false);
               markStepAsCompleted('tipo');
               markStepAsActive('medidas');
               changeSelectorVisibility(simulatorHeadings.step2, false);
@@ -747,7 +791,7 @@ window.Webflow.push(() => {
           markStepAsActive('medidas');
           changeSelectorVisibility(simulatorHeadings.step2, false);
           changeSelectorVisibility(selectors.bainha, false);
-          activateNextBtn(false);
+          if (isNewWindow) activateNextBtn(false);
           changeSelectorVisibility(simulatorHeadings.step3, true);
           changeSelectorVisibility(selectors.medidas, true);
           currentStep = 'medidas';
@@ -760,7 +804,7 @@ window.Webflow.push(() => {
             );
             changeSelectorVisibility(selectors.medidas, false);
             if (windows.length > 0) {
-              activateNextBtn(false);
+              if (isNewWindow) activateNextBtn(false);
               updateProductsCMSFilter('Calha');
               markStepAsCompleted('medidas');
               markStepAsActive('calha');
@@ -780,7 +824,7 @@ window.Webflow.push(() => {
           markStepAsActive('calha');
           changeSelectorVisibility(simulatorHeadings.step3, false);
           changeSelectorVisibility(selectors.correcao, false);
-          activateNextBtn(false);
+          if (isNewWindow) activateNextBtn(false);
           changeSelectorVisibility(simulatorHeadings.step4, true);
           changeSelectorVisibility(selectors.tecido, true);
           currentStep = 'calha';
@@ -788,7 +832,7 @@ window.Webflow.push(() => {
         case 'calha':
           if (validateSelector()) {
             changeSelectorVisibility(selectors.tecido, false);
-            activateNextBtn(false);
+            if (isNewWindow) activateNextBtn(false);
             clearSuporteRadioBtns();
             changeSelectorVisibility(selectors.suporte, true);
             currentStep = 'suporte';
@@ -802,8 +846,10 @@ window.Webflow.push(() => {
             changeSelectorVisibility(simulatorHeadings.step4, false);
             changeSelectorVisibility(selectors.suporte, false);
             if (windows.length > 0) {
-              storeValues();
-              createWindowBtnCheckout();
+              if (isNewWindow) {
+                storeValues();
+                createWindowBtnCheckout();
+              }
               navigateToCheckout();
             } else {
               changeSelectorVisibility(simulatorHeadings.step5, true);
@@ -816,8 +862,10 @@ window.Webflow.push(() => {
           markStepAsCompleted('instalacao');
           changeSelectorVisibility(simulatorHeadings.step5, false);
           changeSelectorVisibility(selectors.instalacao, false);
-          storeValues();
-          createWindowBtnCheckout();
+          if (isNewWindow) {
+            storeValues();
+            createWindowBtnCheckout();
+          }
           navigateToCheckout();
           break;
       }
@@ -825,7 +873,9 @@ window.Webflow.push(() => {
       switch (currentStep) {
         case 'inicio':
           if (validateSelector()) {
+            toggleSteps('Estore');
             changeSelectorVisibility(selectors.inicio, false);
+            if (isNewWindow) activateNextBtn(false);
             changeSelectorVisibility(selectors.tecido, true);
             currentStep = 'tecido';
           }
@@ -836,6 +886,7 @@ window.Webflow.push(() => {
             markStepAsActive('medidas');
             changeSelectorVisibility(simulatorHeadings.step1, false);
             changeSelectorVisibility(selectors.tecido, false);
+            if (isNewWindow) activateNextBtn(false);
             changeSelectorVisibility(simulatorHeadings.step3, true);
             changeSelectorVisibility(selectors.medidas, true);
             currentStep = 'medidas';
@@ -867,7 +918,6 @@ window.Webflow.push(() => {
           changeSelectorVisibility(simulatorHeadings.step3, false);
           changeSelectorVisibility(selectors.correcao, false);
           if (windows.length > 0) {
-            storeValues();
             createWindowBtnCheckout();
             navigateToCheckout();
           } else {
@@ -880,8 +930,10 @@ window.Webflow.push(() => {
           markStepAsCompleted('instalacao');
           changeSelectorVisibility(simulatorHeadings.step5, false);
           changeSelectorVisibility(selectors.instalacao, false);
-          storeValues();
-          createWindowBtnCheckout();
+          if (isNewWindow) {
+            storeValues();
+            createWindowBtnCheckout();
+          }
           navigateToCheckout();
           break;
       }
@@ -891,6 +943,7 @@ window.Webflow.push(() => {
   const navigateToCheckout = () => {
     simContainer.style.display = 'none';
     selectWindow(windows[windows.length - 1]);
+    toggleSteps();
     checkoutContain.style.display = 'flex';
   };
 
@@ -898,24 +951,42 @@ window.Webflow.push(() => {
   // ------------------
 
   const populateCheckoutChoices = (window2) => {
-    checkoutChoices.tecido.textContent = window2.tecido;
-    checkoutChoices.tipo.textContent = window2.tipo;
-    checkoutChoices.bainha.textContent =
-      window2.tipo === 'Ondas' || windows.tipo === 'Franzido'
-        ? 'Ba\xEDnha de Chumbo inclu\xEDda'
-        : window2.bainha
-          ? 'Com Ba\xEDnha de Chumbo'
-          : 'Sem Ba\xEDnha de Chumbo';
-    checkoutChoices.largura.textContent = window2.medidas.split(' X ')[0] + 'cm Largura';
-    checkoutChoices.altura.textContent = window2.medidas.split(' X ')[1] + 'cm Altura';
-    checkoutChoices.correcao.textContent = windows[0].correcao
-      ? 'Com Verifica\xE7\xE3o'
-      : 'Sem Verifica\xE7\xE3o';
-    checkoutChoices.calha.textContent = window2.calha;
-    checkoutChoices.suporte.textContent = 'Suporte de ' + window2.suporte;
-    checkoutChoices.instalacao.textContent = windows[0].instalacao
-      ? 'Com Instala\xE7\xE3o'
-      : 'Sem Instala\xE7\xE3o';
+    if (window2.inicio === 'Cortina') {
+      checkoutInfoEstore.style.display = 'none';
+      checkoutInfoCortina.style.display = 'flex';
+      checkoutChoices.tecido.textContent = window2.tecido;
+      checkoutChoices.tipo.textContent = window2.tipo;
+      checkoutChoices.bainha.textContent =
+        window2.tipo === 'Ondas' || window2.tipo === 'Franzido'
+          ? 'Ba\xEDnha de Chumbo inclu\xEDda'
+          : window2.bainha
+            ? 'Com Ba\xEDnha de Chumbo'
+            : 'Sem Ba\xEDnha de Chumbo';
+      checkoutChoices.largura.textContent = window2.medidas.split(' X ')[0] + 'cm Largura';
+      checkoutChoices.altura.textContent = window2.medidas.split(' X ')[1] + 'cm Altura';
+      checkoutChoices.correcao.textContent = windows[0].correcao
+        ? 'Com Verifica\xE7\xE3o'
+        : 'Sem Verifica\xE7\xE3o';
+      checkoutChoices.calha.textContent = window2.calha;
+      checkoutChoices.suporte.textContent = 'Suporte de ' + window2.suporte;
+      checkoutChoices.instalacao.textContent = windows[0].instalacao
+        ? 'Com Instala\xE7\xE3o'
+        : 'Sem Instala\xE7\xE3o';
+    }
+
+    if (window2.inicio === 'Estore') {
+      checkoutInfoEstore.style.display = 'flex';
+      checkoutInfoCortina.style.display = 'none';
+      checkoutChoices.estoreProduto.textContent = window2.tecido;
+      checkoutChoices.estoreLargura.textContent = window2.medidas.split(' X ')[0] + 'cm';
+      checkoutChoices.estoreAltura.textContent = window2.medidas.split(' X ')[1] + 'cm';
+      checkoutChoices.estoreCorrecao.textContent = windows[0].correcao
+        ? 'Com Verifica\xE7\xE3o'
+        : 'Sem Verifica\xE7\xE3o';
+      checkoutChoices.estoreInstalacao.textContent = windows[0].instalacao
+        ? 'Com Instala\xE7\xE3o'
+        : 'Sem Instala\xE7\xE3o';
+    }
   };
 
   const selectWindow = (window2) => {
@@ -931,16 +1002,51 @@ window.Webflow.push(() => {
   const navigateFromCheckoutToStep = (step) => {
     checkoutContain.style.display = 'none';
     resetSteps();
+    toggleSteps();
     simContainer.style.display = 'flex';
-    if (step === 'largura' || step === 'altura') {
+
+    let isEstore = false;
+
+    if (
+      step === 'estoreLargura' ||
+      step === 'estoreAltura' ||
+      step === 'estoreCorrecao' ||
+      step === 'estoreInstalacao' ||
+      step === 'estoreProduto'
+    ) {
+      isEstore = true;
+    }
+
+    if (
+      step === 'largura' ||
+      step === 'altura' ||
+      step === 'estoreLargura' ||
+      step === 'estoreAltura'
+    ) {
       step = 'medidas';
     }
+
+    if (step === 'estoreCorrecao') {
+      step = 'correcao';
+    }
+
+    if (step === 'estoreInstalacao') {
+      step = 'instalacao';
+    }
+
+    if (step === 'estoreProduto') {
+      step = 'tecido';
+    }
+
+    isEstore ? toggleSteps('Estore') : toggleSteps('Cortina');
+
     switch (step) {
       case 'inicio':
         changeSelectorVisibility(simulatorHeadings.step1, true);
         changeSelectorVisibility(selectors.inicio, true);
         break;
       case 'tecido':
+        isEstore ? updateProductsCMSFilter('Estore') : updateProductsCMSFilter('Cortina');
         changeSelectorVisibility(simulatorHeadings.step1, true);
         changeSelectorVisibility(selectors.tecido, true);
         break;
@@ -953,6 +1059,7 @@ window.Webflow.push(() => {
         changeSelectorVisibility(selectors.medidas, true);
         break;
       case 'calha':
+        updateProductsCMSFilter('Calha');
         changeSelectorVisibility(simulatorHeadings.step4, true);
         changeSelectorVisibility(selectors.tecido, true);
         break;
@@ -961,11 +1068,15 @@ window.Webflow.push(() => {
         changeSelectorVisibility(selectors.instalacao, true);
         break;
     }
+
     currentStep = step;
+
     if (currentStep === 'inicio') {
       return markStepAsActive('tecido');
     }
-    markStepAsActive(step);
+
+    isNewWindow = false;
+    // markStepAsActive(step);
   };
 
   const generateAndDownloadPdf = () => {
@@ -1050,6 +1161,21 @@ window.Webflow.push(() => {
   // UI FUNCTIONS
   // ------------
 
+  const toggleSteps = (productType) => {
+    if (!productType) {
+      cortinaSteps.style.display = 'none';
+      estoreSteps.style.display = 'none';
+    }
+    if (productType === 'Cortina') {
+      cortinaSteps.style.display = 'flex';
+      estoreSteps.style.display = 'none';
+    }
+    if (productType === 'Estore') {
+      cortinaSteps.style.display = 'none';
+      estoreSteps.style.display = 'flex';
+    }
+  };
+
   const changeSelectorVisibility = (selector, visible) => {
     selector.style.display = visible ? 'flex' : 'none';
   };
@@ -1070,19 +1196,53 @@ window.Webflow.push(() => {
     steps[step].classList.add('done');
     steps[step].getElementsByClassName('step_number')[0].classList.remove('active');
     steps[step].getElementsByClassName('step_description')[0].textContent = selectorValues[step];
-    if (step === 'medidas')
-      steps[step].getElementsByClassName('step_description')[0].textContent +=
-        selectorValues.correcao ? 'c/Verifica\xE7\xE3o' : 's/Verifica\xE7\xE3o';
-    if (step === 'tipo')
-      steps[step].getElementsByClassName('step_description')[0].textContent += selectorValues.bainha
-        ? 'c/Ba\xEDnha de Chumbo'
-        : 's/Ba\xEDnha de Chumbo';
+    if (step === 'instalação') {
+      steps.instalacaoEstore?.classList.remove('active');
+      steps.instalacaoEstore?.classList.remove('next');
+      steps.instalacaoEstore?.classList.add('done');
+      steps.instalacaoEstore?.getElementsByClassName('step_number')[0].classList.remove('active');
+      steps.instalacaoEstore.getElementsByClassName('step_description')[0].textContent =
+        selectorValues.instalacao ? 'c/Instala\xE7\xE3o' : 's/Instala\xE7\xE3o';
+    }
+    if (step === 'medidas') {
+      if (windows.length > 0) {
+        steps[step].getElementsByClassName('step_description')[0].innerHTML += windows[0].correcao
+          ? '<br>c/Verifica\xE7\xE3o'
+          : '<br>s/Verifica\xE7\xE3o';
+      } else {
+        steps[step].getElementsByClassName('step_description')[0].innerHTML +=
+          selectorValues.correcao ? '<br>c/Verifica\xE7\xE3o' : '<br>s/Verifica\xE7\xE3o';
+      }
+      steps.medidasEstore?.classList.remove('active');
+      steps.medidasEstore?.classList.remove('next');
+      steps.medidasEstore?.classList.add('done');
+      steps.medidasEstore?.getElementsByClassName('step_number')[0].classList.remove('active');
+      steps.medidasEstore.getElementsByClassName('step_description')[0].textContent =
+        `${larguraInput?.value} X ${alturaInput?.value}cm`;
+      steps.medidasEstore.getElementsByClassName('step_description')[0].innerHTML +=
+        `${selectorValues.correcao ? '<br>c/Verifica\xE7\xE3o' : '<br>s/Verifica\xE7\xE3o'}`;
+    }
+    if (step === 'tipo') {
+      steps[step].getElementsByClassName('step_description')[0].innerHTML += `${
+        selectorValues.bainha ? '<br>c/Ba\xEDnha de Chumbo' : '<br>s/Ba\xEDnha de Chumbo'
+      }`;
+    }
   };
 
   const markStepAsActive = (step) => {
     steps[step].classList.remove('next');
     steps[step].classList.add('active');
     steps[step].getElementsByClassName('step_number')[0].classList.add('active');
+    if (step === 'instalacao') {
+      steps.instalacaoEstore?.classList.remove('next');
+      steps.instalacaoEstore?.classList.add('active');
+      steps.instalacaoEstore?.getElementsByClassName('step_number')[0].classList.add('active');
+    }
+    if (step === 'medidas') {
+      steps.medidasEstore?.classList.remove('next');
+      steps.medidasEstore?.classList.add('active');
+      steps.medidasEstore?.getElementsByClassName('step_number')[0].classList.add('active');
+    }
   };
 
   const markStepAsNext = (step) => {
@@ -1090,8 +1250,24 @@ window.Webflow.push(() => {
       steps[step].classList.remove('active');
       steps[step].getElementsByClassName('step_number')[0].classList.remove('active');
     }
-    if (steps[step].classList.contains('done')) return markStepAsCompleted(step);
+    if (step === 'instalacao') {
+      steps.instalacaoEstore?.classList.remove('active');
+      steps.instalacaoEstore?.getElementsByClassName('step_number')[0].classList.remove('active');
+    }
+    if (step === 'medidas') {
+      steps.medidasEstore?.classList.remove('active');
+      steps.medidasEstore?.getElementsByClassName('step_number')[0].classList.remove('active');
+    }
+
+    if (!isNewWindow) return markStepAsCompleted(step);
+
     steps[step].classList.add('next');
+    if (step === 'instalacao') {
+      steps.instalacaoEstore?.classList.add('next');
+    }
+    if (step === 'medidas') {
+      steps.medidasEstore?.classList.add('next');
+    }
   };
 
   const activateNextBtn = (isActive) => {
@@ -1276,35 +1452,22 @@ window.Webflow.push(() => {
 
   const addOnChangeMedidasInputs = () => {
     larguraInput?.addEventListener('input', (event) => {
-      if (larguraInput?.value === '' && alturaInput?.value === '') {
+      if (larguraInput?.value === '' || alturaInput?.value === '') {
         return;
       }
-      if (
-        parseInt(larguraInput?.value) <= MANUFACTURING_CONSTANTS.minWindowWidth ||
-        parseInt(alturaInput?.value) <= MANUFACTURING_CONSTANTS.minWindowHeight
-      ) {
-        return;
-      }
-      if (!(larguraInput?.value === '') && !(alturaInput?.value === '')) {
+      validateSelector() &&
         updateSelectorValue(selectors.medidas, `${larguraInput?.value} X ${alturaInput?.value}`);
-      }
       if (!(larguraInput?.value === '') && !(alturaInput?.value === '')) {
         validateSelector() ? activateNextBtn(true) : activateNextBtn(false);
       }
     });
+
     alturaInput?.addEventListener('input', (event) => {
-      if (larguraInput?.value === '' && alturaInput?.value === '') {
+      if (larguraInput?.value === '' || alturaInput?.value === '') {
         return;
       }
-      if (
-        parseInt(larguraInput?.value) <= MANUFACTURING_CONSTANTS.minWindowWidth ||
-        parseInt(alturaInput?.value) <= MANUFACTURING_CONSTANTS.minWindowHeight
-      ) {
-        return;
-      }
-      if (!(larguraInput?.value === '') && !(alturaInput?.value === '')) {
+      validateSelector() &&
         updateSelectorValue(selectors.medidas, `${larguraInput?.value} X ${alturaInput?.value}`);
-      }
       if (!(larguraInput?.value === '') && !(alturaInput?.value === '')) {
         validateSelector() ? activateNextBtn(true) : activateNextBtn(false);
       }
@@ -1334,6 +1497,9 @@ window.Webflow.push(() => {
   const addOnClickCheckoutChoices = () => {
     Object.keys(checkoutChoices).forEach((key) => {
       checkoutChoices[key].addEventListener('click', () => {
+        if (key === 'correcao' || key === 'estoreCorrecao') {
+          return;
+        }
         navigateFromCheckoutToStep(key);
       });
     });
