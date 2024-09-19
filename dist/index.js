@@ -43,6 +43,7 @@
       swiper.destroy();
       swiper = new Swiper(".swiper", swiperConfiguration);
     };
+    const logoUrl = "https://cdn.prod.website-files.com/66aadbd497db3d8c63799460/66eb5ac454e950633d646ea2_testlogo.jpg";
     let productsData = {};
     const calhaColors = {
       Branco: "B",
@@ -157,12 +158,14 @@
         {
           name: "Macho Juntos",
           normal: 13.5,
-          blackout: 13.5
+          blackout: 13.5,
+          alinhado: 12.5
         },
         {
           name: "Pregas",
           normal: 13.5,
-          blackout: 13.5
+          blackout: 13.5,
+          alinhado: 12.5
         }
       ],
       bainhaPrice: {
@@ -171,7 +174,8 @@
       },
       uniao: {
         maxLength: 400,
-        price: 8.6
+        price: 8.6,
+        calha9500M: 15
       },
       prolongadores: 3.7,
       roletesPrice: 5,
@@ -197,6 +201,9 @@
     const estoreSteps = document.getElementById("steps-estore");
     const simulatorHeadings = {
       step1: document.getElementById("simulator-heading-1"),
+      step1i: document.getElementById("inicio-description"),
+      step1c: document.getElementById("inicio-description-c"),
+      step1e: document.getElementById("inicio-description-e"),
       step2: document.getElementById("simulator-heading-2"),
       step3: document.getElementById("simulator-heading-3"),
       step4: document.getElementById("simulator-heading-4"),
@@ -219,6 +226,12 @@
     const tectoRadioBtn = document.getElementById("tecto-radio-btn");
     const paredeRadioBtn = document.getElementById("parede-radio-btn");
     const instalacaoInput = document.querySelector("#instalacao-switch");
+    const larguraMinErrorEstore = document.getElementById("largura-min-error-estore");
+    const alturaMinErrorEstore = document.getElementById("altura-min-error-estore");
+    const larguraMaxErrorEstore = document.getElementById("largura-max-error-estore");
+    const alturaMaxErrorEstore = document.getElementById("altura-max-error-estore");
+    const larguraMaxErrorCortina = document.getElementById("largura-error");
+    const alturaMaxErrorCortina = document.getElementById("altura-error");
     const nextButton = document.getElementById("seguinte-btn");
     const steps = {
       tecido: document.getElementById("step-tecido"),
@@ -229,6 +242,7 @@
       medidasEstore: document.getElementById("step-medidas-estore"),
       instalacaoEstore: document.getElementById("step-instalacao-estore")
     };
+    const userDetailsForm = document.getElementById("form");
     const nomeInput = document.getElementById("nome-input");
     const emailInput = document.getElementById("email-input");
     const contactoSwitch = document.getElementById("contacto-switch");
@@ -256,6 +270,10 @@
       estoreCorrecao: document.getElementById("checkout-correcao-estore"),
       estoreInstalacao: document.getElementById("checkout-instalacao-estore")
     };
+    const feedbackMessage = document.getElementById("feedback-div");
+    const nameError = document.getElementById("name-error");
+    const emailError = document.getElementById("email-error");
+    const checkFieldError = document.getElementById("contacto-switch-error");
     const cortinaRadioBtn = document.getElementById("cortina-radio-btn");
     const estoreRadioBtn = document.getElementById("estore-radio-btn");
     const calhaRadioBtn = document.getElementById("calha-radio-btn");
@@ -310,7 +328,7 @@
         window2?.suporte === "Parede" ? true : false
       );
       calhaPrice = !productsData[calhaReference] ? 0 : width < MANUFACTURING_CONSTANTS.maxCalhaWidth ? productsData[calhaReference].price : productsData[calhaReference].price * calhaMultiplier;
-      calhaPrice += width > MANUFACTURING_CONSTANTS.maxCalhaWidth ? MANUFACTURING_CONSTANTS.prolongadores * calhaMultiplier : width > MANUFACTURING_CONSTANTS.uniao.maxLength ? MANUFACTURING_CONSTANTS.uniao.price * calhaMultiplier : 0;
+      calhaPrice += width > MANUFACTURING_CONSTANTS.maxCalhaWidth ? MANUFACTURING_CONSTANTS.prolongadores * calhaMultiplier : width > MANUFACTURING_CONSTANTS.uniao.maxLength && window2.calha.startsWith("9500M") ? MANUFACTURING_CONSTANTS.uniao.calha9500M * calhaMultiplier : width > MANUFACTURING_CONSTANTS.uniao.maxLength ? MANUFACTURING_CONSTANTS.uniao.price * calhaMultiplier : 0;
       (calhaReference.startsWith("5000") || calhaReference.startsWith("1500")) && (calhaPrice += width < MANUFACTURING_CONSTANTS.maxCalhaWidth ? MANUFACTURING_CONSTANTS.roletesPrice : MANUFACTURING_CONSTANTS.roletesPrice * calhaMultiplier);
       return { product: productPrice, calha: calhaPrice };
     };
@@ -421,20 +439,32 @@
           }
           if (selectorValues.inicio === "Cortina") {
             if (parseInt(larguraInput?.value) > MANUFACTURING_CONSTANTS.maxWindowWidth || parseInt(alturaInput?.value) > MANUFACTURING_CONSTANTS.maxWindowHeight) {
+              parseInt(larguraInput?.value) > MANUFACTURING_CONSTANTS.maxWindowWidth ? larguraMaxErrorCortina.style.display = "block" : larguraMaxErrorCortina.style.display = "none";
+              parseInt(alturaInput?.value) > MANUFACTURING_CONSTANTS.maxWindowHeight ? alturaMaxErrorCortina.style.display = "block" : alturaMaxErrorCortina.style.display = "none";
               activateNextBtn(false);
               return false;
             }
           }
           if (selectorValues.inicio === "Estore") {
             if (parseInt(larguraInput?.value) < MANUFACTURING_CONSTANTS.minWindowWidthEstores || parseInt(alturaInput?.value) < MANUFACTURING_CONSTANTS.minWindowHeightEstores) {
+              parseInt(larguraInput?.value) < MANUFACTURING_CONSTANTS.minWindowWidthEstores ? larguraMinErrorEstore.style.display = "block" : larguraMinErrorEstore.style.display = "none";
+              parseInt(alturaInput?.value) < MANUFACTURING_CONSTANTS.minWindowHeightEstores ? alturaMinErrorEstore.style.display = "block" : alturaMinErrorEstore.style.display = "none";
               activateNextBtn(false);
               return false;
             }
             if (parseInt(larguraInput?.value) > MANUFACTURING_CONSTANTS.maxWindowWidthEstores || parseInt(alturaInput?.value) > MANUFACTURING_CONSTANTS.maxWindowHeightEstores) {
+              parseInt(larguraInput?.value) > MANUFACTURING_CONSTANTS.maxWindowWidthEstores ? larguraMaxErrorEstore.style.display = "block" : larguraMaxErrorEstore.style.display = "none";
+              parseInt(alturaInput?.value) > MANUFACTURING_CONSTANTS.maxWindowHeightEstores ? alturaMaxErrorEstore.style.display = "block" : alturaMaxErrorEstore.style.display = "none";
               activateNextBtn(false);
               return false;
             }
           }
+          larguraMaxErrorCortina.style.display = "none";
+          alturaMaxErrorCortina.style.display = "none";
+          larguraMinErrorEstore.style.display = "none";
+          alturaMinErrorEstore.style.display = "none";
+          larguraMaxErrorEstore.style.display = "none";
+          alturaMaxErrorEstore.style.display = "none";
           return true;
         case "calha":
           if (selectorValues.calha === "") {
@@ -610,6 +640,23 @@
         instalacaoInput.checked = window2.instalacao;
       }
     };
+    const updateHeadingSubtitles = (step) => {
+      if (step === "inicio") {
+        simulatorHeadings.step1i.style.display = "flex";
+        simulatorHeadings.step1c.style.display = "none";
+        simulatorHeadings.step1e.style.display = "none";
+      }
+      if (step === "tecido" && selectorValues.inicio === "Cortina") {
+        simulatorHeadings.step1i.style.display = "none";
+        simulatorHeadings.step1c.style.display = "flex";
+        simulatorHeadings.step1e.style.display = "none";
+      }
+      if (step === "tecido" && selectorValues.inicio === "Estore") {
+        simulatorHeadings.step1i.style.display = "none";
+        simulatorHeadings.step1c.style.display = "flex";
+        simulatorHeadings.step1e.style.display = "none";
+      }
+    };
     const navigateToStep = (step) => {
       if (step === "largura" || step === "altura") {
         step = "medidas";
@@ -625,6 +672,7 @@
         } else {
           changeSelectorVisibility(selectors[currentStep], false);
         }
+        updateHeadingSubtitles(step);
         switch (step) {
           case "tecido":
             changeSelectorVisibility(simulatorHeadings.step1, true);
@@ -658,6 +706,7 @@
             if (validateSelector()) {
               toggleSteps("Cortina");
               changeSelectorVisibility(selectors.inicio, false);
+              updateHeadingSubtitles("tecido");
               if (isNewWindow)
                 activateNextBtn(false);
               changeSelectorVisibility(selectors.tecido, true);
@@ -666,6 +715,7 @@
             break;
           case "tecido":
             if (validateSelector()) {
+              updateHeadingSubtitles("tecido");
               markStepAsCompleted("tecido");
               markStepAsActive("tipo");
               changeSelectorVisibility(simulatorHeadings.step1, false);
@@ -954,25 +1004,55 @@
       }
       isNewWindow = false;
     };
-    const generateAndDownloadPdf = () => {
+    const compressPdf = async (base64Pdf) => {
+      const pdfBytes = Buffer.from(base64Pdf, "base64");
+      const pdfDoc = await PDFDocument.load(pdfBytes);
+      const compressedPdfBytes = await pdfDoc.save();
+      return Buffer.from(compressedPdfBytes).toString("base64");
+    };
+    const fetchImage = async (url) => {
+      const response = await fetch(url);
+      const imageBytes = await response.arrayBuffer();
+      return imageBytes;
+    };
+    const generateAndDownloadPdf = async () => {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
       const x = 10;
       const rightMargin = 190;
-      let y = 10;
+      let y = 25;
       const lineHeight = 6;
       let total = 0;
-      doc.setFontSize(12);
-      doc.text("Data: " + /* @__PURE__ */ (/* @__PURE__ */ new Date()).toLocaleDateString(), rightMargin - 40, y);
-      doc.text("Cliente: " + selectorValues.nome, x, y);
+      doc.setFontSize(10);
+      const logoWidth = 40;
+      const logoHeight = 7;
+      const logoX = (doc.internal.pageSize.width - logoWidth) / 2;
+      let logoTest = null;
+      try {
+        logoTest = await loadImageFromWebflow(logoUrl);
+      } catch (error) {
+        console.error(error);
+      }
+      doc.setFont("helvetica", "bold");
+      doc.text("Data:", rightMargin - 40, y);
+      doc.setFont("helvetica", "normal");
+      doc.text((/* @__PURE__ */ new Date()).toLocaleDateString(), rightMargin - 40 + doc.getTextWidth("Data: "), y);
+      doc.setFont("helvetica", "bold");
+      doc.text("Cliente:", x, y);
+      doc.setFont("helvetica", "normal");
+      doc.text(selectorValues.nome, x + doc.getTextWidth("Cliente:  "), y);
       y += lineHeight;
-      doc.text("Email: " + selectorValues.email, x, y);
-      y += lineHeight * 2;
+      doc.setFont("helvetica", "bold");
+      doc.text("Email:", x, y);
+      doc.setFont("helvetica", "normal");
+      doc.text(selectorValues.email, x + doc.getTextWidth("Email:  "), y);
+      y += 25;
       windows.forEach((window2, index) => {
-        if (index % 6 === 0 && index !== 0) {
+        if (index % 5 === 0 && index !== 0) {
           doc.addPage();
-          y = 10;
+          y = 25;
         }
+        doc.setFontSize(10);
         const {
           usedWidth,
           productPrice,
@@ -983,8 +1063,8 @@
           windowTotal
         } = calculateWindowPrice(window2);
         total += windowTotal;
+        doc.setFont("helvetica", "bold");
         const windowDescription = `Janela ${index + 1} - ${window2.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(usedWidth).toFixed(2))} CM)`;
-        doc.setFontSize(10);
         doc.text(windowDescription, x, y);
         doc.text(`${windowTotal.toFixed(2)}\u20AC`, x + 150, y);
         y += lineHeight;
@@ -1009,28 +1089,73 @@
         ];
         subItems.forEach((item) => {
           doc.setFontSize(8);
+          doc.setFont("helvetica", "normal");
           doc.text(`  - ${item.label}`, x + 5, y);
           doc.text(`${item.price.toFixed(2)}\u20AC`, x + 150, y);
           y += lineHeight;
         });
         y += lineHeight;
       });
-      if (!windows.length === 6) {
-        y += lineHeight;
-      }
+      doc.setFont("helvetica", "bold");
       doc.setFontSize(10);
-      doc.text("Corre\xE7\xE3o:", x, y);
+      doc.text(
+        `Corre\xE7\xE3o: ${!windows[0].correcao ? "Medidas facultadas pelo cliente" : "Com corre\xE7\xE3o de medidas"}`,
+        x,
+        y
+      );
       doc.text(`${windows[0].correcao ? 30 : 0}\u20AC`, x + 150, y);
       y += lineHeight;
       y += lineHeight;
       total += windows[0].correcao ? 30 : 0;
-      doc.setFontSize(10);
+      doc.setFontSize(12);
       doc.setFont("helvetica", "bold");
       doc.setFillColor(240, 240, 240);
       doc.rect(x, y, 190, lineHeight + 2, "F");
       doc.text(`Total:`, x + 120, y + lineHeight - 2);
       doc.text(`${total.toFixed(2)}\u20AC`, x + 150, y + lineHeight - 2);
-      doc.save("generated.pdf");
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "normal");
+      y += lineHeight * 4;
+      doc.text("Valores com IVA incluido a taxa em vigor. Or\xE7amento valido por 15 dias", x, y);
+      y += lineHeight;
+      doc.text(
+        "Calhas j\xE1 incluem os rodizios e suportes necess\xE1rias para as medidas seleccionadas.",
+        x,
+        y
+      );
+      y += lineHeight;
+      doc.text(
+        "Valor referente \xE0 instala\xE7\xE3o e Rectifica\xE7\xE3o de Medidas & Instala\xE7\xE3o sujeito a valida\xE7\xE3o do c\xF3digo postal.",
+        x,
+        y
+      );
+      y += lineHeight;
+      doc.text(`IBAN: PT50 0000 0000 0000 0000 0`, x, y);
+      doc.save("Orcamento_Fabric-Store.pdf");
+      return doc.output("blob", { filename: "Orcamento_Fabric-Store.pdf" });
+    };
+    const loadImageFromWebflow = (url) => {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = "Anonymous";
+        img.src = url;
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const context = canvas.getContext("2d");
+          context.drawImage(img, 0, 0);
+          const dataURL = canvas.toDataURL("image/png");
+          resolve(dataURL);
+        };
+        img.onerror = (error) => {
+          reject(new Error(`Failed to load image from ${url}: ${error.message}`));
+        };
+      });
+    };
+    const animateOpacity = (element) => {
+      element.classList.add("show");
+      gsap.fromTo(element, { opacity: 0 }, { opacity: 1, duration: 1, ease: "power1.in" });
     };
     const toggleSteps = (productType) => {
       if (!productType) {
@@ -1063,6 +1188,9 @@
       steps[step].classList.remove("next");
       steps[step].classList.add("done");
       steps[step].getElementsByClassName("step_number")[0].classList.remove("active");
+      if (steps[step].getElementsByClassName("step_description")[0].classList.contains("next")) {
+        steps[step].getElementsByClassName("step_description")[0].classList.remove("next");
+      }
       steps[step].getElementsByClassName("step_description")[0].textContent = selectorValues[step];
       if (step === "instala\xE7\xE3o") {
         steps.instalacaoEstore?.classList.remove("active");
@@ -1119,6 +1247,9 @@
       if (!isNewWindow)
         return markStepAsCompleted(step);
       steps[step].classList.add("next");
+      if (!steps[step].getElementsByTagName("p")[0].classList.contains("next")) {
+        steps[step].getElementsByTagName("p")[0].classList.add("next");
+      }
       if (step === "instalacao") {
         steps.instalacaoEstore?.classList.add("next");
       }
@@ -1350,11 +1481,17 @@
       });
     };
     const addOnClickEnviar = () => {
-      enviarButton.addEventListener("click", () => {
+      enviarButton.addEventListener("click", async () => {
         selectorValues.nome = nomeInput.value;
         selectorValues.email = emailInput.value;
         selectorValues.contacto = contactoSwitch.checked;
-        generateAndDownloadPdf();
+        const pdfBytes = await generateAndDownloadPdf();
+        await sendQuoteEmail(
+          selectorValues.nome,
+          selectorValues.email,
+          selectorValues.contacto,
+          pdfBytes
+        );
       });
     };
     const addOnClickNewWindow = () => {
@@ -1400,7 +1537,7 @@
         (price) => window2.tipo === price.name
       );
       if (manufacturingPrice) {
-        return window2.tecido.startsWith("101") ? manufacturingPrice.blackout * (usedWidth / 100) : manufacturingPrice.normal * (usedWidth / 100);
+        return window2.tecido.startsWith("101") ? manufacturingPrice.blackout * (usedWidth / 100) : (window2.tecido.startsWith("120") || window2.tecido.startsWith("122")) && (window2.tipo === "Ondas" || window2.tipo === "Franzido") ? manufacturingPrice.alinhado * (usedWidth / 100) : manufacturingPrice.normal * (usedWidth / 100);
       }
       return 0;
     };
@@ -1423,11 +1560,14 @@
       if (!windows[0].instalacao) {
         return 0;
       }
+      let instalationPrice = 0;
       const largura = parseInt(window2.medidas.split(" X ")[0]);
-      const instalationPrice = MANUFACTURING_CONSTANTS.instalation.find(
+      const instalationPriceDetails = MANUFACTURING_CONSTANTS.instalation.find(
         (price) => largura <= price.maxWidth
       );
-      return instalationPrice ? instalationPrice.price : 0;
+      instalationPriceDetails && (instalationPrice = instalationPriceDetails.price);
+      instalationPriceDetails && window2.inicio === "Cortina" && window2.calha.startsWith("9500") && (instalationPrice *= 2);
+      return instalationPrice ? instalationPrice : 0;
     };
     const calculateWindowPrice = (window2) => {
       const totalWidth = calculateUsedWidth(window2);
@@ -1446,6 +1586,79 @@
         instalationPrice,
         windowTotal: result
       };
+    };
+    const isValidEmail = (email) => {
+      const atPosition = email.indexOf("@");
+      return atPosition > 0 && atPosition < email.length - 1;
+    };
+    const blobToBase64 = (blob) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    };
+    const resetCheckoutErrors = () => {
+      nameError.textContent = "";
+      emailError.textContent = "";
+      checkFieldError.textContent = "";
+      nameError.classList.remove("u-text-main");
+      emailError.classList.remove("u-text-main");
+      checkFieldError.classList.remove("u-text-main");
+    };
+    const sendQuoteEmail = async (name, email, allowsContact, base64PdfPromise) => {
+      const feedbackMessage2 = document.getElementById("feedback-div");
+      let pdfFile = null;
+      let errorExists = false;
+      resetCheckoutErrors();
+      if (name.trim() === "") {
+        nameError.textContent = "Preencher este campo obrigat\xF3rio";
+        nameError.classList.add("u-text-main");
+        errorExists = true;
+      }
+      const emailValue = email.trim();
+      if (emailValue === "") {
+        emailError.textContent = "Preencher este campo obrigat\xF3rio";
+        emailError.classList.add("u-text-main");
+        errorExists = true;
+      } else if (!isValidEmail(emailValue)) {
+        emailError.textContent = "Insira um email v\xE1lido";
+        emailError.classList.add("u-text-main");
+        errorExists = true;
+      }
+      if (!errorExists) {
+        try {
+          const base64Pdf = await base64PdfPromise;
+          pdfFile = await blobToBase64(base64Pdf);
+        } catch {
+          console.error("Failed to load PDF");
+          pdfFile = null;
+        }
+        const templateParams = {
+          name,
+          email,
+          check: allowsContact,
+          file: [{ base64: pdfFile, filename: "Orcamento_Fabric-Store.pdf" }],
+          to_company_email: "general@brightweb.tech",
+          // The company's email
+          to_user_email: email,
+          // Send a copy to the user
+          reply_to: "general@brightweb.tech"
+        };
+        emailjs.send("service_test", "template_quote", templateParams).then(
+          function(response) {
+            console.log("SUCCESS!", response.status, response.text);
+            userDetailsForm.style.display = "none";
+            feedbackMessage2.textContent = "Obrigado pelo seu contacto!";
+          },
+          function(error) {
+            console.log("FAILED...", error);
+            userDetailsForm.style.display = "none";
+            feedbackMessage2.textContent = "Oops! Algo correu mal!";
+          }
+        );
+      }
     };
     onInit();
   });
