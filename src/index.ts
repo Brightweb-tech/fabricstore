@@ -1921,7 +1921,8 @@ window.Webflow.push(() => {
         reply_to: 'general@brightweb.tech',
       };
 
-      emailjs.send('service_test', 'template_quote', templateParams).then(
+      // emailjs.send('service_test', 'template_quote', templateParams).then(
+      emailjs.send('service_fabricstore', 'template_quote', templateParams).then(
         function (response) {
           console.log('SUCCESS!', response.status, response.text);
           userDetailsForm.style.display = 'none';
