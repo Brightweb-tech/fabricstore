@@ -7,6 +7,48 @@ window.Webflow.push(() => {
   // ----------------------------
   // const logoUrl =
   //   'https://cdn.prod.website-files.com/66aadbd497db3d8c63799460/66e9c13dd03e9404b10a0393_fabric-store-logo.png';
+  // ----------------------------
+
+  //           SWIPER
+  // ----------------------------
+  const swiperConfiguration = {
+    spaceBetween: 12,
+    allowTouchMove: false,
+    // Disable touch-based swiping (optional)
+    resistanceRatio: 0,
+    // Prevents users from dragging/swiping past the last slide
+    watchOverflow: true,
+    // Disables swiper if the slides are fewer than the container width
+    keyboard: {
+      enabled: true,
+      onlyInViewport: false,
+    },
+    navigation: {
+      nextEl: '.slider-main_button.swiper-btn-next',
+      prevEl: '.slider-main_button.swiper-btn-prev',
+    },
+    breakpoints: {
+      320: {
+        slidesPerView: 1,
+      },
+      480: {
+        slidesPerView: 2,
+      },
+      640: {
+        slidesPerView: 3,
+        // Adjust according to your design
+      },
+      1024: {
+        slidesPerView: 6,
+      },
+    },
+  };
+  let swiper = new Swiper('.swiper', swiperConfiguration);
+  const resetSwiper = () => {
+    swiper.destroy();
+    swiper = new Swiper('.swiper', swiperConfiguration);
+  };
+
   const logoUrl =
     'https://cdn.prod.website-files.com/66aadbd497db3d8c63799460/66eb5ac454e950633d646ea2_testlogo.jpg';
   let productsData = {};
@@ -834,6 +876,7 @@ window.Webflow.push(() => {
             changeSelectorVisibility(selectors.tecido, false);
             changeSelectorVisibility(simulatorHeadings.step2, true);
             changeSelectorVisibility(selectors.tipo, true);
+            updateMedidasDescriptions();
             currentStep = 'tipo';
           }
           break;
@@ -1916,21 +1959,22 @@ window.Webflow.push(() => {
         check: allowsContact,
         // file: [{ base64: pdfFile, filename: 'Orcamento_Fabric-Store.pdf' }],
         file: pdfFile,
-        to_company_email: 'general@brightweb.tech', // The company's email
+        to_company_email: 'contact@fabricstore.pt', // The company's email
         to_user_email: email, // Send a copy to the user
         reply_to: 'general@brightweb.tech',
       };
 
-      // emailjs.send('service_test', 'template_quote', templateParams).then(
-      emailjs.send('service_fabricstore', 'template_quote', templateParams).then(
+      emailjs.send('service_test', 'template_quote', templateParams).then(
         function (response) {
           console.log('SUCCESS!', response.status, response.text);
           userDetailsForm.style.display = 'none';
+          enviarButton.style.display = 'none';
           feedbackMessage.textContent = 'Obrigado pelo seu contacto!';
         },
         function (error) {
           console.log('FAILED...', error);
           userDetailsForm.style.display = 'none';
+          enviarButton.style.display = 'none';
           feedbackMessage.textContent = 'Oops! Algo correu mal!';
         }
       );
