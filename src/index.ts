@@ -525,6 +525,8 @@ window.Webflow.push(() => {
             activateNextBtn(false);
             return false; // Error Maximum value exceeded
           }
+          activateNextBtn(true);
+          return true;
         }
         if (selectorValues.inicio === 'Estore') {
           // If Minimum value is exceeded
@@ -554,6 +556,8 @@ window.Webflow.push(() => {
             activateNextBtn(false);
             return false; // Error Maximum value exceeded
           }
+          activateNextBtn(true);
+          return true;
         }
         larguraMaxErrorCortina.style.display = 'none';
         alturaMaxErrorCortina.style.display = 'none';
@@ -809,6 +813,42 @@ window.Webflow.push(() => {
     if (step === currentStep) {
       return;
     }
+
+    let isEstore = false;
+
+    if (
+      step === 'estoreLargura' ||
+      step === 'estoreAltura' ||
+      step === 'estoreCorrecao' ||
+      step === 'estoreInstalacao' ||
+      step === 'estoreProduto' ||
+      step === 'medidasEstore'
+    ) {
+      isEstore = true;
+    }
+
+    if (
+      step === 'largura' ||
+      step === 'altura' ||
+      step === 'estoreLargura' ||
+      step === 'estoreAltura' ||
+      step === 'medidasEstore'
+    ) {
+      step = 'medidas';
+    }
+
+    if (step === 'estoreCorrecao') {
+      step = 'correcao';
+    }
+
+    if (step === 'estoreInstalacao') {
+      step = 'instalacao';
+    }
+
+    if (step === 'estoreProduto') {
+      step = 'tecido';
+    }
+
     if (steps[step].classList.contains('done')) {
       markStepAsNext(currentStep);
       changeSelectorVisibility(simulatorHeadings[convertStepInStepNumber(currentStep)], false);
@@ -1118,6 +1158,25 @@ window.Webflow.push(() => {
     }
   };
 
+  const populateSteps = (window2) => {
+    if (window2.inicio === 'Cortina') {
+      markStepAsCompleted('inicio');
+      markStepAsCompleted('tecido');
+      markStepAsCompleted('tipo');
+      markStepAsCompleted('medidas');
+      markStepAsCompleted('calha');
+      markStepAsCompleted('suporte');
+      markStepAsCompleted('instalacao');
+    }
+    if (window2.inicio === 'Estore') {
+      markStepAsCompleted('inicio');
+      markStepAsCompleted('tecido');
+      markStepAsCompleted('medidas');
+      markStepAsCompleted('correcao');
+      markStepAsCompleted('instalacao');
+    }
+  };
+
   const selectWindow = (window2) => {
     windows.forEach((w) => {
       if (w.button) {
@@ -1128,6 +1187,7 @@ window.Webflow.push(() => {
     populateCheckoutChoices(window2);
     populateInputValues(window2);
     populateSelectorValues(window2);
+    populateSteps(window2);
   };
 
   const navigateFromCheckoutToStep = (step) => {
@@ -1496,6 +1556,7 @@ window.Webflow.push(() => {
   };
 
   const markStepAsCompleted = (step) => {
+    if (step === 'inicio') return;
     steps[step].classList.remove('active');
     steps[step].classList.remove('next');
     steps[step].classList.add('done');
