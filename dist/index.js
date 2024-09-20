@@ -1180,6 +1180,61 @@
       link.click();
       return blob;
     };
+    const generateTxt = async () => {
+      let total = 0;
+      let txtContent = "";
+      txtContent += `Data: ${(/* @__PURE__ */ new Date()).toLocaleDateString()}
+
+`;
+      txtContent += `Cliente: ${selectorValues.nome}
+
+`;
+      txtContent += `Email: ${selectorValues.email}
+
+`;
+      const correctionLabel = !windows[0].correcao ? "  Medidas facultadas pelo cliente:" : "  Com corre\xE7\xE3o de medidas:";
+      const correctionPrice = windows[0].correcao ? 30 : 0;
+      windows.forEach((window2, index) => {
+        const {
+          usedWidth,
+          productPrice,
+          manufacturingPrice,
+          bainhaPrice,
+          calhaPrice,
+          instalationPrice,
+          windowTotal
+        } = calculateWindowPrice(window2);
+        total += windowTotal;
+        txtContent += `Janela ${index + 1} - ${window2.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(usedWidth).toFixed(2))} CM): ${windowTotal.toFixed(2)}\u20AC
+
+`;
+        txtContent += `  Pre\xE7o do Produto: ${productPrice.toFixed(2)}\u20AC
+`;
+        txtContent += `  Pre\xE7o de Fabrica\xE7\xE3o: ${manufacturingPrice.toFixed(2)}\u20AC
+`;
+        txtContent += `  Pre\xE7o da Bainha: ${bainhaPrice.toFixed(2)}\u20AC
+`;
+        txtContent += `  Pre\xE7o da Calha: ${calhaPrice.toFixed(2)}\u20AC
+`;
+        txtContent += `  Pre\xE7o da Instala\xE7\xE3o: ${instalationPrice.toFixed(2)}\u20AC
+
+`;
+      });
+      txtContent += `Corre\xE7\xE3o:
+${correctionLabel} ${correctionPrice.toFixed(2)}\u20AC
+
+`;
+      total += correctionPrice;
+      txtContent += `Total: ${total.toFixed(2)}\u20AC
+
+`;
+      const txtBlob = new Blob([txtContent], { type: "text/plain" });
+      const txtLink = document.createElement("a");
+      txtLink.href = URL.createObjectURL(txtBlob);
+      txtLink.download = "Orcamento_Fabric-Store.txt";
+      txtLink.click();
+      return txtBlob;
+    };
     const loadImageFromWebflow = (url) => {
       return new Promise((resolve, reject) => {
         const img = new Image();
@@ -1541,11 +1596,13 @@
         selectorValues.email = emailInput.value;
         selectorValues.contacto = contactoSwitch.checked;
         const pdfBytes = await generateAndDownloadPdfLIB();
+        const txtBytes = await generateTxt();
         await sendQuoteEmail(
           selectorValues.nome,
           selectorValues.email,
           selectorValues.contacto,
-          pdfBytes
+          pdfBytes,
+          txtBytes
         );
       });
     };
@@ -1662,9 +1719,10 @@
       emailError.classList.remove("u-text-main");
       checkFieldError.classList.remove("u-text-main");
     };
-    const sendQuoteEmail = async (name, email, allowsContact, base64PdfPromise) => {
+    const sendQuoteEmail = async (name, email, allowsContact, base64PdfPromise, base64TxtPromise) => {
       const feedbackMessage2 = document.getElementById("feedback-div");
       let pdfFile = null;
+      let txtFile = null;
       let errorExists = false;
       resetCheckoutErrors();
       if (name.trim() === "") {
@@ -1685,12 +1743,14 @@
       if (!errorExists) {
         try {
           const base64Pdf = await base64PdfPromise;
+          const base64Txt = await base64TxtPromise;
           pdfFile = await blobToBase64(base64Pdf);
+          txtFile = await blobToBase64(base64Txt);
         } catch {
           console.error("Failed to load PDF");
           pdfFile = null;
         }
-        const templateParams = {
+        const templateParamsPdf = {
           name,
           email,
           check: allowsContact,
@@ -1702,7 +1762,29 @@
           // Send a copy to the user
           reply_to: "general@brightweb.tech"
         };
-        emailjs.send("service_test", "template_quote", templateParams).then(
+        const templateParamsTxt = {
+          name,
+          email,
+          check: allowsContact,
+          file: txtFile,
+          to_company_email: "contact@fabricstore.pt",
+          reply_to: "general@brightweb.tech"
+        };
+        emailjs.send("service_fabricstore", "template_quote_pdf", templateParamsPdf).then(
+          function(response) {
+            console.log("SUCCESS!", response.status, response.text);
+            userDetailsForm.style.display = "none";
+            enviarButton.style.display = "none";
+            feedbackMessage2.textContent = "Obrigado pelo seu contacto!";
+          },
+          function(error) {
+            console.log("FAILED...", error);
+            userDetailsForm.style.display = "none";
+            enviarButton.style.display = "none";
+            feedbackMessage2.textContent = "Oops! Algo correu mal!";
+          }
+        );
+        emailjs.send("service_fabricstore", "template_quote_txt", templateParamsTxt).then(
           function(response) {
             console.log("SUCCESS!", response.status, response.text);
             userDetailsForm.style.display = "none";
