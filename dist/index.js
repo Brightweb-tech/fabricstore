@@ -1052,44 +1052,49 @@
       const imageBytes = await response.arrayBuffer();
       return imageBytes;
     };
-    const generateAndDownloadPdf = async () => {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      const x = 10;
-      const rightMargin = 190;
-      let y = 25;
-      const lineHeight = 6;
+    const generateAndDownloadPdfLIB = async () => {
+      const { PDFDocument: PDFDocument2, rgb } = PDFLib;
+      const pdfDoc = await PDFDocument2.create();
+      const page = pdfDoc.addPage([595.28, 841.89]);
+      let y = 800;
+      const x = 50;
+      const rightMargin = 545;
+      const lineHeight = 12;
       let total = 0;
-      doc.setFontSize(10);
-      const logoWidth = 40;
-      const logoHeight = 7;
-      const logoX = (doc.internal.pageSize.width - logoWidth) / 2;
+      const font = await pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaBold);
       let logoTest = null;
       try {
         logoTest = await loadImageFromWebflow(logoUrl);
+        const pngImageBytes = await fetch(logoTest).then((res) => res.arrayBuffer());
+        const pngImage = await pdfDoc.embedPng(pngImageBytes);
+        const logoWidth = 200;
+        const logoHeight = 30;
+        const logoX = (page.getWidth() - logoWidth) / 2;
+        page.drawImage(pngImage, {
+          x: logoX,
+          y: y - 50,
+          width: logoWidth,
+          height: logoHeight
+        });
       } catch (error) {
-        console.error(error);
+        console.error("Error loading logo:", error);
       }
-      doc.setFont("helvetica", "bold");
-      doc.text("Data:", rightMargin - 40, y);
-      doc.setFont("helvetica", "normal");
-      doc.text((/* @__PURE__ */ new Date()).toLocaleDateString(), rightMargin - 40 + doc.getTextWidth("Data: "), y);
-      doc.setFont("helvetica", "bold");
-      doc.text("Cliente:", x, y);
-      doc.setFont("helvetica", "normal");
-      doc.text(selectorValues.nome, x + doc.getTextWidth("Cliente:  "), y);
-      y += lineHeight;
-      doc.setFont("helvetica", "bold");
-      doc.text("Email:", x, y);
-      doc.setFont("helvetica", "normal");
-      doc.text(selectorValues.email, x + doc.getTextWidth("Email:  "), y);
-      y += 25;
+      y -= 60;
+      page.drawText(`Data: ${(/* @__PURE__ */ new Date()).toLocaleDateString()}`, {
+        x: rightMargin - 90,
+        y,
+        size: 10,
+        font
+      });
+      page.drawText(`Cliente: ${selectorValues.nome}`, { x, y, size: 10, font });
+      y -= lineHeight;
+      page.drawText(`Email: ${selectorValues.email}`, { x, y, size: 10, font });
+      y -= 30;
       windows.forEach((window2, index) => {
-        if (index % 5 === 0 && index !== 0) {
-          doc.addPage();
-          y = 25;
+        if (y < 100) {
+          const newPage = pdfDoc.addPage([595.28, 841.89]);
+          y = 800;
         }
-        doc.setFontSize(10);
         const {
           usedWidth,
           productPrice,
@@ -1100,11 +1105,12 @@
           windowTotal
         } = calculateWindowPrice(window2);
         total += windowTotal;
-        doc.setFont("helvetica", "bold");
-        const windowDescription = `Janela ${index + 1} - ${window2.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(usedWidth).toFixed(2))} CM)`;
-        doc.text(windowDescription, x, y);
-        doc.text(`${windowTotal.toFixed(2)}\u20AC`, x + 150, y);
-        y += lineHeight;
+        page.drawText(
+          `Janela ${index + 1} - ${window2.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(usedWidth).toFixed(2))} CM)`,
+          { x, y, size: 10, font }
+        );
+        page.drawText(`${windowTotal.toFixed(2)}\u20AC`, { x: rightMargin - 100, y, size: 10, font });
+        y -= lineHeight;
         const subItems = [
           { label: `Tecido: ${window2.tecido}`, price: productPrice },
           {
@@ -1125,51 +1131,46 @@
           }
         ];
         subItems.forEach((item) => {
-          doc.setFontSize(8);
-          doc.setFont("helvetica", "normal");
-          doc.text(`  - ${item.label}`, x + 5, y);
-          doc.text(`${item.price.toFixed(2)}\u20AC`, x + 150, y);
-          y += lineHeight;
+          page.drawText(`  - ${item.label}`, { x: x + 10, y, size: 8, font });
+          page.drawText(`${item.price.toFixed(2)}\u20AC`, { x: rightMargin - 100, y, size: 8, font });
+          y -= lineHeight;
         });
-        y += lineHeight;
+        y -= lineHeight;
       });
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(10);
-      doc.text(
-        `Corre\xE7\xE3o: ${!windows[0].correcao ? "Medidas facultadas pelo cliente" : "Com corre\xE7\xE3o de medidas"}`,
+      const correctionLabel = !windows[0].correcao ? "Medidas facultadas pelo cliente" : "Com corre\xE7\xE3o de medidas";
+      page.drawText(`Corre\xE7\xE3o: ${correctionLabel}`, { x, y, size: 10, font });
+      const correctionPrice = windows[0].correcao ? 30 : 0;
+      total += correctionPrice;
+      page.drawText(`${correctionPrice.toFixed(2)}\u20AC`, { x: rightMargin - 100, y, size: 10, font });
+      y -= lineHeight * 2;
+      page.drawText("Total:", { x: rightMargin - 150, y, size: 12, font });
+      page.drawText(`${total.toFixed(2)}\u20AC`, { x: rightMargin - 100, y, size: 12, font });
+      y -= lineHeight * 4;
+      page.drawText("Valores com IVA incluido \xE0 taxa em vigor. Or\xE7amento v\xE1lido por 15 dias.", {
         x,
-        y
+        y,
+        size: 8,
+        font
+      });
+      y -= lineHeight;
+      page.drawText(
+        "Calhas j\xE1 incluem os rod\xEDzios e suportes necess\xE1rios para as medidas selecionadas.",
+        { x, y, size: 8, font }
       );
-      doc.text(`${windows[0].correcao ? 30 : 0}\u20AC`, x + 150, y);
-      y += lineHeight;
-      y += lineHeight;
-      total += windows[0].correcao ? 30 : 0;
-      doc.setFontSize(12);
-      doc.setFont("helvetica", "bold");
-      doc.setFillColor(240, 240, 240);
-      doc.rect(x, y - 1, 190, lineHeight + 2, "F");
-      doc.text(`Total:`, x + 120, y + lineHeight - 3);
-      doc.text(`${total.toFixed(2)}\u20AC`, x + 150, y + lineHeight - 2);
-      doc.setFontSize(8);
-      doc.setFont("helvetica", "normal");
-      y += lineHeight * 4;
-      doc.text("Valores com IVA incluido a taxa em vigor. Or\xE7amento valido por 15 dias", x, y);
-      y += lineHeight;
-      doc.text(
-        "Calhas j\xE1 incluem os rodizios e suportes necess\xE1rias para as medidas seleccionadas.",
-        x,
-        y
+      y -= lineHeight;
+      page.drawText(
+        "Valor referente \xE0 instala\xE7\xE3o e Rectifica\xE7\xE3o de Medidas sujeito a valida\xE7\xE3o do c\xF3digo postal.",
+        { x, y, size: 8, font }
       );
-      y += lineHeight;
-      doc.text(
-        "Valor referente \xE0 instala\xE7\xE3o e Rectifica\xE7\xE3o de Medidas & Instala\xE7\xE3o sujeito a valida\xE7\xE3o do c\xF3digo postal.",
-        x,
-        y
-      );
-      y += lineHeight;
-      doc.text(`IBAN: PT50 0000 0000 0000 0000 0`, x, y);
-      doc.save("Orcamento_Fabric-Store.pdf");
-      return doc.output("blob", { filename: "Orcamento_Fabric-Store.pdf" });
+      y -= lineHeight;
+      page.drawText("IBAN: PT50 0000 0000 0000 0000 0", { x, y, size: 8, font });
+      const pdfBytes = await pdfDoc.save();
+      const blob = new Blob([pdfBytes], { type: "application/pdf" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "Orcamento_Fabric-Store.pdf";
+      link.click();
+      return blob;
     };
     const loadImageFromWebflow = (url) => {
       return new Promise((resolve, reject) => {
@@ -1527,7 +1528,7 @@
         selectorValues.nome = nomeInput.value;
         selectorValues.email = emailInput.value;
         selectorValues.contacto = contactoSwitch.checked;
-        const pdfBytes = await generateAndDownloadPdf();
+        const pdfBytes = await generateAndDownloadPdfLIB();
         await sendQuoteEmail(
           selectorValues.nome,
           selectorValues.email,

@@ -1219,7 +1219,165 @@ window.Webflow.push(() => {
     return imageBytes;
   };
 
-  const generateAndDownloadPdf = async () => {
+  const generateAndDownloadPdfLIB = async () => {
+    const { PDFDocument, rgb } = PDFLib; // Access PDFLib from the global window object
+    const pdfDoc = await PDFDocument.create();
+    const page = pdfDoc.addPage([595.28, 841.89]); // A4 page size (in points)
+    let y = 800; // Start at the top
+    const x = 50; // Left margin
+    const rightMargin = 545; // Right margin
+    const lineHeight = 12;
+    let total = 0;
+
+    // Load custom font if necessary (using standard Helvetica for simplicity)
+    const font = await pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaBold);
+
+    // Load logo image
+    let logoTest = null;
+    try {
+      logoTest = await loadImageFromWebflow(logoUrl);
+      const pngImageBytes = await fetch(logoTest).then((res) => res.arrayBuffer());
+      const pngImage = await pdfDoc.embedPng(pngImageBytes);
+
+      // Center logo
+      const logoWidth = 200;
+      const logoHeight = 30;
+      const logoX = (page.getWidth() - logoWidth) / 2;
+      page.drawImage(pngImage, {
+        x: logoX,
+        y: y - 50,
+        width: logoWidth,
+        height: logoHeight,
+      });
+    } catch (error) {
+      console.error('Error loading logo:', error);
+    }
+
+    y -= 60; // Adjust after logo
+
+    // Draw Date (right-aligned)
+    page.drawText(`Data: ${new Date().toLocaleDateString()}`, {
+      x: rightMargin - 90,
+      y,
+      size: 10,
+      font,
+    });
+
+    // Draw Client Info (left-aligned)
+    page.drawText(`Cliente: ${selectorValues.nome}`, { x, y, size: 10, font });
+    y -= lineHeight;
+    page.drawText(`Email: ${selectorValues.email}`, { x, y, size: 10, font });
+    y -= 30;
+
+    // List Windows Products
+    windows.forEach((window2, index) => {
+      if (y < 100) {
+        // Add new page when reaching the end
+        const newPage = pdfDoc.addPage([595.28, 841.89]);
+        y = 800;
+      }
+
+      const {
+        usedWidth,
+        productPrice,
+        manufacturingPrice,
+        bainhaPrice,
+        calhaPrice,
+        instalationPrice,
+        windowTotal,
+      } = calculateWindowPrice(window2);
+
+      total += windowTotal;
+
+      // Draw Window Description
+      page.drawText(
+        `Janela ${index + 1} - ${window2.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(usedWidth).toFixed(2))} CM)`,
+        { x, y, size: 10, font }
+      );
+      page.drawText(`${windowTotal.toFixed(2)}€`, { x: rightMargin - 100, y, size: 10, font });
+      y -= lineHeight;
+
+      // Draw Sub Items
+      const subItems = [
+        { label: `Tecido: ${window2.tecido}`, price: productPrice },
+        {
+          label: `Tipo de Cortina: ${window2.tipo}`,
+          price: manufacturingPrice,
+        },
+        {
+          label: `Baínha de Chumbo: ${
+            window2.tecido.startsWith('120') || window2.tecido.startsWith('122')
+              ? 'Incluída'
+              : window2.bainha
+                ? 'Sim'
+                : 'Não'
+          }`,
+          price: bainhaPrice,
+        },
+        {
+          label: `Calha: ${window2.calha} - Suporte: Suporte de ${window2.suporte}`,
+          price: calhaPrice,
+        },
+        {
+          label: `Instalação: ${windows[0].instalacao ? 'Sim' : 'Não'}`,
+          price: instalationPrice,
+        },
+      ];
+
+      subItems.forEach((item) => {
+        page.drawText(`  - ${item.label}`, { x: x + 10, y, size: 8, font });
+        page.drawText(`${item.price.toFixed(2)}€`, { x: rightMargin - 100, y, size: 8, font });
+        y -= lineHeight;
+      });
+      y -= lineHeight; // Extra space after each window
+    });
+
+    // Draw Correction
+    const correctionLabel = !windows[0].correcao
+      ? 'Medidas facultadas pelo cliente'
+      : 'Com correção de medidas';
+    page.drawText(`Correção: ${correctionLabel}`, { x, y, size: 10, font });
+    const correctionPrice = windows[0].correcao ? 30 : 0;
+    total += correctionPrice;
+    page.drawText(`${correctionPrice.toFixed(2)}€`, { x: rightMargin - 100, y, size: 10, font });
+    y -= lineHeight * 2;
+
+    // Draw Total
+    page.drawText('Total:', { x: rightMargin - 150, y, size: 12, font });
+    page.drawText(`${total.toFixed(2)}€`, { x: rightMargin - 100, y, size: 12, font });
+    y -= lineHeight * 4;
+
+    // Draw Footer
+    page.drawText('Valores com IVA incluido à taxa em vigor. Orçamento válido por 15 dias.', {
+      x,
+      y,
+      size: 8,
+      font,
+    });
+    y -= lineHeight;
+    page.drawText(
+      'Calhas já incluem os rodízios e suportes necessários para as medidas selecionadas.',
+      { x, y, size: 8, font }
+    );
+    y -= lineHeight;
+    page.drawText(
+      'Valor referente à instalação e Rectificação de Medidas sujeito a validação do código postal.',
+      { x, y, size: 8, font }
+    );
+    y -= lineHeight;
+    page.drawText('IBAN: PT50 0000 0000 0000 0000 0', { x, y, size: 8, font });
+
+    // Save the PDF
+    const pdfBytes = await pdfDoc.save();
+    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'Orcamento_Fabric-Store.pdf';
+    link.click();
+    return blob;
+  };
+
+  /*const generateAndDownloadPdf = async () => {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     const x = 10;
@@ -1358,7 +1516,7 @@ window.Webflow.push(() => {
     doc.text(`IBAN: PT50 0000 0000 0000 0000 0`, x, y); // Add IBAN after increasing y
     doc.save('Orcamento_Fabric-Store.pdf');
     return doc.output('blob', { filename: 'Orcamento_Fabric-Store.pdf' });
-  };
+  };*/
 
   // UI FUNCTIONS
   // ------------
@@ -1757,7 +1915,7 @@ window.Webflow.push(() => {
       selectorValues.nome = nomeInput.value;
       selectorValues.email = emailInput.value;
       selectorValues.contacto = contactoSwitch.checked;
-      const pdfBytes = await generateAndDownloadPdf(); // base64 -> data:application/pdf;base64,JVBERi0xLjMKJbrfrOAKM   to remove metadata pdfbytes.split(',')[1]
+      const pdfBytes = await generateAndDownloadPdfLIB(); // base64 -> data:application/pdf;base64,JVBERi0xLjMKJbrfrOAKM   to remove metadata pdfbytes.split(',')[1]
       await sendQuoteEmail(
         selectorValues.nome,
         selectorValues.email,
