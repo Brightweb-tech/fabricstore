@@ -420,21 +420,24 @@
       switch (currentStep) {
         case "inicio":
           if (selectorValues.inicio === "") {
-            alert("Por favor selecione um valor");
+            activateNextBtn(false);
             return false;
           }
+          activateNextBtn(true);
           return true;
         case "tecido":
           if (selectorValues.tecido === "") {
-            alert("Por favor selecione um valor");
+            activateNextBtn(false);
             return false;
           }
+          activateNextBtn(true);
           return true;
         case "tipo":
           if (selectorValues.tipo === "") {
-            alert("Por favor selecione um valor");
+            activateNextBtn(false);
             return false;
           }
+          activateNextBtn(true);
           return true;
         case "medidas":
           if (larguraInput?.value === "" || alturaInput?.value === "") {
@@ -470,20 +473,24 @@
           alturaMinErrorEstore.style.display = "none";
           larguraMaxErrorEstore.style.display = "none";
           alturaMaxErrorEstore.style.display = "none";
+          activateNextBtn(true);
           return true;
         case "calha":
           if (selectorValues.calha === "") {
-            alert("Por favor selecione um valor");
+            activateNextBtn(false);
             return false;
           }
+          activateNextBtn(true);
           return true;
         case "suporte":
           if (selectorValues.suporte === "") {
-            alert("Por favor selecione um valor");
+            activateNextBtn(false);
             return false;
           }
+          activateNextBtn(true);
           return true;
       }
+      activateNextBtn(true);
       return true;
     };
     const getVariableEstoreReference = (product, color, width, height) => {
@@ -634,7 +641,7 @@
       if (windows.length > 1) {
         if (windowBtn) {
           const clonedBtn = windowBtn.cloneNode(true);
-          clonedBtn.querySelector("h6").textContent = `Janela ${windows.length}`;
+          clonedBtn.querySelector(".checkout_info_title").textContent = `Janela ${windows.length}`;
           windows[windows.length - 1].button = clonedBtn;
           addOnClickToWindowBtn(windows[windows.length - 1]);
           windowbtnsContainer?.appendChild(clonedBtn);
@@ -718,6 +725,7 @@
             break;
         }
         currentStep = step;
+        validateSelector();
         markStepAsActive(step);
       }
     };
@@ -1269,7 +1277,11 @@
         steps.medidasEstore?.getElementsByClassName("step_number")[0].classList.add("active");
       }
     };
-    const markStepAsNext = (step) => {
+    const markStepAsNext = (stepToMark) => {
+      let step = stepToMark;
+      if (step === "suporte") {
+        step = "calha";
+      }
       if (steps[step].classList.contains("active")) {
         steps[step].classList.remove("active");
         steps[step].getElementsByClassName("step_number")[0].classList.remove("active");
@@ -1282,11 +1294,11 @@
         steps.medidasEstore?.classList.remove("active");
         steps.medidasEstore?.getElementsByClassName("step_number")[0].classList.remove("active");
       }
-      if (!isNewWindow)
+      if (!isNewWindow || validateSelector())
         return markStepAsCompleted(step);
       steps[step].classList.add("next");
-      if (!steps[step].getElementsByTagName("p")[0].classList.contains("next")) {
-        steps[step].getElementsByTagName("p")[0].classList.add("next");
+      if (steps[step].querySelector("step_description") && !steps[step].querySelector("step_description")[0].classList.contains("next")) {
+        steps[step].querySelector("step_description")[0].classList.add("next");
       }
       if (step === "instalacao") {
         steps.instalacaoEstore?.classList.add("next");

@@ -485,21 +485,24 @@ window.Webflow.push(() => {
     switch (currentStep) {
       case 'inicio':
         if (selectorValues.inicio === '') {
-          alert('Por favor selecione um valor');
+          activateNextBtn(false);
           return false;
         }
+        activateNextBtn(true);
         return true;
       case 'tecido':
         if (selectorValues.tecido === '') {
-          alert('Por favor selecione um valor');
+          activateNextBtn(false);
           return false;
         }
+        activateNextBtn(true);
         return true;
       case 'tipo':
         if (selectorValues.tipo === '') {
-          alert('Por favor selecione um valor');
+          activateNextBtn(false);
           return false;
         }
+        activateNextBtn(true);
         return true;
       case 'medidas':
         if (larguraInput?.value === '' || alturaInput?.value === '') {
@@ -558,20 +561,24 @@ window.Webflow.push(() => {
         alturaMinErrorEstore.style.display = 'none';
         larguraMaxErrorEstore.style.display = 'none';
         alturaMaxErrorEstore.style.display = 'none';
+        activateNextBtn(true);
         return true;
       case 'calha':
         if (selectorValues.calha === '') {
-          alert('Por favor selecione um valor');
+          activateNextBtn(false);
           return false;
         }
+        activateNextBtn(true);
         return true;
       case 'suporte':
         if (selectorValues.suporte === '') {
-          alert('Por favor selecione um valor');
+          activateNextBtn(false);
           return false;
         }
+        activateNextBtn(true);
         return true;
     }
+    activateNextBtn(true);
     return true;
   };
 
@@ -744,7 +751,7 @@ window.Webflow.push(() => {
     if (windows.length > 1) {
       if (windowBtn) {
         const clonedBtn = windowBtn.cloneNode(true);
-        clonedBtn.querySelector('h6').textContent = `Janela ${windows.length}`;
+        clonedBtn.querySelector('.checkout_info_title').textContent = `Janela ${windows.length}`;
         windows[windows.length - 1].button = clonedBtn;
         addOnClickToWindowBtn(windows[windows.length - 1]);
         windowbtnsContainer?.appendChild(clonedBtn);
@@ -834,6 +841,7 @@ window.Webflow.push(() => {
           break;
       }
       currentStep = step;
+      validateSelector();
       markStepAsActive(step);
     }
   };
@@ -1377,147 +1385,6 @@ window.Webflow.push(() => {
     return blob;
   };
 
-  /*const generateAndDownloadPdf = async () => {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    const x = 10;
-    const rightMargin = 190;
-    let y = 25;
-    const lineHeight = 6;
-    let total = 0;
-    doc.setFontSize(10);
-
-    // Header Center
-    const logoWidth = 40; // Width of the logo
-    const logoHeight = 7; // Height of the logo
-    const logoX = (doc.internal.pageSize.width - logoWidth) / 2; // Center logo horizontally
-    let logoTest = null;
-    try {
-      logoTest = await loadImageFromWebflow(logoUrl);
-    } catch (error) {
-      console.error(error);
-    }
-
-    // doc.addImage(logoTest, 'PNG', logoX, y - 10, logoWidth, logoHeight); // Fix fetching img instead of loading the logo base64 string staticaly
-
-    // Header Right
-    doc.setFont('helvetica', 'bold');
-    doc.text('Data:', rightMargin - 40, y);
-    doc.setFont('helvetica', 'normal');
-    doc.text(new Date().toLocaleDateString(), rightMargin - 40 + doc.getTextWidth('Data: '), y);
-
-    // Header Left
-    doc.setFont('helvetica', 'bold');
-    doc.text('Cliente:', x, y);
-    doc.setFont('helvetica', 'normal');
-    doc.text(selectorValues.nome, x + doc.getTextWidth('Cliente:  '), y);
-    y += lineHeight;
-    doc.setFont('helvetica', 'bold');
-    doc.text('Email:', x, y);
-    doc.setFont('helvetica', 'normal');
-    doc.text(selectorValues.email, x + doc.getTextWidth('Email:  '), y);
-    y += 25;
-
-    // Windows products
-    windows.forEach((window2, index) => {
-      if (index % 5 === 0 && index !== 0) {
-        doc.addPage();
-        y = 25;
-      }
-      doc.setFontSize(10);
-      const {
-        usedWidth,
-        productPrice,
-        manufacturingPrice,
-        bainhaPrice,
-        calhaPrice,
-        instalationPrice,
-        windowTotal,
-      } = calculateWindowPrice(window2);
-      total += windowTotal;
-      doc.setFont('helvetica', 'bold');
-      const windowDescription = `Janela ${index + 1} - ${window2.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(usedWidth).toFixed(2))} CM)`;
-      doc.text(windowDescription, x, y);
-      doc.text(`${windowTotal.toFixed(2)}\u20AC`, x + 150, y);
-      y += lineHeight;
-      const subItems = [
-        { label: `Tecido: ${window2.tecido}`, price: productPrice },
-        {
-          label: `Tipo de Cortina: ${window2.tipo}`,
-          price: manufacturingPrice,
-        },
-        {
-          label: `Ba\xEDnha de Chumbo: ${window2.tecido.startsWith('120') || window2.tecido.startsWith('122') ? 'Inclu\xEDda' : window2.bainha ? 'Sim' : 'N\xE3o'}`,
-          price: bainhaPrice,
-        },
-        {
-          label: `Calha: ${window2.calha} - Suporte: Suporte de ${window2.suporte}`,
-          price: calhaPrice,
-        },
-        {
-          label: `Instala\xE7\xE3o: ${windows[0].instalacao ? 'Sim' : 'N\xE3o'}`,
-          price: instalationPrice,
-        },
-      ];
-      subItems.forEach((item) => {
-        doc.setFontSize(8);
-        doc.setFont('helvetica', 'normal');
-        doc.text(`  - ${item.label}`, x + 5, y);
-        doc.text(`${item.price.toFixed(2)}\u20AC`, x + 150, y);
-        y += lineHeight;
-      });
-      y += lineHeight;
-    });
-
-    // if (!windows.length === 6) {
-    //   y += lineHeight;
-    // }
-
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(10);
-    doc.text(
-      `Corre\xE7\xE3o: ${!windows[0].correcao ? 'Medidas facultadas pelo cliente' : 'Com correção de medidas'}`,
-      x,
-      y
-    );
-    doc.text(`${windows[0].correcao ? 30 : 0}\u20AC`, x + 150, y);
-    y += lineHeight;
-    y += lineHeight;
-    total += windows[0].correcao ? 30 : 0;
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'bold');
-    doc.setFillColor(240, 240, 240);
-    doc.rect(x, y - 1, 190, lineHeight + 2, 'F');
-    doc.text(`Total:`, x + 120, y + lineHeight - 3);
-    doc.text(`${total.toFixed(2)}\u20AC`, x + 150, y + lineHeight - 2);
-
-    // After adding the Total box
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'normal');
-
-    // Adjust the footer position dynamically
-    y += lineHeight * 4; // Add more space if needed based on the ending content position
-    doc.text('Valores com IVA incluido a taxa em vigor. Orçamento valido por 15 dias', x, y);
-    y += lineHeight;
-    doc.text(
-      'Calhas já incluem os rodizios e suportes necessárias para as medidas seleccionadas.',
-      x,
-      y
-    );
-    y += lineHeight;
-    doc.text(
-      'Valor referente à instalação e Rectificação de Medidas & Instalação sujeito a validação do código postal.',
-      x,
-      y
-    );
-
-    // Ensure there is space between the previous line and the IBAN
-    y += lineHeight;
-    doc.text(`IBAN: PT50 0000 0000 0000 0000 0`, x, y); // Add IBAN after increasing y
-    doc.save('Orcamento_Fabric-Store.pdf');
-    return doc.output('blob', { filename: 'Orcamento_Fabric-Store.pdf' });
-  };*/
-
   // UI FUNCTIONS
   // ------------
 
@@ -1636,7 +1503,13 @@ window.Webflow.push(() => {
     }
   };
 
-  const markStepAsNext = (step) => {
+  const markStepAsNext = (stepToMark) => {
+    let step = stepToMark;
+
+    if (step === 'suporte') {
+      step = 'calha';
+    }
+
     if (steps[step].classList.contains('active')) {
       steps[step].classList.remove('active');
       steps[step].getElementsByClassName('step_number')[0].classList.remove('active');
@@ -1650,11 +1523,14 @@ window.Webflow.push(() => {
       steps.medidasEstore?.getElementsByClassName('step_number')[0].classList.remove('active');
     }
 
-    if (!isNewWindow) return markStepAsCompleted(step);
+    if (!isNewWindow || validateSelector()) return markStepAsCompleted(step);
 
     steps[step].classList.add('next');
-    if (!steps[step].getElementsByTagName('p')[0].classList.contains('next')) {
-      steps[step].getElementsByTagName('p')[0].classList.add('next');
+    if (
+      steps[step].querySelector('step_description') &&
+      !steps[step].querySelector('step_description')[0].classList.contains('next')
+    ) {
+      steps[step].querySelector('step_description')[0].classList.add('next');
     }
     if (step === 'instalacao') {
       steps.instalacaoEstore?.classList.add('next');
