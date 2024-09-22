@@ -7,47 +7,6 @@ window.Webflow.push(() => {
   // ----------------------------
   // const logoUrl =
   //   'https://cdn.prod.website-files.com/66aadbd497db3d8c63799460/66e9c13dd03e9404b10a0393_fabric-store-logo.png';
-  // ----------------------------
-
-  //           SWIPER
-  // ----------------------------
-  const swiperConfiguration = {
-    spaceBetween: 12,
-    allowTouchMove: false,
-    // Disable touch-based swiping (optional)
-    resistanceRatio: 0,
-    // Prevents users from dragging/swiping past the last slide
-    watchOverflow: true,
-    // Disables swiper if the slides are fewer than the container width
-    keyboard: {
-      enabled: true,
-      onlyInViewport: false,
-    },
-    navigation: {
-      nextEl: '.slider-main_button.swiper-btn-next',
-      prevEl: '.slider-main_button.swiper-btn-prev',
-    },
-    breakpoints: {
-      320: {
-        slidesPerView: 1,
-      },
-      480: {
-        slidesPerView: 2,
-      },
-      640: {
-        slidesPerView: 3,
-        // Adjust according to your design
-      },
-      1024: {
-        slidesPerView: 6,
-      },
-    },
-  };
-  let swiper = new Swiper('.swiper', swiperConfiguration);
-  const resetSwiper = () => {
-    swiper.destroy();
-    swiper = new Swiper('.swiper', swiperConfiguration);
-  };
 
   const logoUrl =
     'https://cdn.prod.website-files.com/66aadbd497db3d8c63799460/66eb5ac454e950633d646ea2_testlogo.jpg';
@@ -506,7 +465,6 @@ window.Webflow.push(() => {
         return true;
       case 'medidas':
         if (larguraInput?.value === '' || alturaInput?.value === '') {
-          alert('Preencha valores v\xE1lidos de largura e altura');
           activateNextBtn(false);
           return false;
         }
@@ -1160,20 +1118,16 @@ window.Webflow.push(() => {
 
   const populateSteps = (window2) => {
     if (window2.inicio === 'Cortina') {
-      markStepAsCompleted('inicio');
       markStepAsCompleted('tecido');
       markStepAsCompleted('tipo');
       markStepAsCompleted('medidas');
       markStepAsCompleted('calha');
-      markStepAsCompleted('suporte');
       markStepAsCompleted('instalacao');
     }
     if (window2.inicio === 'Estore') {
-      markStepAsCompleted('inicio');
       markStepAsCompleted('tecido');
-      markStepAsCompleted('medidas');
-      markStepAsCompleted('correcao');
-      markStepAsCompleted('instalacao');
+      markStepAsCompleted('medidasEstore');
+      markStepAsCompleted('instalacaoEstore');
     }
   };
 
@@ -1192,7 +1146,7 @@ window.Webflow.push(() => {
 
   const navigateFromCheckoutToStep = (step) => {
     checkoutContain.style.display = 'none';
-    resetSteps();
+    if (isNewWindow) resetSteps();
     toggleSteps();
     simContainer.style.display = 'flex';
 
@@ -1253,6 +1207,10 @@ window.Webflow.push(() => {
         updateProductsCMSFilter('Calha');
         changeSelectorVisibility(simulatorHeadings.step4, true);
         changeSelectorVisibility(selectors.tecido, true);
+        break;
+      case 'suporte':
+        changeSelectorVisibility(simulatorHeadings.step4, true);
+        changeSelectorVisibility(selectors.suporte, true);
         break;
       case 'instalacao':
         changeSelectorVisibility(simulatorHeadings.step5, true);
@@ -1556,7 +1514,6 @@ window.Webflow.push(() => {
   };
 
   const markStepAsCompleted = (step) => {
-    if (step === 'inicio') return;
     steps[step].classList.remove('active');
     steps[step].classList.remove('next');
     steps[step].classList.add('done');
@@ -1771,7 +1728,7 @@ window.Webflow.push(() => {
           selectedColors.push({ product, color: `${selectedColor}` });
         }
         const cardThumbnailImage =
-          selectedDiv.parentElement.parentElement.parentElement.parentElement.getElementsByClassName(
+          selectedDiv.parentElement.parentElement.parentElement.parentElement.parentElement.getElementsByClassName(
             'tecido_image'
           )[0];
         for (let i = 0; i < colors.length; i++) {
@@ -1887,6 +1844,13 @@ window.Webflow.push(() => {
         if (key === 'correcao' || key === 'estoreCorrecao') {
           return;
         }
+        // if (key.star('estore')) {
+        //   if (key === 'estoreInstalacao') return navigateFromCheckoutToStep('instalacao');
+        //   if (key === 'estoreCorrecao') return navigateFromCheckoutToStep('correcao');
+        //   if (key === 'estoreProduto') return navigateFromCheckoutToStep('tecido');
+        //   if (key === 'estoreLargura') return navigateFromCheckoutToStep('medidas');
+        //   if (key === 'estoreAltura') return navigateFromCheckoutToStep('medidas');
+        // }
         navigateFromCheckoutToStep(key);
       });
     });
@@ -2154,6 +2118,47 @@ window.Webflow.push(() => {
         }
       );
     }
+  };
+
+  // ----------------------------
+  //           SWIPER
+  // ----------------------------
+  const swiperConfiguration = {
+    spaceBetween: 12,
+    allowTouchMove: false,
+    // Disable touch-based swiping (optional)
+    resistanceRatio: 0,
+    // Prevents users from dragging/swiping past the last slide
+    watchOverflow: true,
+    // Disables swiper if the slides are fewer than the container width
+    keyboard: {
+      enabled: true,
+      onlyInViewport: false,
+    },
+    navigation: {
+      nextEl: '.slider-main_button.swiper-btn-next',
+      prevEl: '.slider-main_button.swiper-btn-prev',
+    },
+    breakpoints: {
+      320: {
+        slidesPerView: 1,
+      },
+      480: {
+        slidesPerView: 2,
+      },
+      640: {
+        slidesPerView: 3,
+        // Adjust according to your design
+      },
+      1024: {
+        slidesPerView: 6,
+      },
+    },
+  };
+  let swiper = new Swiper('.swiper', swiperConfiguration);
+  const resetSwiper = () => {
+    swiper.destroy();
+    swiper = new Swiper('.swiper', swiperConfiguration);
   };
 
   // TEST DATA
