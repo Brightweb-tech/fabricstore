@@ -1231,10 +1231,6 @@ window.Webflow.push(() => {
   const compressPdf = async (base64Pdf) => {
     const pdfBytes = Buffer.from(base64Pdf, 'base64');
     const pdfDoc = await PDFDocument.load(pdfBytes);
-
-    // Here you can manipulate the document
-    // Compress images, remove metadata, etc.
-
     const compressedPdfBytes = await pdfDoc.save();
     return Buffer.from(compressedPdfBytes).toString('base64');
   };
@@ -1246,7 +1242,7 @@ window.Webflow.push(() => {
   };
 
   const generateAndDownloadPdfLIB = async () => {
-    const { PDFDocument, rgb } = PDFLib; // Access PDFLib from the global window object
+    const { PDFDocument, rgb } = PDFLib;
     const pdfDoc = await PDFDocument.create();
     const page = pdfDoc.addPage([595.28, 841.89]); // A4 page size (in points)
     let y = 800; // Start at the top
@@ -1255,23 +1251,24 @@ window.Webflow.push(() => {
     const lineHeight = 12;
     let total = 0;
 
-    // Load custom font if necessary (using standard Helvetica for simplicity)
-    const font = await pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaBold);
+    const fontReg = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+    const fontBold = await pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaBold);
 
-    // Load logo image
+    const clientY = y;
+
     let logoTest = null;
     try {
       logoTest = await loadImageFromWebflow(logoUrl);
       const pngImageBytes = await fetch(logoTest).then((res) => res.arrayBuffer());
       const pngImage = await pdfDoc.embedPng(pngImageBytes);
 
-      // Center logo
-      const logoWidth = 200;
-      const logoHeight = 30;
-      const logoX = (page.getWidth() - logoWidth) / 2;
+      const logoWidth = 100;
+      const logoHeight = (30 / 200) * logoWidth; // Maintain aspect ratio for logo
+      const logoX = (page.getWidth() - logoWidth) / 2; // Center the logo horizontally
+
       page.drawImage(pngImage, {
         x: logoX,
-        y: y - 50,
+        y: clientY - 10, // Align with text (slight offset to adjust for font size)
         width: logoWidth,
         height: logoHeight,
       });
@@ -1279,23 +1276,38 @@ window.Webflow.push(() => {
       console.error('Error loading logo:', error);
     }
 
-    y -= 60; // Adjust after logo
-
-    // Draw Date (right-aligned)
+    page.drawText(`Cliente: ${selectorValues.nome}`, { x, y: clientY, size: 8, fontReg });
     page.drawText(`Data: ${new Date().toLocaleDateString()}`, {
       x: rightMargin - 90,
-      y,
-      size: 10,
-      font,
+      y: clientY,
+      size: 8,
+      fontReg,
     });
+    const emailY = clientY - lineHeight;
+    page.drawText(`Email: ${selectorValues.email}`, { x, y: emailY, size: 8, fontReg });
 
-    // Draw Client Info (left-aligned)
-    page.drawText(`Cliente: ${selectorValues.nome}`, { x, y, size: 10, font });
+    y = emailY - 30; // Adjust after client info and logo to continue with the rest of the document
+
+    page.drawLine({
+      start: { x: x, y: y },
+      end: { x: rightMargin, y: y },
+      thickness: 0.5,
+      color: rgb(0, 0, 0),
+    });
     y -= lineHeight;
-    page.drawText(`Email: ${selectorValues.email}`, { x, y, size: 10, font });
-    y -= 30;
 
-    // List Windows Products
+    page.drawText('Descrição', { x: x, y, size: 10, fontBold });
+    page.drawText('Preço', { x: rightMargin - 100, y, size: 10, fontBold });
+    y -= lineHeight;
+
+    page.drawLine({
+      start: { x: x, y: y },
+      end: { x: rightMargin, y: y },
+      thickness: 0.5,
+      color: rgb(0, 0, 0),
+    });
+    y -= lineHeight;
+
     windows.forEach((window2, index) => {
       if (y < 100) {
         // Add new page when reaching the end
@@ -1318,9 +1330,8 @@ window.Webflow.push(() => {
       // Draw Window Description
       page.drawText(
         `Janela ${index + 1} - ${window2.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(usedWidth).toFixed(2))} CM)`,
-        { x, y, size: 10, font }
+        { x, y, size: 10, fontBold }
       );
-      page.drawText(`${windowTotal.toFixed(2)}€`, { x: rightMargin - 100, y, size: 10, font });
       y -= lineHeight;
 
       // Draw Sub Items
@@ -1351,47 +1362,82 @@ window.Webflow.push(() => {
       ];
 
       subItems.forEach((item) => {
-        page.drawText(`  - ${item.label}`, { x: x + 10, y, size: 8, font });
-        page.drawText(`${item.price.toFixed(2)}€`, { x: rightMargin - 100, y, size: 8, font });
+        page.drawText(`  - ${item.label}`, { x: x + 10, y, size: 8, fontReg });
+        page.drawText(`${item.price.toFixed(2)}€`, { x: rightMargin - 100, y, size: 8, fontReg });
         y -= lineHeight;
       });
       y -= lineHeight; // Extra space after each window
+
+      page.drawText(`Total`, { x, y, size: 10, fontReg });
+      page.drawText(`${windowTotal.toFixed(2)}€`, { x: rightMargin - 100, y, size: 10, fontReg });
+      y -= lineHeight;
+      // Draw horizontal line after each window total
+      page.drawLine({
+        start: { x: x, y: y },
+        end: { x: rightMargin, y: y },
+        thickness: 0.5,
+        color: rgb(0, 0, 0),
+      });
+      y -= lineHeight;
     });
 
     // Draw Correction
     const correctionLabel = !windows[0].correcao
       ? 'Medidas facultadas pelo cliente'
       : 'Com correção de medidas';
-    page.drawText(`Correção: ${correctionLabel}`, { x, y, size: 10, font });
+    page.drawText(`Correção: ${correctionLabel}`, { x, y, size: 10, fontReg });
     const correctionPrice = windows[0].correcao ? 30 : 0;
     total += correctionPrice;
-    page.drawText(`${correctionPrice.toFixed(2)}€`, { x: rightMargin - 100, y, size: 10, font });
+    page.drawText(`${correctionPrice.toFixed(2)}€`, { x: rightMargin - 100, y, size: 10, fontReg });
     y -= lineHeight * 2;
 
     // Draw Total
-    page.drawText('Total:', { x: rightMargin - 150, y, size: 12, font });
-    page.drawText(`${total.toFixed(2)}€`, { x: rightMargin - 100, y, size: 12, font });
+    page.drawText('Total:', { x: rightMargin - 150, y, size: 12, fontBold });
+    page.drawText(`${total.toFixed(2)}€`, { x: rightMargin - 100, y, size: 12, fontBold });
     y -= lineHeight * 4;
 
-    // Draw Footer
+    // Footer
+    const footerY = 100;
     page.drawText('Valores com IVA incluido à taxa em vigor. Orçamento válido por 15 dias.', {
-      x,
-      y,
+      x: x,
+      y: footerY,
       size: 8,
-      font,
+      fontReg,
     });
-    y -= lineHeight;
     page.drawText(
       'Calhas já incluem os rodízios e suportes necessários para as medidas selecionadas.',
-      { x, y, size: 8, font }
+      { x: x, y: footerY - lineHeight, size: 8, fontReg }
     );
-    y -= lineHeight;
     page.drawText(
       'Valor referente à instalação e Rectificação de Medidas sujeito a validação do código postal.',
-      { x, y, size: 8, font }
+      { x: x, y: footerY - 2 * lineHeight, size: 8, fontReg }
     );
-    y -= lineHeight;
-    page.drawText('IBAN: PT50 0000 0000 0000 0000 0', { x, y, size: 8, font });
+    page.drawText('IBAN: PT50 0000 0000 0000 0000 0', {
+      x: x,
+      y: footerY - 3 * lineHeight,
+      size: 8,
+      fontReg,
+    });
+
+    page.drawLine({
+      start: { x: x, y: footerY - 4 * lineHeight },
+      end: { x: rightMargin, y: footerY - 4 * lineHeight },
+      thickness: 0.5,
+      color: rgb(0, 0, 0),
+    });
+
+    const footerText = 'www.fabricstore.pt';
+    const paginationText = 'Pag. 1 de 1';
+    const paginationWidth = fontReg.widthOfTextAtSize(paginationText, 8);
+    const paginationCenterX = (page.getWidth() - paginationWidth) / 2;
+
+    page.drawText(footerText, { x: x, y: footerY - 5 * lineHeight, size: 10, fontReg });
+    page.drawText(paginationText, {
+      x: paginationCenterX,
+      y: footerY - 5 * lineHeight,
+      size: 8,
+      fontReg,
+    });
 
     // Save the PDF
     const pdfBytes = await pdfDoc.save();
@@ -1406,16 +1452,13 @@ window.Webflow.push(() => {
   const generateTxt = async () => {
     let total = 0;
     let txtContent = '';
-
     txtContent += `Data: ${new Date().toLocaleDateString()}\n\n`;
     txtContent += `Cliente: ${selectorValues.nome}\n\n`;
     txtContent += `Email: ${selectorValues.email}\n\n`;
-
     const correctionLabel = !windows[0].correcao
       ? '  Medidas facultadas pelo cliente:'
       : '  Com correção de medidas:';
     const correctionPrice = windows[0].correcao ? 30 : 0;
-
     windows.forEach((window2, index) => {
       const {
         usedWidth,
@@ -1426,9 +1469,7 @@ window.Webflow.push(() => {
         instalationPrice,
         windowTotal,
       } = calculateWindowPrice(window2);
-
       total += windowTotal;
-
       // Add window description and details
       txtContent += `Janela ${index + 1} - ${window2.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(usedWidth).toFixed(2))} CM): ${windowTotal.toFixed(2)}€\n\n`;
       txtContent += `  Preço do Produto: ${productPrice.toFixed(2)}€\n`;
@@ -1437,14 +1478,11 @@ window.Webflow.push(() => {
       txtContent += `  Preço da Calha: ${calhaPrice.toFixed(2)}€\n`;
       txtContent += `  Preço da Instalação: ${instalationPrice.toFixed(2)}€\n\n`;
     });
-
     // Add correction and total
     txtContent += `Correção:\n${correctionLabel} ${correctionPrice.toFixed(2)}€\n\n`;
     total += correctionPrice;
-
     // Add final total
     txtContent += `Total: ${total.toFixed(2)}€\n\n`;
-
     // Create and download the txt file
     const txtBlob = new Blob([txtContent], { type: 'text/plain' });
     const txtLink = document.createElement('a');
