@@ -436,6 +436,7 @@ window.Webflow.push(() => {
     updateProductsCMSFilter('Cortina');
     resetValues();
     resetInputs();
+    resetSteps();
     navigateFromCheckoutToStep('inicio');
     isNewWindow = true;
   };
@@ -818,6 +819,7 @@ window.Webflow.push(() => {
       updateHeadingSubtitles(step);
       switch (step) {
         case 'tecido':
+          isEstore ? updateProductsCMSFilter('Estore') : updateProductsCMSFilter('Cortina');
           changeSelectorVisibility(simulatorHeadings.step1, true);
           changeSelectorVisibility(selectors.tecido, true);
           break;
@@ -830,6 +832,7 @@ window.Webflow.push(() => {
           changeSelectorVisibility(selectors.medidas, true);
           break;
         case 'calha':
+          updateProductsCMSFilter('calha');
           changeSelectorVisibility(simulatorHeadings.step4, true);
           changeSelectorVisibility(selectors.tecido, true);
           break;
@@ -1171,11 +1174,11 @@ window.Webflow.push(() => {
       step = 'medidas';
     }
 
-    if (step === 'estoreCorrecao') {
-      step = 'correcao';
+    if (step === 'estoreCorrecao' || step === 'correcao') {
+      step = 'medidas';
     }
 
-    if (step === 'estoreInstalacao') {
+    if (step === 'estoreInstalacao' || step === 'instalacao') {
       step = 'instalacao';
     }
 
@@ -1185,37 +1188,41 @@ window.Webflow.push(() => {
 
     isEstore ? toggleSteps('Estore') : toggleSteps('Cortina');
 
-    switch (step) {
-      case 'inicio':
-        changeSelectorVisibility(simulatorHeadings.step1, true);
-        changeSelectorVisibility(selectors.inicio, true);
-        break;
-      case 'tecido':
-        isEstore ? updateProductsCMSFilter('Estore') : updateProductsCMSFilter('Cortina');
-        changeSelectorVisibility(simulatorHeadings.step1, true);
-        changeSelectorVisibility(selectors.tecido, true);
-        break;
-      case 'tipo':
-        changeSelectorVisibility(simulatorHeadings.step2, true);
-        changeSelectorVisibility(selectors.tipo, true);
-        break;
-      case 'medidas':
-        changeSelectorVisibility(simulatorHeadings.step3, true);
-        changeSelectorVisibility(selectors.medidas, true);
-        break;
-      case 'calha':
-        updateProductsCMSFilter('Calha');
-        changeSelectorVisibility(simulatorHeadings.step4, true);
-        changeSelectorVisibility(selectors.tecido, true);
-        break;
-      case 'suporte':
-        changeSelectorVisibility(simulatorHeadings.step4, true);
-        changeSelectorVisibility(selectors.suporte, true);
-        break;
-      case 'instalacao':
-        changeSelectorVisibility(simulatorHeadings.step5, true);
-        changeSelectorVisibility(selectors.instalacao, true);
-        break;
+    if (isEstore) {
+      updateProductsCMSFilter('Estore');
+    } else {
+      switch (step) {
+        case 'inicio':
+          changeSelectorVisibility(simulatorHeadings.step1, true);
+          changeSelectorVisibility(selectors.inicio, true);
+          break;
+        case 'tecido':
+          isEstore ? updateProductsCMSFilter('Estore') : updateProductsCMSFilter('Cortina');
+          changeSelectorVisibility(simulatorHeadings.step1, true);
+          changeSelectorVisibility(selectors.tecido, true);
+          break;
+        case 'tipo':
+          changeSelectorVisibility(simulatorHeadings.step2, true);
+          changeSelectorVisibility(selectors.tipo, true);
+          break;
+        case 'medidas':
+          changeSelectorVisibility(simulatorHeadings.step3, true);
+          changeSelectorVisibility(selectors.medidas, true);
+          break;
+        case 'calha':
+          updateProductsCMSFilter('Calha');
+          changeSelectorVisibility(simulatorHeadings.step4, true);
+          changeSelectorVisibility(selectors.tecido, true);
+          break;
+        case 'suporte':
+          changeSelectorVisibility(simulatorHeadings.step4, true);
+          changeSelectorVisibility(selectors.suporte, true);
+          break;
+        case 'instalacao':
+          changeSelectorVisibility(simulatorHeadings.step5, true);
+          changeSelectorVisibility(selectors.instalacao, true);
+          break;
+      }
     }
 
     currentStep = step;
@@ -1223,7 +1230,15 @@ window.Webflow.push(() => {
     if (currentStep === 'inicio') {
       return markStepAsActive('tecido');
     }
-
+    if (isEstore) {
+      if (step === 'medidas' || step === 'correcao') {
+        markStepAsActive('medidasEstore');
+      }
+      if (step === 'instalacao') {
+        markStepAsActive('instalacaoEstore');
+      }
+    }
+    markStepAsActive(step);
     isNewWindow = false;
     // markStepAsActive(step);
   };
@@ -1844,12 +1859,25 @@ window.Webflow.push(() => {
         if (key === 'correcao' || key === 'estoreCorrecao') {
           return;
         }
-        // if (key.star('estore')) {
-        //   if (key === 'estoreInstalacao') return navigateFromCheckoutToStep('instalacao');
-        //   if (key === 'estoreCorrecao') return navigateFromCheckoutToStep('correcao');
-        //   if (key === 'estoreProduto') return navigateFromCheckoutToStep('tecido');
-        //   if (key === 'estoreLargura') return navigateFromCheckoutToStep('medidas');
-        //   if (key === 'estoreAltura') return navigateFromCheckoutToStep('medidas');
+        if (key === 'suporte') {
+          return;
+          // return navigateFromCheckoutToStep('calha');
+        }
+        if (key === 'bainha') {
+          return;
+          // return navigateFromCheckoutToStep('tipo');
+        }
+        // if (key === 'estoreInstalacao') {
+        //   return navigateFromCheckoutToStep('instalacaoEstore');
+        // }
+        // if (key === 'estoreLargura' || key === 'estoreAltura') {
+        //   return navigateFromCheckoutToStep('medidasEstore');
+        // }
+        // if (key === 'estoreCorrecao') {
+        //   return navigateFromCheckoutToStep('correcao');
+        // }
+        // if (key === 'estoreProduto') {
+        //   return navigateFromCheckoutToStep('estoreProduto');
         // }
         navigateFromCheckoutToStep(key);
       });
@@ -1930,9 +1958,11 @@ window.Webflow.push(() => {
       (price) => window2.tipo === price.name
     );
     if (manufacturingPrice) {
-      return window2.tecido.startsWith('101')
+      // return window2.tecido.startsWith('101')
+      return window2.tecido.startsWith('8') // Blackout
         ? manufacturingPrice.blackout * (usedWidth / 100)
-        : (window2.tecido.startsWith('120') || window2.tecido.startsWith('122')) &&
+        : // : (window2.tecido.startsWith('120') || window2.tecido.startsWith('122')) &&
+          window2.tecido.startsWith('9') && // Alinhado
             (window2.tipo === 'Ondas' || window2.tipo === 'Franzido')
           ? manufacturingPrice.alinhado * (usedWidth / 100)
           : manufacturingPrice.normal * (usedWidth / 100);
