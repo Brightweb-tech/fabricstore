@@ -111,22 +111,24 @@
         {
           name: "Franzido",
           blackout: 9,
-          normal: 8
+          normal: 8,
+          alinhado: 8
         },
         {
           name: "Ondas",
           blackout: 8.5,
-          normal: 7.5
+          normal: 7.5,
+          alinhado: 7.5
         },
         {
           name: "Macho Juntos",
-          normal: 13.5,
+          normal: 12.5,
           blackout: 13.5,
           alinhado: 12.5
         },
         {
           name: "Pregas",
-          normal: 13.5,
+          normal: 12.5,
           blackout: 13.5,
           alinhado: 12.5
         }
