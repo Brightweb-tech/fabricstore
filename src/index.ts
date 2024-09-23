@@ -1246,10 +1246,6 @@ window.Webflow.push(() => {
   const compressPdf = async (base64Pdf) => {
     const pdfBytes = Buffer.from(base64Pdf, 'base64');
     const pdfDoc = await PDFDocument.load(pdfBytes);
-
-    // Here you can manipulate the document
-    // Compress images, remove metadata, etc.
-
     const compressedPdfBytes = await pdfDoc.save();
     return Buffer.from(compressedPdfBytes).toString('base64');
   };
@@ -1261,32 +1257,38 @@ window.Webflow.push(() => {
   };
 
   const generateAndDownloadPdfLIB = async () => {
-    const { PDFDocument, rgb } = PDFLib; // Access PDFLib from the global window object
+    const { PDFDocument, rgb } = PDFLib;
     const pdfDoc = await PDFDocument.create();
     const page = pdfDoc.addPage([595.28, 841.89]); // A4 page size (in points)
     let y = 800; // Start at the top
     const x = 50; // Left margin
-    const rightMargin = 545; // Right margin
+    const rightMargin = 520; // Right margin
     const lineHeight = 12;
     let total = 0;
 
-    // Load custom font if necessary (using standard Helvetica for simplicity)
-    const font = await pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaBold);
+    const fontReg = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+    const fontBold = await pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaBold);
 
-    // Load logo image
+    const clientY = y;
+
     let logoTest = null;
     try {
       logoTest = await loadImageFromWebflow(logoUrl);
       const pngImageBytes = await fetch(logoTest).then((res) => res.arrayBuffer());
       const pngImage = await pdfDoc.embedPng(pngImageBytes);
 
-      // Center logo
-      const logoWidth = 200;
-      const logoHeight = 30;
-      const logoX = (page.getWidth() - logoWidth) / 2;
+      const { width: originalWidth, height: originalHeight } = pngImage.scale(1);
+      const logoWidth = 100;
+      const logoHeight = (originalHeight / originalWidth) * logoWidth; // Maintain aspect ratio dynamically
+      const logoX = (page.getWidth() - logoWidth) / 2; // Center the logo horizontally
+
+      // const logoWidth = 100;
+      // const logoHeight = (30 / 200) * logoWidth; // Maintain aspect ratio for logo
+      // const logoX = (page.getWidth() - logoWidth) / 2; // Center the logo horizontally
+
       page.drawImage(pngImage, {
         x: logoX,
-        y: y - 50,
+        y: clientY - 10, // Align with text (slight offset to adjust for font size)
         width: logoWidth,
         height: logoHeight,
       });
@@ -1294,23 +1296,197 @@ window.Webflow.push(() => {
       console.error('Error loading logo:', error);
     }
 
-    y -= 60; // Adjust after logo
+    const labelCliente = 'Cliente:';
+    const labelData = 'Data:';
+    const labelEmail = 'Email:';
 
-    // Draw Date (right-aligned)
-    page.drawText(`Data: ${new Date().toLocaleDateString()}`, {
-      x: rightMargin - 90,
-      y,
-      size: 10,
-      font,
+    const dateString = new Date().toLocaleDateString();
+
+    // Calculate the width of the bold labels
+    const labelClienteWidth = fontBold.widthOfTextAtSize(labelCliente, 8);
+    const labelDataWidth = fontBold.widthOfTextAtSize(labelData, 8);
+    const labelEmailWidth = fontBold.widthOfTextAtSize(labelEmail, 8);
+
+    // Calculate the width of the date string in the regular font
+    const dateStringWidth = fontReg.widthOfTextAtSize(dateString, 8);
+
+    // page.drawText(`Cliente: ${selectorValues.nome}`, { x, y: clientY, size: 8, fontReg });
+    // page.drawText(`Data: ${new Date().toLocaleDateString()}`, {
+    //   x: rightMargin - 90,
+    //   y: clientY,
+    //   size: 8,
+    //   fontReg,
+    // });
+    // const emailY = clientY - lineHeight;
+    // page.drawText(`Email: ${selectorValues.email}`, { x, y: emailY, size: 8, fontReg });
+
+    // Draw "Cliente:"
+    page.drawText(labelCliente, {
+      x,
+      y: clientY,
+      size: 8,
+      font: fontBold, // Bold font for the label
     });
 
-    // Draw Client Info (left-aligned)
-    page.drawText(`Cliente: ${selectorValues.nome}`, { x, y, size: 10, font });
-    y -= lineHeight;
-    page.drawText(`Email: ${selectorValues.email}`, { x, y, size: 10, font });
-    y -= 30;
+    // Draw the cliente name right after "Cliente:"
+    page.drawText(`${selectorValues.nome}`, {
+      x: x + labelClienteWidth + 2, // Adjust X based on the width of "Cliente:"
+      y: clientY,
+      size: 8,
+      font: fontReg, // Regular font for the value
+    });
 
-    // List Windows Products
+    // Total width of the text "Data: 00/00/0000"
+    const totalTextWidth = labelDataWidth + dateStringWidth + 2; // Adding a small space between "Data:" and date
+
+    // Adjust the X position based on the total width
+    const textX = rightMargin - totalTextWidth;
+
+    // Draw "Data:" label in bold
+    page.drawText(labelData, {
+      x: textX,
+      y: clientY,
+      size: 8,
+      font: fontBold, // Bold font for the label
+    });
+
+    // Draw the date right after "Data:"
+    page.drawText(dateString, {
+      x: textX + labelDataWidth + 2, // Add a small space after "Data:"
+      y: clientY,
+      size: 8,
+      font: fontReg, // Regular font for the date
+    });
+
+    // // Draw "Data:"
+    // page.drawText(labelData, {
+    //   x: rightMargin,
+    //   y: clientY,
+    //   size: 8,
+    //   font: fontBold, // Bold font for the label
+    // });
+
+    // // Draw the date right after "Data:"
+    // page.drawText(`${new Date().toLocaleDateString()}`, {
+    //   x: rightMargin + labelDataWidth + 2, // Adjust X based on the width of "Data:"
+    //   y: clientY,
+    //   size: 8,
+    //   font: fontReg, // Regular font for the value
+    // });
+
+    const emailY = clientY - lineHeight;
+
+    // Draw "Email:"
+    page.drawText(labelEmail, {
+      x,
+      y: emailY,
+      size: 8,
+      font: fontBold, // Bold font for the label
+    });
+
+    // Draw the email right after "Email:"
+    page.drawText(`${selectorValues.email}`, {
+      x: x + labelEmailWidth + 2, // Adjust X based on the width of "Email:"
+      y: emailY,
+      size: 8,
+      font: fontReg, // Regular font for the value
+    });
+
+    y = emailY - lineHeight * 2; // Adjust after client info and logo to continue with the rest of the document
+
+    page.drawLine({
+      start: { x: x, y: y },
+      end: { x: rightMargin, y: y },
+      thickness: 0.5,
+      color: rgb(0, 0, 0),
+    });
+    y -= lineHeight;
+
+    page.drawText('Descrição', { x: x, y, size: 10, fontBold });
+    page.drawText('Preço', { x: rightMargin - 100, y, size: 10, fontBold });
+    y -= lineHeight;
+
+    page.drawLine({
+      start: { x: x, y: y },
+      end: { x: rightMargin, y: y },
+      thickness: 0.5,
+      color: rgb(0, 0, 0),
+    });
+    y -= lineHeight;
+
+    // windows.forEach((window2, index) => {
+    //   if (y < 100) {
+    //     // Add new page when reaching the end
+    //     const newPage = pdfDoc.addPage([595.28, 841.89]);
+    //     y = 800;
+    //   }
+
+    //   const {
+    //     usedWidth,
+    //     productPrice,
+    //     manufacturingPrice,
+    //     bainhaPrice,
+    //     calhaPrice,
+    //     instalationPrice,
+    //     windowTotal,
+    //   } = calculateWindowPrice(window2);
+
+    //   total += windowTotal;
+
+    //   // Draw Window Description
+    //   page.drawText(
+    //     `Janela ${index + 1} - ${window2.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(usedWidth).toFixed(2))} CM)`,
+    //     { x, y, size: 10, fontBold }
+    //   );
+    //   y -= lineHeight;
+
+    //   // Draw Sub Items
+    //   const subItems = [
+    //     { label: `Tecido: ${window2.tecido}`, price: productPrice },
+    //     {
+    //       label: `Tipo de Cortina: ${window2.tipo}`,
+    //       price: manufacturingPrice,
+    //     },
+    //     {
+    //       label: `Baínha de Chumbo: ${
+    //         window2.tecido.startsWith('120') || window2.tecido.startsWith('122')
+    //           ? 'Incluída'
+    //           : window2.bainha
+    //             ? 'Sim'
+    //             : 'Não'
+    //       }`,
+    //       price: bainhaPrice,
+    //     },
+    //     {
+    //       label: `Calha: ${window2.calha} - Suporte: Suporte de ${window2.suporte}`,
+    //       price: calhaPrice,
+    //     },
+    //     {
+    //       label: `Instalação: ${windows[0].instalacao ? 'Sim' : 'Não'}`,
+    //       price: instalationPrice,
+    //     },
+    //   ];
+
+    //   subItems.forEach((item) => {
+    //     page.drawText(`  - ${item.label}`, { x: x + 10, y, size: 8, fontReg });
+    //     page.drawText(`${item.price.toFixed(2)}€`, { x: rightMargin - 100, y, size: 8, fontReg });
+    //     y -= lineHeight;
+    //   });
+    //   y -= lineHeight; // Extra space after each window
+
+    //   page.drawText(`Total`, { x, y, size: 10, fontReg });
+    //   page.drawText(`${windowTotal.toFixed(2)}€`, { x: rightMargin - 100, y, size: 10, fontReg });
+    //   y -= lineHeight;
+    //   // Draw horizontal line after each window total
+    //   page.drawLine({
+    //     start: { x: x, y: y },
+    //     end: { x: rightMargin, y: y },
+    //     thickness: 0.5,
+    //     color: rgb(0, 0, 0),
+    //   });
+    //   y -= lineHeight;
+    // });
+
     windows.forEach((window2, index) => {
       if (y < 100) {
         // Add new page when reaching the end
@@ -1318,95 +1494,136 @@ window.Webflow.push(() => {
         y = 800;
       }
 
-      const {
-        usedWidth,
-        productPrice,
-        manufacturingPrice,
-        bainhaPrice,
-        calhaPrice,
-        instalationPrice,
-        windowTotal,
-      } = calculateWindowPrice(window2);
+      // Use the new return structure of calculateWindowPrice
+      const { tecido, calha, instalacao, total: windowTotal } = calculateWindowPrice(window2);
 
       total += windowTotal;
 
       // Draw Window Description
       page.drawText(
-        `Janela ${index + 1} - ${window2.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(usedWidth).toFixed(2))} CM)`,
-        { x, y, size: 10, font }
+        `Janela ${index + 1} - ${window2.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(window2.usedWidth).toFixed(2))} CM)`,
+        { x, y, size: 8, fontBold }
       );
-      page.drawText(`${windowTotal.toFixed(2)}€`, { x: rightMargin - 100, y, size: 10, font });
       y -= lineHeight;
 
-      // Draw Sub Items
-      const subItems = [
-        { label: `Tecido: ${window2.tecido}`, price: productPrice },
+      // Create priced items with their respective subitems
+      const items = [
         {
-          label: `Tipo de Cortina: ${window2.tipo}`,
-          price: manufacturingPrice,
+          label: `Tecido`,
+          price: tecido,
+          subItems: [
+            { label: `Modelo: ${window2.tecido}` },
+            { label: `Tipo de Cortina: ${window2.tipo}` },
+            {
+              label: `Baínha: ${
+                window2.tecido.startsWith('120') || window2.tecido.startsWith('122')
+                  ? 'Incluída'
+                  : window2.bainha
+                    ? 'Sim'
+                    : 'Não'
+              }`,
+            },
+          ],
         },
         {
-          label: `Baínha de Chumbo: ${
-            window2.tecido.startsWith('120') || window2.tecido.startsWith('122')
-              ? 'Incluída'
-              : window2.bainha
-                ? 'Sim'
-                : 'Não'
-          }`,
-          price: bainhaPrice,
+          label: `Calha`,
+          price: calha,
+          subItems: [{ label: `Suporte: Suporte de ${window2.suporte}` }],
         },
         {
-          label: `Calha: ${window2.calha} - Suporte: Suporte de ${window2.suporte}`,
-          price: calhaPrice,
-        },
-        {
-          label: `Instalação: ${windows[0].instalacao ? 'Sim' : 'Não'}`,
-          price: instalationPrice,
+          label: `Instalação`,
+          price: instalacao,
+          subItems: [],
         },
       ];
 
-      subItems.forEach((item) => {
-        page.drawText(`  - ${item.label}`, { x: x + 10, y, size: 8, font });
-        page.drawText(`${item.price.toFixed(2)}€`, { x: rightMargin - 100, y, size: 8, font });
+      items.forEach((item) => {
+        // Draw the main item label in bold
+        page.drawText(`  - ${item.label}`, { x, y, size: 8, font: fontBold });
+        page.drawText(`${item.price.toFixed(2)}€`, { x: rightMargin - 100, y, size: 8, fontReg });
         y -= lineHeight;
+
+        // Draw each subitem, indented, and in regular font
+        item.subItems.forEach((subItem) => {
+          page.drawText(`      • ${subItem.label}`, { x: x + 20, y, size: 8, font: fontReg });
+          y -= lineHeight;
+        });
+
+        y -= lineHeight; // Extra space after each main item
       });
-      y -= lineHeight; // Extra space after each window
+
+      // Draw Total for the window
+      page.drawText(`Total`, { x, y, size: 10, font: fontBold });
+      page.drawText(`${windowTotal.toFixed(2)}€`, { x: rightMargin - 100, y, size: 10, fontReg });
+      y -= lineHeight;
+
+      // Draw horizontal line after each window total
+      page.drawLine({
+        start: { x: x, y: y },
+        end: { x: rightMargin, y: y },
+        thickness: 0.5,
+        color: rgb(0, 0, 0),
+      });
+      y -= lineHeight;
     });
 
     // Draw Correction
     const correctionLabel = !windows[0].correcao
       ? 'Medidas facultadas pelo cliente'
       : 'Com correção de medidas';
-    page.drawText(`Correção: ${correctionLabel}`, { x, y, size: 10, font });
+    page.drawText(`Correção: ${correctionLabel}`, { x, y, size: 10, fontReg });
     const correctionPrice = windows[0].correcao ? 30 : 0;
     total += correctionPrice;
-    page.drawText(`${correctionPrice.toFixed(2)}€`, { x: rightMargin - 100, y, size: 10, font });
+    page.drawText(`${correctionPrice.toFixed(2)}€`, { x: rightMargin - 100, y, size: 10, fontReg });
     y -= lineHeight * 2;
 
     // Draw Total
-    page.drawText('Total:', { x: rightMargin - 150, y, size: 12, font });
-    page.drawText(`${total.toFixed(2)}€`, { x: rightMargin - 100, y, size: 12, font });
+    page.drawText('Total:', { x: rightMargin - 150, y, size: 12, fontBold });
+    page.drawText(`${total.toFixed(2)}€`, { x: rightMargin - 100, y, size: 12, fontBold });
     y -= lineHeight * 4;
 
-    // Draw Footer
+    // Footer
+    const footerY = 100;
     page.drawText('Valores com IVA incluido à taxa em vigor. Orçamento válido por 15 dias.', {
-      x,
-      y,
+      x: x,
+      y: footerY,
       size: 8,
-      font,
+      fontReg,
     });
-    y -= lineHeight;
     page.drawText(
       'Calhas já incluem os rodízios e suportes necessários para as medidas selecionadas.',
-      { x, y, size: 8, font }
+      { x: x, y: footerY - lineHeight, size: 8, fontReg }
     );
-    y -= lineHeight;
     page.drawText(
       'Valor referente à instalação e Rectificação de Medidas sujeito a validação do código postal.',
-      { x, y, size: 8, font }
+      { x: x, y: footerY - 2 * lineHeight, size: 8, fontReg }
     );
-    y -= lineHeight;
-    page.drawText('IBAN: PT50 0000 0000 0000 0000 0', { x, y, size: 8, font });
+    page.drawText('IBAN: PT50 0000 0000 0000 0000 0', {
+      x: x,
+      y: footerY - 3 * lineHeight,
+      size: 8,
+      fontReg,
+    });
+
+    page.drawLine({
+      start: { x: x, y: footerY - 4 * lineHeight },
+      end: { x: rightMargin, y: footerY - 4 * lineHeight },
+      thickness: 0.5,
+      color: rgb(0, 0, 0),
+    });
+
+    const footerText = 'www.fabricstore.pt';
+    const paginationText = 'Pag. 1 de 1';
+    const paginationWidth = fontReg.widthOfTextAtSize(paginationText, 8);
+    const paginationCenterX = (page.getWidth() - paginationWidth) / 2;
+
+    page.drawText(footerText, { x: x, y: footerY - 5 * lineHeight, size: 10, fontReg });
+    page.drawText(paginationText, {
+      x: paginationCenterX,
+      y: footerY - 5 * lineHeight,
+      size: 8,
+      fontReg,
+    });
 
     // Save the PDF
     const pdfBytes = await pdfDoc.save();
@@ -1421,16 +1638,13 @@ window.Webflow.push(() => {
   const generateTxt = async () => {
     let total = 0;
     let txtContent = '';
-
     txtContent += `Data: ${new Date().toLocaleDateString()}\n\n`;
     txtContent += `Cliente: ${selectorValues.nome}\n\n`;
     txtContent += `Email: ${selectorValues.email}\n\n`;
-
     const correctionLabel = !windows[0].correcao
       ? '  Medidas facultadas pelo cliente:'
       : '  Com correção de medidas:';
     const correctionPrice = windows[0].correcao ? 30 : 0;
-
     windows.forEach((window2, index) => {
       const {
         usedWidth,
@@ -1441,9 +1655,7 @@ window.Webflow.push(() => {
         instalationPrice,
         windowTotal,
       } = calculateWindowPrice(window2);
-
       total += windowTotal;
-
       // Add window description and details
       txtContent += `Janela ${index + 1} - ${window2.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(usedWidth).toFixed(2))} CM): ${windowTotal.toFixed(2)}€\n\n`;
       txtContent += `  Preço do Produto: ${productPrice.toFixed(2)}€\n`;
@@ -1452,14 +1664,11 @@ window.Webflow.push(() => {
       txtContent += `  Preço da Calha: ${calhaPrice.toFixed(2)}€\n`;
       txtContent += `  Preço da Instalação: ${instalationPrice.toFixed(2)}€\n\n`;
     });
-
     // Add correction and total
     txtContent += `Correção:\n${correctionLabel} ${correctionPrice.toFixed(2)}€\n\n`;
     total += correctionPrice;
-
     // Add final total
     txtContent += `Total: ${total.toFixed(2)}€\n\n`;
-
     // Create and download the txt file
     const txtBlob = new Blob([txtContent], { type: 'text/plain' });
     const txtLink = document.createElement('a');
@@ -2020,14 +2229,20 @@ window.Webflow.push(() => {
       materialPrice.calha +
       instalationPrice;
     window2.totalPrice = result;
+    // return {
+    //   usedWidth: totalWidth,
+    //   productPrice: materialPrice.product,
+    //   manufacturingPrice,
+    //   bainhaPrice,
+    //   calhaPrice: materialPrice.calha,
+    //   instalationPrice,
+    //   windowTotal: result,
+    // };
     return {
-      usedWidth: totalWidth,
-      productPrice: materialPrice.product,
-      manufacturingPrice,
-      bainhaPrice,
-      calhaPrice: materialPrice.calha,
-      instalationPrice,
-      windowTotal: result,
+      tecido: materialPrice.product + manufacturingPrice + bainhaPrice,
+      calha: materialPrice.calha,
+      instalacao: instalationPrice,
+      total: result,
     };
   };
 
