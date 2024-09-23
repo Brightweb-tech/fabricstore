@@ -145,9 +145,16 @@ window.Webflow.push(() => {
     step1c: document.getElementById('inicio-description-c'),
     step1e: document.getElementById('inicio-description-e'),
     step2: document.getElementById('simulator-heading-2'),
+    step2t: document.getElementById('tipo-description'),
+    step2b: document.getElementById('bainha-description'),
     step3: document.getElementById('simulator-heading-3'),
+    step3m: document.getElementById('medidas-description'),
+    step3c: document.getElementById('correcao-description'),
     step4: document.getElementById('simulator-heading-4'),
+    step4c: document.getElementById('calha-description'),
+    step4s: document.getElementById('suporte-description'),
     step5: document.getElementById('simulator-heading-5'),
+    step5i: document.getElementById('instalacao-description'),
   };
 
   // Selectors
@@ -763,6 +770,33 @@ window.Webflow.push(() => {
       simulatorHeadings.step1c.style.display = 'none';
       simulatorHeadings.step1e.style.display = 'flex';
     }
+    if (step === 'tipo') {
+      simulatorHeadings.step2t.style.display = 'flex';
+      simulatorHeadings.step2b.style.display = 'none';
+    }
+    if (step === 'bainha') {
+      simulatorHeadings.step2t.style.display = 'none';
+      simulatorHeadings.step2b.style.display = 'flex';
+    }
+    if (step === 'medidas') {
+      simulatorHeadings.step3m.style.display = 'flex';
+      simulatorHeadings.step3c.style.display = 'none';
+    }
+    if (step === 'correcao') {
+      simulatorHeadings.step3m.style.display = 'none';
+      simulatorHeadings.step3c.style.display = 'flex';
+    }
+    if (step === 'calha') {
+      simulatorHeadings.step4c.style.display = 'flex';
+      simulatorHeadings.step4s.style.display = 'none';
+    }
+    if (step === 'suporte') {
+      simulatorHeadings.step4c.style.display = 'none';
+      simulatorHeadings.step4s.style.display = 'flex';
+    }
+    if (step === 'instalacao') {
+      simulatorHeadings.step5.style.display = 'flex';
+    }
   };
 
   const navigateToStep = (step) => {
@@ -781,7 +815,8 @@ window.Webflow.push(() => {
       step === 'estoreCorrecao' ||
       step === 'estoreInstalacao' ||
       step === 'estoreProduto' ||
-      step === 'medidasEstore'
+      step === 'medidasEstore' ||
+      selectorValues.inicio === 'Estore'
     ) {
       isEstore = true;
     }
@@ -883,6 +918,7 @@ window.Webflow.push(() => {
             changeSelectorVisibility(simulatorHeadings.step1, false);
             if (isNewWindow) activateNextBtn(false);
             changeSelectorVisibility(selectors.tecido, false);
+            updateHeadingSubtitles('tipo');
             changeSelectorVisibility(simulatorHeadings.step2, true);
             changeSelectorVisibility(selectors.tipo, true);
             updateMedidasDescriptions();
@@ -901,10 +937,12 @@ window.Webflow.push(() => {
               markStepAsCompleted('tipo');
               markStepAsActive('medidas');
               changeSelectorVisibility(simulatorHeadings.step2, false);
+              updateHeadingSubtitles('medidas');
               changeSelectorVisibility(simulatorHeadings.step3, true);
               changeSelectorVisibility(selectors.medidas, true);
               currentStep = 'medidas';
             } else {
+              updateHeadingSubtitles('bainha');
               changeSelectorVisibility(selectors.bainha, true);
               currentStep = 'bainha';
             }
@@ -920,6 +958,7 @@ window.Webflow.push(() => {
           changeSelectorVisibility(simulatorHeadings.step2, false);
           changeSelectorVisibility(selectors.bainha, false);
           if (isNewWindow) activateNextBtn(false);
+          updateHeadingSubtitles('medidas');
           changeSelectorVisibility(simulatorHeadings.step3, true);
           changeSelectorVisibility(selectors.medidas, true);
           currentStep = 'medidas';
@@ -937,10 +976,12 @@ window.Webflow.push(() => {
               markStepAsCompleted('medidas');
               markStepAsActive('calha');
               changeSelectorVisibility(simulatorHeadings.step3, false);
+              updateHeadingSubtitles('calha');
               changeSelectorVisibility(simulatorHeadings.step4, true);
               changeSelectorVisibility(selectors.tecido, true);
               currentStep = 'calha';
             } else {
+              updateHeadingSubtitles('correcao');
               changeSelectorVisibility(selectors.correcao, true);
               currentStep = 'correcao';
             }
@@ -953,6 +994,7 @@ window.Webflow.push(() => {
           changeSelectorVisibility(simulatorHeadings.step3, false);
           changeSelectorVisibility(selectors.correcao, false);
           if (isNewWindow) activateNextBtn(false);
+          updateHeadingSubtitles('calha');
           changeSelectorVisibility(simulatorHeadings.step4, true);
           changeSelectorVisibility(selectors.tecido, true);
           currentStep = 'calha';
@@ -962,6 +1004,7 @@ window.Webflow.push(() => {
             changeSelectorVisibility(selectors.tecido, false);
             if (isNewWindow) activateNextBtn(false);
             clearSuporteRadioBtns();
+            updateHeadingSubtitles('suporte');
             changeSelectorVisibility(selectors.suporte, true);
             currentStep = 'suporte';
           }
@@ -973,6 +1016,7 @@ window.Webflow.push(() => {
             markStepAsActive('instalacao');
             changeSelectorVisibility(simulatorHeadings.step4, false);
             changeSelectorVisibility(selectors.suporte, false);
+            updateHeadingSubtitles('instalacao');
             if (windows.length > 0) {
               if (isNewWindow) {
                 storeValues();
@@ -1017,6 +1061,7 @@ window.Webflow.push(() => {
             changeSelectorVisibility(selectors.tecido, false);
             updateMedidasDescriptions();
             if (isNewWindow) activateNextBtn(false);
+            updateHeadingSubtitles('medidas');
             changeSelectorVisibility(simulatorHeadings.step3, true);
             changeSelectorVisibility(selectors.medidas, true);
             currentStep = 'medidas';
@@ -1033,10 +1078,12 @@ window.Webflow.push(() => {
               markStepAsCompleted('medidas');
               markStepAsActive('instalacao');
               changeSelectorVisibility(simulatorHeadings.step3, false);
+              updateHeadingSubtitles('instalacao');
               changeSelectorVisibility(simulatorHeadings.step5, true);
               changeSelectorVisibility(selectors.instalacao, true);
               currentStep = 'instalacao';
             } else {
+              updateHeadingSubtitles('correcao');
               changeSelectorVisibility(selectors.correcao, true);
               currentStep = 'correcao';
             }
@@ -1160,7 +1207,8 @@ window.Webflow.push(() => {
       step === 'estoreAltura' ||
       step === 'estoreCorrecao' ||
       step === 'estoreInstalacao' ||
-      step === 'estoreProduto'
+      step === 'estoreProduto' ||
+      selectorValues.inicio === 'Estore'
     ) {
       isEstore = true;
     }
@@ -1190,32 +1238,39 @@ window.Webflow.push(() => {
 
     switch (step) {
       case 'inicio':
+        updateHeadingSubtitles('inicio');
         changeSelectorVisibility(simulatorHeadings.step1, true);
         changeSelectorVisibility(selectors.inicio, true);
         break;
       case 'tecido':
         isEstore ? updateProductsCMSFilter('Estore') : updateProductsCMSFilter('Cortina');
+        updateHeadingSubtitles('tecido');
         changeSelectorVisibility(simulatorHeadings.step1, true);
         changeSelectorVisibility(selectors.tecido, true);
         break;
       case 'tipo':
+        updateHeadingSubtitles('tipo');
         changeSelectorVisibility(simulatorHeadings.step2, true);
         changeSelectorVisibility(selectors.tipo, true);
         break;
       case 'medidas':
+        updateHeadingSubtitles('medidas');
         changeSelectorVisibility(simulatorHeadings.step3, true);
         changeSelectorVisibility(selectors.medidas, true);
         break;
       case 'calha':
         updateProductsCMSFilter('Calha');
+        updateHeadingSubtitles('calha');
         changeSelectorVisibility(simulatorHeadings.step4, true);
         changeSelectorVisibility(selectors.tecido, true);
         break;
       case 'suporte':
+        updateHeadingSubtitles('suporte');
         changeSelectorVisibility(simulatorHeadings.step4, true);
         changeSelectorVisibility(selectors.suporte, true);
         break;
       case 'instalacao':
+        updateHeadingSubtitles('instalacao');
         changeSelectorVisibility(simulatorHeadings.step5, true);
         changeSelectorVisibility(selectors.instalacao, true);
         break;
