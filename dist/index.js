@@ -1062,6 +1062,7 @@
         step = "tecido";
       }
       isEstore ? toggleSteps("Estore") : toggleSteps("Cortina");
+<<<<<<< HEAD
       switch (step) {
         case "inicio":
           updateHeadingSubtitles("inicio");
@@ -1100,6 +1101,43 @@
           changeSelectorVisibility(simulatorHeadings.step5, true);
           changeSelectorVisibility(selectors.instalacao, true);
           break;
+=======
+      if (isEstore) {
+        updateProductsCMSFilter("Estore");
+      } else {
+        switch (step) {
+          case "inicio":
+            changeSelectorVisibility(simulatorHeadings.step1, true);
+            changeSelectorVisibility(selectors.inicio, true);
+            break;
+          case "tecido":
+            isEstore ? updateProductsCMSFilter("Estore") : updateProductsCMSFilter("Cortina");
+            changeSelectorVisibility(simulatorHeadings.step1, true);
+            changeSelectorVisibility(selectors.tecido, true);
+            break;
+          case "tipo":
+            changeSelectorVisibility(simulatorHeadings.step2, true);
+            changeSelectorVisibility(selectors.tipo, true);
+            break;
+          case "medidas":
+            changeSelectorVisibility(simulatorHeadings.step3, true);
+            changeSelectorVisibility(selectors.medidas, true);
+            break;
+          case "calha":
+            updateProductsCMSFilter("Calha");
+            changeSelectorVisibility(simulatorHeadings.step4, true);
+            changeSelectorVisibility(selectors.tecido, true);
+            break;
+          case "suporte":
+            changeSelectorVisibility(simulatorHeadings.step4, true);
+            changeSelectorVisibility(selectors.suporte, true);
+            break;
+          case "instalacao":
+            changeSelectorVisibility(simulatorHeadings.step5, true);
+            changeSelectorVisibility(selectors.instalacao, true);
+            break;
+        }
+>>>>>>> 6ac158b28e37c1af73c3ed66cc976158b6f7a5eb
       }
       currentStep = step;
       if (currentStep === "inicio") {
@@ -1222,8 +1260,8 @@
         color: rgb(0, 0, 0)
       });
       y -= lineHeight;
-      page.drawText("Descri\xE7\xE3o", { x, y, size: 10, fontBold });
-      page.drawText("Pre\xE7o", { x: rightMargin - 100, y, size: 10, fontBold });
+      page.drawText("Descri\xE7\xE3o", { x, y, size: 8, fontBold });
+      page.drawText("Pre\xE7o", { x: rightMargin - 100, y, size: 8, fontBold });
       y -= lineHeight;
       page.drawLine({
         start: { x, y },
@@ -1237,10 +1275,16 @@
           const newPage = pdfDoc.addPage([595.28, 841.89]);
           y = 800;
         }
-        const { tecido, calha, instalacao, total: windowTotal } = calculateWindowPrice(window2);
+        const {
+          usedWidth,
+          tecido,
+          calha,
+          instalacao,
+          total: windowTotal
+        } = calculateWindowPrice(window2);
         total += windowTotal;
         page.drawText(
-          `Janela ${index + 1} - ${window2.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(window2.usedWidth).toFixed(2))} CM)`,
+          `Janela ${index + 1} - ${window2.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(usedWidth).toFixed(2))} CM)`,
           { x, y, size: 8, fontBold }
         );
         y -= lineHeight;
@@ -1289,10 +1333,10 @@
         y -= lineHeight;
       });
       const correctionLabel = !windows[0].correcao ? "Medidas facultadas pelo cliente" : "Com corre\xE7\xE3o de medidas";
-      page.drawText(`Corre\xE7\xE3o: ${correctionLabel}`, { x, y, size: 10, fontReg });
+      page.drawText(`Corre\xE7\xE3o: ${correctionLabel}`, { x, y, size: 8, fontBold });
       const correctionPrice = windows[0].correcao ? 30 : 0;
       total += correctionPrice;
-      page.drawText(`${correctionPrice.toFixed(2)}\u20AC`, { x: rightMargin - 100, y, size: 10, fontReg });
+      page.drawText(`${correctionPrice.toFixed(2)}\u20AC`, { x: rightMargin - 100, y, size: 8, fontReg });
       y -= lineHeight * 2;
       page.drawText("Total:", { x: rightMargin - 150, y, size: 12, fontBold });
       page.drawText(`${total.toFixed(2)}\u20AC`, { x: rightMargin - 100, y, size: 12, fontBold });
@@ -1360,26 +1404,26 @@
       windows.forEach((window2, index) => {
         const {
           usedWidth,
-          productPrice,
-          manufacturingPrice,
-          bainhaPrice,
-          calhaPrice,
-          instalationPrice,
-          windowTotal
+          tecido,
+          calha,
+          instalacao,
+          total: windowTotal
         } = calculateWindowPrice(window2);
         total += windowTotal;
         txtContent += `Janela ${index + 1} - ${window2.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(usedWidth).toFixed(2))} CM): ${windowTotal.toFixed(2)}\u20AC
 
 `;
-        txtContent += `  Pre\xE7o do Produto: ${productPrice.toFixed(2)}\u20AC
+        txtContent += `  Tecido: ${tecido.toFixed(2)}\u20AC
 `;
-        txtContent += `  Pre\xE7o de Fabrica\xE7\xE3o: ${manufacturingPrice.toFixed(2)}\u20AC
+        txtContent += `    Modelo: ${window2.tecido}
 `;
-        txtContent += `  Pre\xE7o da Bainha: ${bainhaPrice.toFixed(2)}\u20AC
+        txtContent += `    Tipo de Cortina: ${window2.tipo}
 `;
-        txtContent += `  Pre\xE7o da Calha: ${calhaPrice.toFixed(2)}\u20AC
+        txtContent += `    Ba\xEDnha: ${window2.tecido.startsWith("120") || window2.tecido.startsWith("122") ? "Inclu\xEDda" : window2.bainha ? "Sim" : "N\xE3o"}
 `;
-        txtContent += `  Pre\xE7o da Instala\xE7\xE3o: ${instalationPrice.toFixed(2)}\u20AC
+        txtContent += `  Calha: ${calha.toFixed(2)}\u20AC
+`;
+        txtContent += `  Instala\xE7\xE3o: ${instalacao.toFixed(2)}\u20AC
 
 `;
       });
@@ -1863,10 +1907,29 @@ ${correctionLabel} ${correctionPrice.toFixed(2)}\u20AC
       const result = materialPrice.product + manufacturingPrice + bainhaPrice + materialPrice.calha + instalationPrice;
       window2.totalPrice = result;
       return {
+        usedWidth: totalWidth,
         tecido: materialPrice.product + manufacturingPrice + bainhaPrice,
         calha: materialPrice.calha,
         instalacao: instalationPrice,
         total: result
+      };
+    };
+    const calculateWindowPriceTxt = (window2) => {
+      const totalWidth = calculateUsedWidth(window2);
+      const materialPrice = calculateMaterialPrice(window2, totalWidth);
+      const manufacturingPrice = calculateManufacturingPrice(window2, totalWidth);
+      const bainhaPrice = calculateBainhaPrice(window2, totalWidth);
+      const instalationPrice = calculateInstalationPrice(window2);
+      const result = materialPrice.product + manufacturingPrice + bainhaPrice + materialPrice.calha + instalationPrice;
+      window2.totalPrice = result;
+      return {
+        usedWidth: totalWidth,
+        productPrice: materialPrice.product,
+        manufacturingPrice,
+        bainhaPrice,
+        calhaPrice: materialPrice.calha,
+        instalationPrice,
+        windowTotal: result
       };
     };
     const isValidEmail = (email) => {
