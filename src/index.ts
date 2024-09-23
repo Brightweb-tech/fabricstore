@@ -1188,37 +1188,41 @@ window.Webflow.push(() => {
 
     isEstore ? toggleSteps('Estore') : toggleSteps('Cortina');
 
-    switch (step) {
-      case 'inicio':
-        changeSelectorVisibility(simulatorHeadings.step1, true);
-        changeSelectorVisibility(selectors.inicio, true);
-        break;
-      case 'tecido':
-        isEstore ? updateProductsCMSFilter('Estore') : updateProductsCMSFilter('Cortina');
-        changeSelectorVisibility(simulatorHeadings.step1, true);
-        changeSelectorVisibility(selectors.tecido, true);
-        break;
-      case 'tipo':
-        changeSelectorVisibility(simulatorHeadings.step2, true);
-        changeSelectorVisibility(selectors.tipo, true);
-        break;
-      case 'medidas':
-        changeSelectorVisibility(simulatorHeadings.step3, true);
-        changeSelectorVisibility(selectors.medidas, true);
-        break;
-      case 'calha':
-        updateProductsCMSFilter('Calha');
-        changeSelectorVisibility(simulatorHeadings.step4, true);
-        changeSelectorVisibility(selectors.tecido, true);
-        break;
-      case 'suporte':
-        changeSelectorVisibility(simulatorHeadings.step4, true);
-        changeSelectorVisibility(selectors.suporte, true);
-        break;
-      case 'instalacao':
-        changeSelectorVisibility(simulatorHeadings.step5, true);
-        changeSelectorVisibility(selectors.instalacao, true);
-        break;
+    if (isEstore) {
+      updateProductsCMSFilter('Estore');
+    } else {
+      switch (step) {
+        case 'inicio':
+          changeSelectorVisibility(simulatorHeadings.step1, true);
+          changeSelectorVisibility(selectors.inicio, true);
+          break;
+        case 'tecido':
+          isEstore ? updateProductsCMSFilter('Estore') : updateProductsCMSFilter('Cortina');
+          changeSelectorVisibility(simulatorHeadings.step1, true);
+          changeSelectorVisibility(selectors.tecido, true);
+          break;
+        case 'tipo':
+          changeSelectorVisibility(simulatorHeadings.step2, true);
+          changeSelectorVisibility(selectors.tipo, true);
+          break;
+        case 'medidas':
+          changeSelectorVisibility(simulatorHeadings.step3, true);
+          changeSelectorVisibility(selectors.medidas, true);
+          break;
+        case 'calha':
+          updateProductsCMSFilter('Calha');
+          changeSelectorVisibility(simulatorHeadings.step4, true);
+          changeSelectorVisibility(selectors.tecido, true);
+          break;
+        case 'suporte':
+          changeSelectorVisibility(simulatorHeadings.step4, true);
+          changeSelectorVisibility(selectors.suporte, true);
+          break;
+        case 'instalacao':
+          changeSelectorVisibility(simulatorHeadings.step5, true);
+          changeSelectorVisibility(selectors.instalacao, true);
+          break;
+      }
     }
 
     currentStep = step;
@@ -1398,8 +1402,8 @@ window.Webflow.push(() => {
     });
     y -= lineHeight;
 
-    page.drawText('Descrição', { x: x, y, size: 10, fontBold });
-    page.drawText('Preço', { x: rightMargin - 100, y, size: 10, fontBold });
+    page.drawText('Descrição', { x: x, y, size: 8, fontBold });
+    page.drawText('Preço', { x: rightMargin - 100, y, size: 8, fontBold });
     y -= lineHeight;
 
     page.drawLine({
@@ -1491,13 +1495,19 @@ window.Webflow.push(() => {
       }
 
       // Use the new return structure of calculateWindowPrice
-      const { tecido, calha, instalacao, total: windowTotal } = calculateWindowPrice(window2);
+      const {
+        usedWidth,
+        tecido,
+        calha,
+        instalacao,
+        total: windowTotal,
+      } = calculateWindowPrice(window2);
 
       total += windowTotal;
 
       // Draw Window Description
       page.drawText(
-        `Janela ${index + 1} - ${window2.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(window2.usedWidth).toFixed(2))} CM)`,
+        `Janela ${index + 1} - ${window2.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(usedWidth).toFixed(2))} CM)`,
         { x, y, size: 8, fontBold }
       );
       y -= lineHeight;
@@ -1567,10 +1577,10 @@ window.Webflow.push(() => {
     const correctionLabel = !windows[0].correcao
       ? 'Medidas facultadas pelo cliente'
       : 'Com correção de medidas';
-    page.drawText(`Correção: ${correctionLabel}`, { x, y, size: 10, fontReg });
+    page.drawText(`Correção: ${correctionLabel}`, { x, y, size: 8, fontBold });
     const correctionPrice = windows[0].correcao ? 30 : 0;
     total += correctionPrice;
-    page.drawText(`${correctionPrice.toFixed(2)}€`, { x: rightMargin - 100, y, size: 10, fontReg });
+    page.drawText(`${correctionPrice.toFixed(2)}€`, { x: rightMargin - 100, y, size: 8, fontReg });
     y -= lineHeight * 2;
 
     // Draw Total
@@ -1631,7 +1641,7 @@ window.Webflow.push(() => {
     return blob;
   };
 
-  const generateTxt = async () => {
+  /*const generateTxt = async () => {
     let total = 0;
     let txtContent = '';
     txtContent += `Data: ${new Date().toLocaleDateString()}\n\n`;
@@ -1649,8 +1659,8 @@ window.Webflow.push(() => {
         bainhaPrice,
         calhaPrice,
         instalationPrice,
-        windowTotal,
-      } = calculateWindowPrice(window2);
+        total: windowTotal,
+      } = calculateWindowPriceTxt(window2);
       total += windowTotal;
       // Add window description and details
       txtContent += `Janela ${index + 1} - ${window2.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(usedWidth).toFixed(2))} CM): ${windowTotal.toFixed(2)}€\n\n`;
@@ -1659,6 +1669,54 @@ window.Webflow.push(() => {
       txtContent += `  Preço da Bainha: ${bainhaPrice.toFixed(2)}€\n`;
       txtContent += `  Preço da Calha: ${calhaPrice.toFixed(2)}€\n`;
       txtContent += `  Preço da Instalação: ${instalationPrice.toFixed(2)}€\n\n`;
+    });
+    // Add correction and total
+    txtContent += `Correção:\n${correctionLabel} ${correctionPrice.toFixed(2)}€\n\n`;
+    total += correctionPrice;
+    // Add final total
+    txtContent += `Total: ${total.toFixed(2)}€\n\n`;
+    // Create and download the txt file
+    const txtBlob = new Blob([txtContent], { type: 'text/plain' });
+    const txtLink = document.createElement('a');
+    txtLink.href = URL.createObjectURL(txtBlob);
+    txtLink.download = 'Orcamento_Fabric-Store.txt';
+    txtLink.click();
+    return txtBlob;
+  };*/
+
+  const generateTxt = async () => {
+    let total = 0;
+    let txtContent = '';
+    txtContent += `Data: ${new Date().toLocaleDateString()}\n\n`;
+    txtContent += `Cliente: ${selectorValues.nome}\n\n`;
+    txtContent += `Email: ${selectorValues.email}\n\n`;
+    const correctionLabel = !windows[0].correcao
+      ? '  Medidas facultadas pelo cliente:'
+      : '  Com correção de medidas:';
+    const correctionPrice = windows[0].correcao ? 30 : 0;
+    windows.forEach((window2, index) => {
+      const {
+        usedWidth,
+        tecido,
+        calha,
+        instalacao,
+        total: windowTotal,
+      } = calculateWindowPrice(window2);
+      total += windowTotal;
+      // Add window description and details
+      txtContent += `Janela ${index + 1} - ${window2.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(usedWidth).toFixed(2))} CM): ${windowTotal.toFixed(2)}€\n\n`;
+      txtContent += `  Tecido: ${tecido.toFixed(2)}€\n`;
+      txtContent += `    Modelo: ${window2.tecido}\n`;
+      txtContent += `    Tipo de Cortina: ${window2.tipo}\n`;
+      txtContent += `    Baínha: ${
+        window2.tecido.startsWith('120') || window2.tecido.startsWith('122')
+          ? 'Incluída'
+          : window2.bainha
+            ? 'Sim'
+            : 'Não'
+      }\n`;
+      txtContent += `  Calha: ${calha.toFixed(2)}€\n`;
+      txtContent += `  Instalação: ${instalacao.toFixed(2)}€\n\n`;
     });
     // Add correction and total
     txtContent += `Correção:\n${correctionLabel} ${correctionPrice.toFixed(2)}€\n\n`;
@@ -2235,10 +2293,35 @@ window.Webflow.push(() => {
     //   windowTotal: result,
     // };
     return {
+      usedWidth: totalWidth,
       tecido: materialPrice.product + manufacturingPrice + bainhaPrice,
       calha: materialPrice.calha,
       instalacao: instalationPrice,
       total: result,
+    };
+  };
+
+  const calculateWindowPriceTxt = (window2) => {
+    const totalWidth = calculateUsedWidth(window2);
+    const materialPrice = calculateMaterialPrice(window2, totalWidth);
+    const manufacturingPrice = calculateManufacturingPrice(window2, totalWidth);
+    const bainhaPrice = calculateBainhaPrice(window2, totalWidth);
+    const instalationPrice = calculateInstalationPrice(window2);
+    const result =
+      materialPrice.product +
+      manufacturingPrice +
+      bainhaPrice +
+      materialPrice.calha +
+      instalationPrice;
+    window2.totalPrice = result;
+    return {
+      usedWidth: totalWidth,
+      productPrice: materialPrice.product,
+      manufacturingPrice,
+      bainhaPrice,
+      calhaPrice: materialPrice.calha,
+      instalationPrice,
+      windowTotal: result,
     };
   };
 
