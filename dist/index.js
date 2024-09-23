@@ -422,6 +422,12 @@
               activateNextBtn(false);
               return false;
             }
+            larguraMaxErrorCortina.style.display = "none";
+            alturaMaxErrorCortina.style.display = "none";
+            larguraMinErrorEstore.style.display = "none";
+            alturaMinErrorEstore.style.display = "none";
+            larguraMaxErrorEstore.style.display = "none";
+            alturaMaxErrorEstore.style.display = "none";
             activateNextBtn(true);
             return true;
           }
@@ -433,11 +439,19 @@
               return false;
             }
             if (parseInt(larguraInput?.value) > MANUFACTURING_CONSTANTS.maxWindowWidthEstores || parseInt(alturaInput?.value) > MANUFACTURING_CONSTANTS.maxWindowHeightEstores) {
+              larguraMinErrorEstore.style.display = "none";
+              alturaMinErrorEstore.style.display = "none";
               parseInt(larguraInput?.value) > MANUFACTURING_CONSTANTS.maxWindowWidthEstores ? larguraMaxErrorEstore.style.display = "block" : larguraMaxErrorEstore.style.display = "none";
               parseInt(alturaInput?.value) > MANUFACTURING_CONSTANTS.maxWindowHeightEstores ? alturaMaxErrorEstore.style.display = "block" : alturaMaxErrorEstore.style.display = "none";
               activateNextBtn(false);
               return false;
             }
+            larguraMaxErrorCortina.style.display = "none";
+            alturaMaxErrorCortina.style.display = "none";
+            larguraMinErrorEstore.style.display = "none";
+            alturaMinErrorEstore.style.display = "none";
+            larguraMaxErrorEstore.style.display = "none";
+            alturaMaxErrorEstore.style.display = "none";
             activateNextBtn(true);
             return true;
           }
@@ -795,7 +809,7 @@
           case "tipo":
             if (validateSelector()) {
               changeSelectorVisibility(selectors.tipo, false);
-              if (selectorValues.tecido.startsWith("120") || selectorValues.tecido.startsWith("122")) {
+              if (selectorValues.tecido.startsWith("9")) {
                 updateSelectorValue(selectors.bainha, true);
                 if (isNewWindow)
                   activateNextBtn(false);
@@ -816,7 +830,7 @@
           case "bainha":
             updateSelectorValue(
               selectors.bainha,
-              `${selectorValues.tecido.startsWith("120") || selectorValues.tecido.startsWith("122") ? true : selectorValues.bainha ? selectorValues.bainha : false}`
+              `${selectorValues.tecido.startsWith("9") ? true : selectorValues.bainha ? selectorValues.bainha : false}`
             );
             markStepAsCompleted("tipo");
             markStepAsActive("medidas");
@@ -1062,7 +1076,6 @@
         step = "tecido";
       }
       isEstore ? toggleSteps("Estore") : toggleSteps("Cortina");
-<<<<<<< HEAD
       switch (step) {
         case "inicio":
           updateHeadingSubtitles("inicio");
@@ -1071,6 +1084,7 @@
           break;
         case "tecido":
           isEstore ? updateProductsCMSFilter("Estore") : updateProductsCMSFilter("Cortina");
+          selectProduct(selectorValues.tecido);
           updateHeadingSubtitles("tecido");
           changeSelectorVisibility(simulatorHeadings.step1, true);
           changeSelectorVisibility(selectors.tecido, true);
@@ -1101,43 +1115,6 @@
           changeSelectorVisibility(simulatorHeadings.step5, true);
           changeSelectorVisibility(selectors.instalacao, true);
           break;
-=======
-      if (isEstore) {
-        updateProductsCMSFilter("Estore");
-      } else {
-        switch (step) {
-          case "inicio":
-            changeSelectorVisibility(simulatorHeadings.step1, true);
-            changeSelectorVisibility(selectors.inicio, true);
-            break;
-          case "tecido":
-            isEstore ? updateProductsCMSFilter("Estore") : updateProductsCMSFilter("Cortina");
-            changeSelectorVisibility(simulatorHeadings.step1, true);
-            changeSelectorVisibility(selectors.tecido, true);
-            break;
-          case "tipo":
-            changeSelectorVisibility(simulatorHeadings.step2, true);
-            changeSelectorVisibility(selectors.tipo, true);
-            break;
-          case "medidas":
-            changeSelectorVisibility(simulatorHeadings.step3, true);
-            changeSelectorVisibility(selectors.medidas, true);
-            break;
-          case "calha":
-            updateProductsCMSFilter("Calha");
-            changeSelectorVisibility(simulatorHeadings.step4, true);
-            changeSelectorVisibility(selectors.tecido, true);
-            break;
-          case "suporte":
-            changeSelectorVisibility(simulatorHeadings.step4, true);
-            changeSelectorVisibility(selectors.suporte, true);
-            break;
-          case "instalacao":
-            changeSelectorVisibility(simulatorHeadings.step5, true);
-            changeSelectorVisibility(selectors.instalacao, true);
-            break;
-        }
->>>>>>> 6ac158b28e37c1af73c3ed66cc976158b6f7a5eb
       }
       currentStep = step;
       if (currentStep === "inicio") {
@@ -1296,7 +1273,7 @@
               { label: `Modelo: ${window2.tecido}` },
               { label: `Tipo de Cortina: ${window2.tipo}` },
               {
-                label: `Ba\xEDnha: ${window2.tecido.startsWith("120") || window2.tecido.startsWith("122") ? "Inclu\xEDda" : window2.bainha ? "Sim" : "N\xE3o"}`
+                label: `Ba\xEDnha: ${window2.tecido.startsWith("9") ? "Inclu\xEDda" : window2.bainha ? "Sim" : "N\xE3o"}`
               }
             ]
           },
@@ -1419,7 +1396,7 @@
 `;
         txtContent += `    Tipo de Cortina: ${window2.tipo}
 `;
-        txtContent += `    Ba\xEDnha: ${window2.tecido.startsWith("120") || window2.tecido.startsWith("122") ? "Inclu\xEDda" : window2.bainha ? "Sim" : "N\xE3o"}
+        txtContent += `    Ba\xEDnha: ${window2.tecido.startsWith("9") ? "Inclu\xEDda" : window2.bainha ? "Sim" : "N\xE3o"}
 `;
         txtContent += `  Calha: ${calha.toFixed(2)}\u20AC
 `;
@@ -1871,7 +1848,7 @@ ${correctionLabel} ${correctionPrice.toFixed(2)}\u20AC
       return 0;
     };
     const calculateBainhaPrice = (window2, usedWidth) => {
-      if (window2.inicio === "Cortina" && (window2.tecido.startsWith("120") || window2.tecido.startsWith("122"))) {
+      if (window2.inicio === "Cortina" && window2.tecido.startsWith("9")) {
         return 0;
       }
       if (window2.inicio === "Estore") {

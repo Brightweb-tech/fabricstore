@@ -472,6 +472,34 @@ window.Webflow.push(() => {
         activateNextBtn(true);
         return true;
       case 'medidas':
+        // if (selectorValues.inicio === 'Estore') {
+        //   !(larguraInput?.value === '') &&
+        //   larguraInput?.value > MANUFACTURING_CONSTANTS.maxWindowWidthEstores
+        //     ? (larguraMaxErrorEstore.style.display = 'block')
+        //     : (larguraMaxErrorEstore.style.display = 'none');
+        //   !(alturaInput?.value === '') &&
+        //   alturaInput?.value > MANUFACTURING_CONSTANTS.maxWindowHeightEstores
+        //     ? (alturaMaxErrorEstore.style.display = 'block')
+        //     : (alturaMaxErrorEstore.style.display = 'none');
+        //   !(larguraInput?.value === '') &&
+        //   larguraInput?.value < MANUFACTURING_CONSTANTS.minWindowWidthEstores
+        //     ? (larguraMinErrorEstore.style.display = 'block')
+        //     : (larguraMinErrorEstore.style.display = 'none');
+        //   !(alturaInput?.value === '') &&
+        //   alturaInput?.value < MANUFACTURING_CONSTANTS.minWindowHeightEstores
+        //     ? (alturaMinErrorEstore.style.display = 'block')
+        //     : (alturaMinErrorEstore.style.display = 'none');
+        // }
+        // if (selectorValues.inicio === 'Cortina') {
+        //   !(larguraInput?.value === '') &&
+        //   larguraInput?.value > MANUFACTURING_CONSTANTS.maxWindowWidth
+        //     ? (larguraMaxErrorCortina.style.display = 'block')
+        //     : (larguraMaxErrorCortina.style.display = 'none');
+        //   !(alturaInput?.value === '') &&
+        //   alturaInput?.value > MANUFACTURING_CONSTANTS.maxWindowHeight
+        //     ? (alturaMaxErrorCortina.style.display = 'block')
+        //     : (alturaMaxErrorCortina.style.display = 'none');
+        // }
         if (larguraInput?.value === '' || alturaInput?.value === '') {
           activateNextBtn(false);
           return false;
@@ -491,6 +519,12 @@ window.Webflow.push(() => {
             activateNextBtn(false);
             return false; // Error Maximum value exceeded
           }
+          larguraMaxErrorCortina.style.display = 'none';
+          alturaMaxErrorCortina.style.display = 'none';
+          larguraMinErrorEstore.style.display = 'none';
+          alturaMinErrorEstore.style.display = 'none';
+          larguraMaxErrorEstore.style.display = 'none';
+          alturaMaxErrorEstore.style.display = 'none';
           activateNextBtn(true);
           return true;
         }
@@ -513,6 +547,8 @@ window.Webflow.push(() => {
             parseInt(larguraInput?.value) > MANUFACTURING_CONSTANTS.maxWindowWidthEstores ||
             parseInt(alturaInput?.value) > MANUFACTURING_CONSTANTS.maxWindowHeightEstores
           ) {
+            larguraMinErrorEstore.style.display = 'none';
+            alturaMinErrorEstore.style.display = 'none';
             parseInt(larguraInput?.value) > MANUFACTURING_CONSTANTS.maxWindowWidthEstores
               ? (larguraMaxErrorEstore.style.display = 'block')
               : (larguraMaxErrorEstore.style.display = 'none');
@@ -522,6 +558,12 @@ window.Webflow.push(() => {
             activateNextBtn(false);
             return false; // Error Maximum value exceeded
           }
+          larguraMaxErrorCortina.style.display = 'none';
+          alturaMaxErrorCortina.style.display = 'none';
+          larguraMinErrorEstore.style.display = 'none';
+          alturaMinErrorEstore.style.display = 'none';
+          larguraMaxErrorEstore.style.display = 'none';
+          alturaMaxErrorEstore.style.display = 'none';
           activateNextBtn(true);
           return true;
         }
@@ -1241,6 +1283,7 @@ window.Webflow.push(() => {
         break;
       case 'tecido':
         isEstore ? updateProductsCMSFilter('Estore') : updateProductsCMSFilter('Cortina');
+        selectProduct(selectorValues.tecido);
         updateHeadingSubtitles('tecido');
         changeSelectorVisibility(simulatorHeadings.step1, true);
         changeSelectorVisibility(selectors.tecido, true);
