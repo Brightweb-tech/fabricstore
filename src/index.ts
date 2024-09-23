@@ -1188,41 +1188,37 @@ window.Webflow.push(() => {
 
     isEstore ? toggleSteps('Estore') : toggleSteps('Cortina');
 
-    if (isEstore) {
-      updateProductsCMSFilter('Estore');
-    } else {
-      switch (step) {
-        case 'inicio':
-          changeSelectorVisibility(simulatorHeadings.step1, true);
-          changeSelectorVisibility(selectors.inicio, true);
-          break;
-        case 'tecido':
-          isEstore ? updateProductsCMSFilter('Estore') : updateProductsCMSFilter('Cortina');
-          changeSelectorVisibility(simulatorHeadings.step1, true);
-          changeSelectorVisibility(selectors.tecido, true);
-          break;
-        case 'tipo':
-          changeSelectorVisibility(simulatorHeadings.step2, true);
-          changeSelectorVisibility(selectors.tipo, true);
-          break;
-        case 'medidas':
-          changeSelectorVisibility(simulatorHeadings.step3, true);
-          changeSelectorVisibility(selectors.medidas, true);
-          break;
-        case 'calha':
-          updateProductsCMSFilter('Calha');
-          changeSelectorVisibility(simulatorHeadings.step4, true);
-          changeSelectorVisibility(selectors.tecido, true);
-          break;
-        case 'suporte':
-          changeSelectorVisibility(simulatorHeadings.step4, true);
-          changeSelectorVisibility(selectors.suporte, true);
-          break;
-        case 'instalacao':
-          changeSelectorVisibility(simulatorHeadings.step5, true);
-          changeSelectorVisibility(selectors.instalacao, true);
-          break;
-      }
+    switch (step) {
+      case 'inicio':
+        changeSelectorVisibility(simulatorHeadings.step1, true);
+        changeSelectorVisibility(selectors.inicio, true);
+        break;
+      case 'tecido':
+        isEstore ? updateProductsCMSFilter('Estore') : updateProductsCMSFilter('Cortina');
+        changeSelectorVisibility(simulatorHeadings.step1, true);
+        changeSelectorVisibility(selectors.tecido, true);
+        break;
+      case 'tipo':
+        changeSelectorVisibility(simulatorHeadings.step2, true);
+        changeSelectorVisibility(selectors.tipo, true);
+        break;
+      case 'medidas':
+        changeSelectorVisibility(simulatorHeadings.step3, true);
+        changeSelectorVisibility(selectors.medidas, true);
+        break;
+      case 'calha':
+        updateProductsCMSFilter('Calha');
+        changeSelectorVisibility(simulatorHeadings.step4, true);
+        changeSelectorVisibility(selectors.tecido, true);
+        break;
+      case 'suporte':
+        changeSelectorVisibility(simulatorHeadings.step4, true);
+        changeSelectorVisibility(selectors.suporte, true);
+        break;
+      case 'instalacao':
+        changeSelectorVisibility(simulatorHeadings.step5, true);
+        changeSelectorVisibility(selectors.instalacao, true);
+        break;
     }
 
     currentStep = step;
