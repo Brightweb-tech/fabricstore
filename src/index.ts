@@ -226,6 +226,7 @@ window.Webflow.push(() => {
   const newWindowButton = document.getElementById('new-window-btn');
   const noWindowButton = document.getElementById('no-window-btn');
   const enviarButton = document.getElementById('enviar-btn');
+  const enviarButtonContain = document.getElementById('enviar-btn-contain');
   const checkoutChoices = {
     tecido: document.getElementById('checkout-tecido'),
     tipo: document.getElementById('checkout-tipo'),
@@ -279,6 +280,7 @@ window.Webflow.push(() => {
     addOnClickStep();
     addOnChangeMedidasInputs();
     addOnChangeSuporteRadioBtns();
+    addOnChangeFormInputs();
   };
 
   const onInit = () => {
@@ -2426,6 +2428,46 @@ window.Webflow.push(() => {
     });
   };
 
+  const addOnChangeFormInputs = () => {
+    const validateNameInput = () => {
+      if (nomeInput.value.trim() === '') {
+        nameError.textContent = 'Preencher este campo obrigatório';
+        nameError.classList.add('u-text-main');
+        return true;
+      }
+      nameError.textContent = '';
+      nameError.classList.remove('u-text-main');
+      return false;
+    };
+
+    const validateEmailInput = () => {
+      const emailValue = emailInput.value.trim();
+      if (emailValue === '') {
+        emailError.textContent = 'Preencher este campo obrigatório';
+        emailError.classList.add('u-text-main');
+        return true;
+      }
+      if (!isValidEmail(emailValue)) {
+        emailError.textContent = 'Insira um email válido';
+        emailError.classList.add('u-text-main');
+        return true;
+      }
+      emailError.textContent = '';
+      emailError.classList.remove('u-text-main');
+      return false;
+    };
+
+    const validateInputs = () => {
+      resetCheckoutErrors(); // Clear previous error messages
+      const nameErrorExists = validateNameInput();
+      const emailErrorExists = validateEmailInput();
+      activateEnviarBtn(nameErrorExists || emailErrorExists);
+    };
+
+    nomeInput?.addEventListener('input', validateInputs);
+    emailInput?.addEventListener('input', validateInputs);
+  };
+
   // Function to reset error messages
   const resetCheckoutErrors = () => {
     nameError.textContent = '';
@@ -2438,92 +2480,77 @@ window.Webflow.push(() => {
     checkFieldError.classList.remove('u-text-main');
   };
 
+  const activateEnviarBtn = (isError) => {
+    if (isError) {
+      enviarButtonContain?.classList.add('inactive');
+    }
+    if (!isError) {
+      enviarButtonContain?.classList.remove('inactive');
+    }
+  };
+
   const sendQuoteEmail = async (name, email, allowsContact, base64PdfPromise, base64TxtPromise) => {
     const feedbackMessage = document.getElementById('feedback-div');
     let pdfFile = null;
     let txtFile = null;
-    let errorExists = false;
-    resetCheckoutErrors();
 
-    // Validate name field
-    if (name.trim() === '') {
-      nameError.textContent = 'Preencher este campo obrigatório';
-      nameError.classList.add('u-text-main');
-      errorExists = true;
+    try {
+      const base64Pdf = await base64PdfPromise;
+      const base64Txt = await base64TxtPromise;
+      pdfFile = await blobToBase64(base64Pdf);
+      txtFile = await blobToBase64(base64Txt);
+    } catch {
+      console.error('Failed to load PDF');
+      pdfFile = null;
     }
-    // Create checkout validator
-    // Validate email field
-    const emailValue = email.trim();
-    if (emailValue === '') {
-      emailError.textContent = 'Preencher este campo obrigatório';
-      emailError.classList.add('u-text-main');
-      errorExists = true;
-    } else if (!isValidEmail(emailValue)) {
-      emailError.textContent = 'Insira um email válido';
-      emailError.classList.add('u-text-main');
-      errorExists = true;
-    }
+    const templateParamsPdf = {
+      name: name,
+      email: email,
+      check: allowsContact,
+      file: pdfFile,
+      to_company_email: 'contact@fabricstore.pt', // The company's email
+      to_user_email: email, // Send a copy to the user
+      reply_to: 'general@brightweb.tech',
+    };
 
-    if (!errorExists) {
-      try {
-        const base64Pdf = await base64PdfPromise;
-        const base64Txt = await base64TxtPromise;
-        pdfFile = await blobToBase64(base64Pdf);
-        txtFile = await blobToBase64(base64Txt);
-      } catch {
-        console.error('Failed to load PDF');
-        pdfFile = null;
+    const templateParamsTxt = {
+      name: name,
+      email: email,
+      check: allowsContact,
+      file: txtFile,
+      to_company_email: 'contact@fabricstore.pt',
+      reply_to: 'general@brightweb.tech',
+    };
+
+    emailjs.send('service_fabricstore', 'template_quote_pdf', templateParamsPdf).then(
+      function (response) {
+        console.log('SUCCESS!', response.status, response.text);
+        userDetailsForm.style.display = 'none';
+        enviarButton.style.display = 'none';
+        feedbackMessage.textContent = 'Obrigado pelo seu contacto!';
+      },
+      function (error) {
+        console.log('FAILED...', error);
+        userDetailsForm.style.display = 'none';
+        enviarButton.style.display = 'none';
+        feedbackMessage.textContent = 'Oops! Algo correu mal!';
       }
-      const templateParamsPdf = {
-        name: name,
-        email: email,
-        check: allowsContact,
-        // file: [{ base64: pdfFile, filename: 'Orcamento_Fabric-Store.pdf' }],
-        file: pdfFile,
-        to_company_email: 'contact@fabricstore.pt', // The company's email
-        to_user_email: email, // Send a copy to the user
-        reply_to: 'general@brightweb.tech',
-      };
+    );
 
-      const templateParamsTxt = {
-        name: name,
-        email: email,
-        check: allowsContact,
-        file: txtFile,
-        to_company_email: 'contact@fabricstore.pt',
-        reply_to: 'general@brightweb.tech',
-      };
-
-      emailjs.send('service_fabricstore', 'template_quote_pdf', templateParamsPdf).then(
-        function (response) {
-          console.log('SUCCESS!', response.status, response.text);
-          userDetailsForm.style.display = 'none';
-          enviarButton.style.display = 'none';
-          feedbackMessage.textContent = 'Obrigado pelo seu contacto!';
-        },
-        function (error) {
-          console.log('FAILED...', error);
-          userDetailsForm.style.display = 'none';
-          enviarButton.style.display = 'none';
-          feedbackMessage.textContent = 'Oops! Algo correu mal!';
-        }
-      );
-
-      emailjs.send('service_fabricstore', 'template_quote_txt', templateParamsTxt).then(
-        function (response) {
-          console.log('SUCCESS!', response.status, response.text);
-          userDetailsForm.style.display = 'none';
-          enviarButton.style.display = 'none';
-          feedbackMessage.textContent = 'Obrigado pelo seu contacto!';
-        },
-        function (error) {
-          console.log('FAILED...', error);
-          userDetailsForm.style.display = 'none';
-          enviarButton.style.display = 'none';
-          feedbackMessage.textContent = 'Oops! Algo correu mal!';
-        }
-      );
-    }
+    emailjs.send('service_fabricstore', 'template_quote_txt', templateParamsTxt).then(
+      function (response) {
+        console.log('SUCCESS!', response.status, response.text);
+        userDetailsForm.style.display = 'none';
+        enviarButton.style.display = 'none';
+        feedbackMessage.textContent = 'Obrigado pelo seu contacto!';
+      },
+      function (error) {
+        console.log('FAILED...', error);
+        userDetailsForm.style.display = 'none';
+        enviarButton.style.display = 'none';
+        feedbackMessage.textContent = 'Oops! Algo correu mal!';
+      }
+    );
   };
 
   // ----------------------------
