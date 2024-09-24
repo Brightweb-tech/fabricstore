@@ -360,7 +360,9 @@ window.Webflow.push(() => {
 
   const fetchProducts = () => {
     fetch(
-      'https://docs.google.com/spreadsheets/d/e/2PACX-1vSCprbghTI2dhOxsCMkcEHhI-DE5pOb5RnOKO3KPd5-ntAORtuPTuFonSvs9s4-ANy_VCezuEdcZ8pg/pub?gid=0&single=true&output=csv'
+      'https://docs.google.com/spreadsheets/d/e/2PACX-1vRnpR16s-LlJCttzFQBqDmgLYSIGtTKbBKbDGUXfvjwGHR2W3u66qn4TV8DkHr2280Oru6V4QVgFYJV/pub?output=csv'
+      // 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRnpR16s-LlJCttzFQBqDmgLYSIGtTKbBKbDGUXfvjwGHR2W3u66qn4TV8DkHr2280Oru6V4QVgFYJV/pub?gid=0&single=true&output=csv'
+      // 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSCprbghTI2dhOxsCMkcEHhI-DE5pOb5RnOKO3KPd5-ntAORtuPTuFonSvs9s4-ANy_VCezuEdcZ8pg/pub?gid=0&single=true&output=csv'
       // 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSCprbghTI2dhOxsCMkcEHhI-DE5pOb5RnOKO3KPd5-ntAORtuPTuFonSvs9s4-ANy_VCezuEdcZ8pg/export?format=csv&gid=0&single=true'
       // `https://docs.google.com/spreadsheets/d/1hkgiYOVj33yY6b--bJaNPZOvHFvQ4klM402z0xp-gjE/export?format=csv&gid=0&single=true`
     )
@@ -1219,8 +1221,8 @@ window.Webflow.push(() => {
     }
     if (window2.inicio === 'Estore') {
       markStepAsCompleted('tecido');
-      markStepAsCompleted('medidasEstore');
-      markStepAsCompleted('instalacaoEstore');
+      markStepAsCompleted('medidas');
+      markStepAsCompleted('instalacao');
     }
   };
 
@@ -1333,8 +1335,8 @@ window.Webflow.push(() => {
         markStepAsActive('instalacaoEstore');
       }
     }
-    markStepAsActive(step);
     isNewWindow = false;
+    markStepAsActive(step);
     // markStepAsActive(step);
   };
 
