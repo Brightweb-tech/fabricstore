@@ -25,4 +25,8 @@ typings/
 .env
 
 # Production files
-dist/
+/dist/index.js
+/dist/index.js.map
+
+# Production files
+# sandbox_files/

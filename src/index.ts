@@ -1359,6 +1359,7 @@ window.Webflow.push(() => {
     const x = 50; // Left margin
     const rightMargin = 520; // Right margin
     const lineHeight = 12;
+    const lineSpacing = 3;
     let total = 0;
 
     const fontReg = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
@@ -1376,10 +1377,6 @@ window.Webflow.push(() => {
       const logoWidth = 100;
       const logoHeight = (originalHeight / originalWidth) * logoWidth; // Maintain aspect ratio dynamically
       const logoX = (page.getWidth() - logoWidth) / 2; // Center the logo horizontally
-
-      // const logoWidth = 100;
-      // const logoHeight = (30 / 200) * logoWidth; // Maintain aspect ratio for logo
-      // const logoX = (page.getWidth() - logoWidth) / 2; // Center the logo horizontally
 
       page.drawImage(pngImage, {
         x: logoX,
@@ -1405,22 +1402,12 @@ window.Webflow.push(() => {
     // Calculate the width of the date string in the regular font
     const dateStringWidth = fontReg.widthOfTextAtSize(dateString, 8);
 
-    // page.drawText(`Cliente: ${selectorValues.nome}`, { x, y: clientY, size: 8, fontReg });
-    // page.drawText(`Data: ${new Date().toLocaleDateString()}`, {
-    //   x: rightMargin - 90,
-    //   y: clientY,
-    //   size: 8,
-    //   fontReg,
-    // });
-    // const emailY = clientY - lineHeight;
-    // page.drawText(`Email: ${selectorValues.email}`, { x, y: emailY, size: 8, fontReg });
-
     // Draw "Cliente:"
     page.drawText(labelCliente, {
       x,
       y: clientY,
       size: 8,
-      font: fontBold, // Bold font for the label
+      font: fontBold,
     });
 
     // Draw the cliente name right after "Cliente:"
@@ -1450,24 +1437,8 @@ window.Webflow.push(() => {
       x: textX + labelDataWidth + 2, // Add a small space after "Data:"
       y: clientY,
       size: 8,
-      font: fontReg, // Regular font for the date
+      font: fontReg,
     });
-
-    // // Draw "Data:"
-    // page.drawText(labelData, {
-    //   x: rightMargin,
-    //   y: clientY,
-    //   size: 8,
-    //   font: fontBold, // Bold font for the label
-    // });
-
-    // // Draw the date right after "Data:"
-    // page.drawText(`${new Date().toLocaleDateString()}`, {
-    //   x: rightMargin + labelDataWidth + 2, // Adjust X based on the width of "Data:"
-    //   y: clientY,
-    //   size: 8,
-    //   font: fontReg, // Regular font for the value
-    // });
 
     const emailY = clientY - lineHeight;
 
@@ -1476,111 +1447,39 @@ window.Webflow.push(() => {
       x,
       y: emailY,
       size: 8,
-      font: fontBold, // Bold font for the label
+      font: fontBold,
     });
 
-    // Draw the email right after "Email:"
     page.drawText(`${selectorValues.email}`, {
       x: x + labelEmailWidth + 2, // Adjust X based on the width of "Email:"
       y: emailY,
       size: 8,
-      font: fontReg, // Regular font for the value
+      font: fontReg,
     });
 
     y = emailY - lineHeight * 2; // Adjust after client info and logo to continue with the rest of the document
 
+    y -= lineSpacing; // Add space above the line
     page.drawLine({
       start: { x: x, y: y },
       end: { x: rightMargin, y: y },
       thickness: 0.5,
       color: rgb(0, 0, 0),
     });
+    y -= lineSpacing + lineHeight; // Add space below the line and account for text
+
+    page.drawText('Descrição', { x: x, y, size: 8, font: fontBold });
+    page.drawText('Preço', { x: rightMargin - 100, y, size: 8, font: fontBold });
     y -= lineHeight;
 
-    page.drawText('Descrição', { x: x, y, size: 8, fontBold });
-    page.drawText('Preço', { x: rightMargin - 100, y, size: 8, fontBold });
-    y -= lineHeight;
-
+    y -= lineSpacing;
     page.drawLine({
       start: { x: x, y: y },
       end: { x: rightMargin, y: y },
       thickness: 0.5,
       color: rgb(0, 0, 0),
     });
-    y -= lineHeight;
-
-    // windows.forEach((window2, index) => {
-    //   if (y < 100) {
-    //     // Add new page when reaching the end
-    //     const newPage = pdfDoc.addPage([595.28, 841.89]);
-    //     y = 800;
-    //   }
-
-    //   const {
-    //     usedWidth,
-    //     productPrice,
-    //     manufacturingPrice,
-    //     bainhaPrice,
-    //     calhaPrice,
-    //     instalationPrice,
-    //     windowTotal,
-    //   } = calculateWindowPrice(window2);
-
-    //   total += windowTotal;
-
-    //   // Draw Window Description
-    //   page.drawText(
-    //     `Janela ${index + 1} - ${window2.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(usedWidth).toFixed(2))} CM)`,
-    //     { x, y, size: 10, fontBold }
-    //   );
-    //   y -= lineHeight;
-
-    //   // Draw Sub Items
-    //   const subItems = [
-    //     { label: `Tecido: ${window2.tecido}`, price: productPrice },
-    //     {
-    //       label: `Tipo de Cortina: ${window2.tipo}`,
-    //       price: manufacturingPrice,
-    //     },
-    //     {
-    //       label: `Baínha de Chumbo: ${
-    //         window2.tecido.startsWith('120') || window2.tecido.startsWith('122')
-    //           ? 'Incluída'
-    //           : window2.bainha
-    //             ? 'Sim'
-    //             : 'Não'
-    //       }`,
-    //       price: bainhaPrice,
-    //     },
-    //     {
-    //       label: `Calha: ${window2.calha} - Suporte: Suporte de ${window2.suporte}`,
-    //       price: calhaPrice,
-    //     },
-    //     {
-    //       label: `Instalação: ${windows[0].instalacao ? 'Sim' : 'Não'}`,
-    //       price: instalationPrice,
-    //     },
-    //   ];
-
-    //   subItems.forEach((item) => {
-    //     page.drawText(`  - ${item.label}`, { x: x + 10, y, size: 8, fontReg });
-    //     page.drawText(`${item.price.toFixed(2)}€`, { x: rightMargin - 100, y, size: 8, fontReg });
-    //     y -= lineHeight;
-    //   });
-    //   y -= lineHeight; // Extra space after each window
-
-    //   page.drawText(`Total`, { x, y, size: 10, fontReg });
-    //   page.drawText(`${windowTotal.toFixed(2)}€`, { x: rightMargin - 100, y, size: 10, fontReg });
-    //   y -= lineHeight;
-    //   // Draw horizontal line after each window total
-    //   page.drawLine({
-    //     start: { x: x, y: y },
-    //     end: { x: rightMargin, y: y },
-    //     thickness: 0.5,
-    //     color: rgb(0, 0, 0),
-    //   });
-    //   y -= lineHeight;
-    // });
+    y -= lineSpacing + lineHeight;
 
     windows.forEach((window2, index) => {
       if (y < 100) {
@@ -1589,7 +1488,6 @@ window.Webflow.push(() => {
         y = 800;
       }
 
-      // Use the new return structure of calculateWindowPrice
       const {
         usedWidth,
         tecido,
@@ -1601,9 +1499,17 @@ window.Webflow.push(() => {
       total += windowTotal;
 
       // Draw Window Description
+      page.drawText(`Janela ${index + 1} -`, { x, y, size: 8, font: fontBold });
+
+      // Draw the rest of the text in regular font
       page.drawText(
-        `Janela ${index + 1} - ${window2.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(usedWidth).toFixed(2))} CM)`,
-        { x, y, size: 8, fontBold }
+        ` ${window2.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(usedWidth).toFixed(2))} CM)`,
+        {
+          x: x + fontBold.widthOfTextAtSize(`Janela ${index + 1} -`, 8),
+          y,
+          size: 8,
+          font: fontReg,
+        }
       );
       y -= lineHeight;
 
@@ -1655,24 +1561,41 @@ window.Webflow.push(() => {
       y -= lineHeight;
 
       // Draw horizontal line after each window total
+      y -= lineSpacing;
       page.drawLine({
         start: { x: x, y: y },
         end: { x: rightMargin, y: y },
         thickness: 0.5,
         color: rgb(0, 0, 0),
       });
-      y -= lineHeight;
+      y -= lineSpacing + lineHeight;
     });
 
     // Draw Correction
     const correctionLabel = !windows[0].correcao
       ? 'Medidas facultadas pelo cliente'
       : 'Com correção de medidas';
-    page.drawText(`Correção: ${correctionLabel}`, { x, y, size: 8, fontBold });
+    page.drawText('Correção:', { x, y, size: 8, font: fontBold });
+    page.drawText(correctionLabel, {
+      x: x + fontBold.widthOfTextAtSize('Correção:', 8) + 2,
+      y,
+      size: 8,
+      font: fontReg,
+    });
     const correctionPrice = windows[0].correcao ? 30 : 0;
     total += correctionPrice;
     page.drawText(`${correctionPrice.toFixed(2)}€`, { x: rightMargin - 100, y, size: 8, fontReg });
     y -= lineHeight * 2;
+
+    // Draw horizontal line
+    y -= lineSpacing;
+    page.drawLine({
+      start: { x: x, y: y },
+      end: { x: rightMargin, y: y },
+      thickness: 0.5,
+      color: rgb(0, 0, 0),
+    });
+    y -= lineSpacing + lineHeight;
 
     // Draw Total
     page.drawText('Total:', { x: rightMargin - 150, y, size: 12, fontBold });
@@ -1702,12 +1625,14 @@ window.Webflow.push(() => {
       fontReg,
     });
 
+    y -= lineSpacing;
     page.drawLine({
       start: { x: x, y: footerY - 4 * lineHeight },
       end: { x: rightMargin, y: footerY - 4 * lineHeight },
       thickness: 0.5,
       color: rgb(0, 0, 0),
     });
+    y -= lineSpacing + lineHeight;
 
     const footerText = 'www.fabricstore.pt';
     const paginationText = 'Pag. 1 de 1';
@@ -2247,13 +2172,13 @@ window.Webflow.push(() => {
       selectorValues.contacto = contactoSwitch.checked;
       const pdfBytes = await generateAndDownloadPdfLIB(); // base64 -> data:application/pdf;base64,JVBERi0xLjMKJbrfrOAKM   to remove metadata pdfbytes.split(',')[1]
       const txtBytes = await generateTxt();
-      await sendQuoteEmail(
-        selectorValues.nome,
-        selectorValues.email,
-        selectorValues.contacto,
-        pdfBytes,
-        txtBytes
-      );
+      // await sendQuoteEmail(
+      //   selectorValues.nome,
+      //   selectorValues.email,
+      //   selectorValues.contacto,
+      //   pdfBytes,
+      //   txtBytes
+      // );
     });
   };
 
