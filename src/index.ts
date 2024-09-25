@@ -1356,7 +1356,7 @@ window.Webflow.push(() => {
   const generateAndDownloadPdfLIB = async () => {
     const { PDFDocument, rgb } = PDFLib;
     const pdfDoc = await PDFDocument.create();
-    const page = pdfDoc.addPage([595.28, 841.89]); // A4 page size (in points)
+    let page = pdfDoc.addPage([595.28, 841.89]); // A4 page size (in points)
     let y = 800; // Start at the top
     const x = 50; // Left margin
     const rightMargin = 520; // Right margin
@@ -1487,6 +1487,7 @@ window.Webflow.push(() => {
       if (y < 100) {
         // Add new page when reaching the end
         const newPage = pdfDoc.addPage([595.28, 841.89]);
+        page = newPage;
         y = 800;
       }
 
@@ -1512,35 +1513,60 @@ window.Webflow.push(() => {
       });
       y -= lineHeight;
 
-      // Create priced items with their respective subitems
-      const items = [
-        {
-          label: `Cortinado`,
-          price: tecido,
-          subItems: [
-            { label: `Tipo de tecido: ${window2.tecido}` },
-            { label: `Modelo de Cortina: ${window2.tipo}` },
-            {
-              label: `Baínha de chumbo: ${
-                window2.tecido.startsWith('9') ? 'Incluída' : window2.bainha ? 'Sim' : 'Não'
-              }`,
-            },
-          ],
-        },
-        {
-          label: `Calha`,
-          price: calha,
-          subItems: [
-            { label: `Modelo de calha: ${window2.tipo}` },
-            { label: `Suporte da calha: ${window2.suporte}` },
-          ],
-        },
-        {
-          label: `Instalação`,
-          price: instalacao,
-          subItems: [],
-        },
-      ];
+      let items = [];
+      if (window2.inicio === 'Cortina') {
+        // Create priced items with their respective subitems
+        items = [
+          {
+            label: `Cortinado`,
+            price: tecido,
+            subItems: [
+              { label: `Tipo de tecido: ${window2.tecido}` },
+              { label: `Modelo de Cortina: ${window2.tipo}` },
+              {
+                label: `Baínha de chumbo: ${
+                  window2.tecido.startsWith('9') ? 'Incluída' : window2.bainha ? 'Sim' : 'Não'
+                }`,
+              },
+            ],
+          },
+          {
+            label: `Calha`,
+            price: calha,
+            subItems: [
+              { label: `Modelo de calha: ${window2.tipo}` },
+              { label: `Suporte da calha: ${window2.suporte}` },
+            ],
+          },
+          {
+            label: `Instalação`,
+            price: instalacao,
+            subItems: [],
+          },
+        ];
+      }
+      if (window2.inicio === 'Estore') {
+        // Create priced items with their respective subitems
+        items = [
+          {
+            label: `Estore`,
+            price: tecido,
+            subItems: [
+              { label: `Modelo de Estore: ${window2.tecido}` },
+              {
+                label: `Baínha de chumbo: ${
+                  window2.tecido.startsWith('9') ? 'Incluída' : window2.bainha ? 'Sim' : 'Não'
+                }`,
+              },
+            ],
+          },
+          {
+            label: `Instalação`,
+            price: instalacao,
+            subItems: [],
+          },
+        ];
+      }
 
       items.forEach((item) => {
         // Draw the main item label in bold
@@ -1649,7 +1675,10 @@ window.Webflow.push(() => {
     y -= lineSpacing + lineHeight;
 
     const footerText = 'www.fabricstore.pt';
-    const paginationText = 'Pag. 1 de 1';
+    const totalPages = pdfDoc.getPageCount();
+    const pages = pdfDoc.getPages();
+    const currentPageNumber = pages.indexOf(page) + 1;
+    const paginationText = `Pag. ${currentPageNumber} de ${totalPages}`;
     const paginationWidth = fontReg.widthOfTextAtSize(paginationText, 8);
     const paginationCenterX = (page.getWidth() - paginationWidth) / 2;
 
