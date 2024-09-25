@@ -1,22 +1,2319 @@
-"use strict";(()=>{window.Webflow||(window.Webflow=[]);window.Webflow.push(()=>{let it="https://cdn.prod.website-files.com/66aadbd497db3d8c63799460/66eb5ac454e950633d646ea2_testlogo.jpg",z={},ha={Branco:"B",Inox:"I",Bronze:"BZ",Preto:"P",Nogueira:"N",Chumbo:"CH"},T={estores:{width:[80,90,100,110,120,130,140,150,160,170,180,190,200,210,220,230,240,250,260,270,280,290,300],height:[80,100,120,140,160,180,200,220,240,260,280,300,320]},calhas:{"5000-B":[120,140,160,180,200,220,240,260,300,320,340,360,400,440,500,600],"5000-I":[120,140,160,180,200,220,240,260,300,320,340,360,400,440,500,600],"5000-BZ":[120,140,160,180,200,220,240,260,300,320,340,360,400,440,500,600],"5000-P":[120,140,160,180,200,220,240,260,300,320,340,360,400,440,500,600],"5000-N":[120,140,160,180,200,220,240,260,300,320,340,360,400,440,500,600],"5000-CH":[120,140,160,180,200,220,240,260,300,350,400,450,500],"1500-B":[120,140,160,180,200,220,240,260,300,320,340,360,400,440,500,600],"1500-I":[120,140,160,180,200,220,240,260,300,320,340,360,400,440,500,600],"1500-BZ":[120,140,160,180,200,220,240,260,300,320,340,360,400,440,500,600],"1500-P":[120,140,160,180,200,220,240,260,300,320,340,360,400,440,500,600],"1500-N":[120,140,160,180,200,220,240,260,300,320,340,360,400,440,500,600],"1500-CH":[120,140,160,180,200,220,240,260,300,350,400,450,500],"9500M":[150,200,250,300,350,400,450,500,600,650,700,750,800,850,900,1e3,1200],KS:[160,200,240,300,400,500,600],"DSXL-B":[160,200,240,300,400,600],"DSXL-CZ":[160,200,240,300,400,600],"DSXL-P":[160,200,240,300,400,600]}},ue=[],h=[],y="inicio",d={inicio:"",tecido:"",tipo:"",bainha:"",medidas:"",correcao:"",calha:"",suporte:"",instalacao:"",nome:"",email:"",contacto:""},g={usedWidths:[{name:"Franzido",widthRatio:2.5},{name:"Ondas",widthRatio:2.7},{name:"Macho Juntos",widthRatio:3},{name:"Pregas",widthRatio:2.5}],manufacturingPrices:[{name:"Franzido",blackout:9,normal:8,alinhado:8},{name:"Ondas",blackout:8.5,normal:7.5,alinhado:7.5},{name:"Macho Juntos",normal:12.5,blackout:13.5,alinhado:12.5},{name:"Pregas",normal:12.5,blackout:13.5,alinhado:12.5}],bainhaPrice:{price:3.5,widthMargin:20},uniao:{maxLength:400,price:8.6,calha9500M:15},prolongadores:3.7,roletesPrice:5,minWindowWidthEstores:80,maxWindowWidthEstores:300,minWindowHeightEstores:80,maxWindowHeightEstores:300,maxWindowWidth:650,maxWindowHeight:280,maxCalhaWidth:600,measuresCheckPrice:30,instalation:[{maxWidth:300,price:35},{maxWidth:400,price:40},{maxWidth:500,price:45},{maxWidth:600,price:50},{maxWidth:650,price:55}]},L=!0,Ie=document.getElementById("sim-container"),me=document.getElementById("steps-cortina"),pe=document.getElementById("steps-estore"),u={step1:document.getElementById("simulator-heading-1"),step1i:document.getElementById("inicio-description"),step1c:document.getElementById("inicio-description-c"),step1e:document.getElementById("inicio-description-e"),step2:document.getElementById("simulator-heading-2"),step2t:document.getElementById("tipo-description"),step2b:document.getElementById("bainha-description"),step3:document.getElementById("simulator-heading-3"),step3m:document.getElementById("medidas-description"),step3c:document.getElementById("correcao-description"),step4:document.getElementById("simulator-heading-4"),step4c:document.getElementById("calha-description"),step4s:document.getElementById("suporte-description"),step5:document.getElementById("simulator-heading-5"),step5i:document.getElementById("instalacao-description")},n={inicio:document.getElementById("inicio-selector"),tecido:document.getElementById("tecido-selector"),tipo:document.getElementById("tipo-selector"),bainha:document.getElementById("bainha-selector"),medidas:document.getElementById("medidas-selector"),correcao:document.getElementById("correcao-selector"),suporte:document.getElementById("suporte-selector"),instalacao:document.getElementById("instalacao-selector")},ke=document.getElementById("largura-input-descr-c"),Le=document.getElementById("altura-input-descr-c"),Pe=document.getElementById("largura-input-descr-e"),We=document.getElementById("altura-input-descr-e"),I=document.getElementById("largura-input"),k=document.getElementById("altura-input"),U=document.querySelector("#correcao-switch"),oe=document.querySelector("#bainha"),j=document.getElementById("tecto-radio-btn"),_=document.getElementById("parede-radio-btn"),J=document.querySelector("#instalacao-switch"),M=document.getElementById("largura-min-error-estore"),V=document.getElementById("altura-min-error-estore"),Y=document.getElementById("largura-max-error-estore"),w=document.getElementById("altura-max-error-estore"),G=document.getElementById("largura-error"),K=document.getElementById("altura-error"),Z=document.getElementById("seguinte-btn"),m={tecido:document.getElementById("step-tecido"),tipo:document.getElementById("step-tipo"),medidas:document.getElementById("step-medidas"),calha:document.getElementById("step-calha"),instalacao:document.getElementById("step-instalacao"),medidasEstore:document.getElementById("step-medidas-estore"),instalacaoEstore:document.getElementById("step-instalacao-estore")},se=document.getElementById("form"),Q=document.getElementById("nome-input"),ee=document.getElementById("email-input"),nt=document.getElementById("contacto-switch"),Se=document.getElementById("checkout-container"),ct=document.getElementById("new-window-contain"),rt=document.getElementById("checkout-input-contain"),$e=document.getElementById("checkout-info-estore"),Te=document.getElementById("checkout-info-cortina"),lt=document.getElementById("new-window-btn"),dt=document.getElementById("no-window-btn"),te=document.getElementById("enviar-btn"),Oe=document.getElementById("enviar-btn-contain"),W={tecido:document.getElementById("checkout-tecido"),tipo:document.getElementById("checkout-tipo"),bainha:document.getElementById("checkout-bainha"),largura:document.getElementById("checkout-largura"),altura:document.getElementById("checkout-altura"),correcao:document.getElementById("checkout-correcao"),calha:document.getElementById("checkout-calha"),suporte:document.getElementById("checkout-suporte"),instalacao:document.getElementById("checkout-instalacao"),estoreProduto:document.getElementById("checkout-produto-estore"),estoreLargura:document.getElementById("checkout-largura-estore"),estoreAltura:document.getElementById("checkout-altura-estore"),estoreCorrecao:document.getElementById("checkout-correcao-estore"),estoreInstalacao:document.getElementById("checkout-instalacao-estore")},fa=document.getElementById("feedback-div"),R=document.getElementById("name-error"),N=document.getElementById("email-error"),Fe=document.getElementById("contacto-switch-error"),ut=document.getElementById("cortina-radio-btn"),mt=document.getElementById("estore-radio-btn"),pt=document.getElementById("calha-radio-btn"),ht=()=>{Zt(),zt(),Xt(),Vt(),Rt(),Ut(),jt(),Mt(),wt(),Gt(),Kt(),Yt(),Jt(),qt(),Ht(),ea()},ft=()=>{gt(),ht()},yt=e=>{let t=0,o=0,a="",s=e.tecido.split("-"),l=s[0],r=s[1],c=e.calha?e.calha.split("-"):null,x=c?c[0]:null,b=c?c[1]:null,p=e.medidas?e.medidas.split(" X ")[0]:0;if(e.inicio==="Cortina"&&(a=`${l}${r}`),e.inicio==="Estore"){let ce=e.medidas?e.medidas.split(" X ")[1]:0;a=Ct(l,r,p,ce)}if(t=typeof z[a].price=="string"?parseFloat(z[a].price):z[a].price,e.inicio==="Estore")return{product:t,calha:0};let P=(p/g.maxCalhaWidth|0)+1,X=p<=g.maxCalhaWidth?p:p/P,A=Bt(x,e.tipo,b,X,e?.suporte==="Parede");return o=z[A]?p<g.maxCalhaWidth?z[A].price:z[A].price*P:0,o+=p>g.maxCalhaWidth?g.prolongadores*P:p>g.uniao.maxLength&&e.calha.startsWith("9500M")?g.uniao.calha9500M*P:p>g.uniao.maxLength?g.uniao.price*P:0,(A.startsWith("5000")||A.startsWith("1500"))&&(o+=p<g.maxCalhaWidth?g.roletesPrice:g.roletesPrice*P),{product:t,calha:o}},gt=()=>{fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vRnpR16s-LlJCttzFQBqDmgLYSIGtTKbBKbDGUXfvjwGHR2W3u66qn4TV8DkHr2280Oru6V4QVgFYJV/pub?output=csv").then(e=>e.text()).then(e=>{let t=e.trim().split(`
-`),o=t[0].split(","),a=t.slice(1).map(l=>l.split(",")),s={};a.forEach(l=>{let[r,c]=l;s[r]||(s[r]={id:r,price:parseFloat(c)})}),z=s}).catch(e=>console.error("Error fetching CSV data:",e))},E=(e,t)=>{d[e.id.split("-")[0]]=t},he=e=>{d.calha=e},_e=e=>{d.suporte=_.checked?"Parede":"Tecto"},Et=()=>{d.inicio="",d.tecido="",d.tipo="",d.bainha="",d.medidas="",d.correcao="",d.calha="",d.suporte="",d.instalacao=""},xt=e=>{e.inicio==="Cortina"&&(E(n.inicio,"Cortina"),E(n.tecido,e.tecido),E(n.tipo,e.tipo),E(n.bainha,e.bainha),E(n.medidas,e.medidas),E(n.correcao,e.correcao),E(n.suporte,e.suporte),E(n.instalacao,e.instalacao)),e.inicio==="Estore"&&(E(n.inicio,"Estore"),E(n.tecido,e.tecido),E(n.medidas,e.medidas),E(n.correcao,e.correcao),E(n.instalacao,e.instalacao))},fe=()=>{let e={inicio:d.inicio,bainha:d.bainha,tecido:d.tecido,tipo:d.tipo,medidas:d.medidas,correcao:d.correcao,calha:d.calha,suporte:d.suporte,instalacao:d.instalacao};h.push(e),L=!1},bt=()=>{O("Cortina"),Et(),kt(),Me(),Xe("inicio"),L=!0},B=()=>{switch(y){case"inicio":return d.inicio===""?(f(!1),!1):(f(!0),!0);case"tecido":return d.tecido===""?(f(!1),!1):(f(!0),!0);case"tipo":return d.tipo===""?(f(!1),!1):(f(!0),!0);case"medidas":return I?.value===""||k?.value===""?(f(!1),!1):d.inicio==="Cortina"?parseInt(I?.value)>g.maxWindowWidth||parseInt(k?.value)>g.maxWindowHeight?(parseInt(I?.value)>g.maxWindowWidth?G.style.display="block":G.style.display="none",parseInt(k?.value)>g.maxWindowHeight?K.style.display="block":K.style.display="none",f(!1),!1):(G.style.display="none",K.style.display="none",M.style.display="none",V.style.display="none",Y.style.display="none",w.style.display="none",f(!0),!0):d.inicio==="Estore"?parseInt(I?.value)<g.minWindowWidthEstores||parseInt(k?.value)<g.minWindowHeightEstores?(parseInt(I?.value)<g.minWindowWidthEstores?M.style.display="block":M.style.display="none",parseInt(k?.value)<g.minWindowHeightEstores?V.style.display="block":V.style.display="none",f(!1),!1):parseInt(I?.value)>g.maxWindowWidthEstores||parseInt(k?.value)>g.maxWindowHeightEstores?(M.style.display="none",V.style.display="none",parseInt(I?.value)>g.maxWindowWidthEstores?Y.style.display="block":Y.style.display="none",parseInt(k?.value)>g.maxWindowHeightEstores?w.style.display="block":w.style.display="none",f(!1),!1):(G.style.display="none",K.style.display="none",M.style.display="none",V.style.display="none",Y.style.display="none",w.style.display="none",f(!0),!0):(G.style.display="none",K.style.display="none",M.style.display="none",V.style.display="none",Y.style.display="none",w.style.display="none",f(!0),!0);case"calha":return d.calha===""?(f(!1),!1):(f(!0),!0);case"suporte":return d.suporte===""?(f(!1),!1):(f(!0),!0)}return f(!0),!0},Ct=(e,t,o,a)=>{let s=T.estores.width.find(r=>r>=o),l=T.estores.height.find(r=>r>=a);return`${e}${l}${s}`},Bt=(e,t,o,a,s)=>{if(e==="KS"){if(s){let c=T.calhas[e]?.find(x=>x>=a);return`${e}${t==="Franzido"?"F":"O"}${c}SP`}let r=T.calhas[e]?.find(c=>c>=a);return`${e}${t==="Franzido"?"F":"O"}${r}`}if(e==="DSXL"){if(s){let c=T.calhas[`${e}-${o}`]?.find(x=>x>=a);return`${e}${t==="Franzido"?"F":"O"}${c}${o}SP`}let r=T.calhas[`${e}-${o}`]?.find(c=>c>=a);return`${e}${t==="Franzido"?"F":"O"}${r}${o}`}if(e==="9500M"){if(s){let c=T.calhas[e].find(x=>x>=a);return`${e}${c}SP`}let r=T.calhas[e].find(c=>c>=a);return`${e}${r}`}if(s){let r=T.calhas[`${e}-${o}`].find(c=>c>=a);return`${e}${r}${o}SP`}let l=T.calhas[`${e}-${o}`].find(r=>r>=a);return`${e}${l}${o}`},vt=e=>{let t=e.getElementsByClassName("color_name");return t.length>0?t[0].textContent:null},Ne=e=>{let t=e.getElementsByClassName("product_name");return t.length>0?t[0].textContent:null},It=e=>{switch(e){case"tecido":case"inicio":return"step1";case"tipo":case"bainha":return"step2";case"medidas":case"correcao":return"step3";case"calha":return"step4";case"instalacao":return"step5"}},O=e=>{e==="Estore"&&mt?.click(),e==="Cortina"&&ut?.click(),e==="Calha"&&pt?.click()},kt=()=>{let e=document.querySelectorAll("[id^='inicio-card']"),t=document.querySelectorAll("[id^='tipo-card']"),o=document.querySelectorAll("[id^='tecido-card']"),a=document.querySelectorAll(".tecido_color");e.forEach(s=>{F(s)}),t.forEach(s=>{F(s)}),o.forEach(s=>{F(s)}),a.forEach(s=>{Ee(s)}),I.value="",k.value="",U.checked=!1,J.checked=!1,_?.click(),oe.checked=!1},Ae=e=>{document.querySelectorAll("[id^='inicio-card']").forEach(o=>{o.getElementsByTagName("h1")[0].textContent===e?q(o):F(o)})},ye=e=>{document.querySelectorAll("[id^='tecido-card']").forEach(o=>{Ne(o).startsWith(e)?q(o):F(o)})},Lt=e=>{document.querySelectorAll("[id^='tipo-card']").forEach(o=>{o.getElementsByTagName("h1")[0].textContent===e?q(o):F(o)})},Pt=e=>{e==="Parede"?_.click():j.click()},Wt=()=>{j.checked=!1,_.checked=!1},ie=()=>{let e=document.querySelector("#checkout-window-btn"),t=document.getElementById("window-btns-container");if(h.length===1&&(h[0].button=e,Ve(h[0])),h.length>1&&e){let o=e.cloneNode(!0);o.querySelector(".checkout_info_title").textContent=`Janela ${h.length}`,h[h.length-1].button=o,Ve(h[h.length-1]),t?.appendChild(o)}},St=e=>{e.inicio==="Cortina"&&(Ae(e.inicio),ye(e.tecido),Lt(e.tipo),oe.checked=e.bainha,I.value=e.medidas.split(" X ")[0],k.value=e.medidas.split(" X ")[1],U.checked=e.correcao,Pt(e.suporte),J.checked=e.instalacao),e.inicio==="Estore"&&(Ae(e.inicio),ye(e.tecido),I.value=e.medidas.split(" X ")[0],k.value=e.medidas.split(" X ")[1],U.checked=e.correcao,J.checked=e.instalacao)},C=e=>{e==="inicio"&&(u.step1i.style.display="flex",u.step1c.style.display="none",u.step1e.style.display="none"),e==="tecido"&&d.inicio==="Cortina"&&(u.step1i.style.display="none",u.step1c.style.display="flex",u.step1e.style.display="none"),e==="tecido"&&d.inicio==="Estore"&&(u.step1i.style.display="none",u.step1c.style.display="none",u.step1e.style.display="flex"),e==="tipo"&&(u.step2t.style.display="flex",u.step2b.style.display="none"),e==="bainha"&&(u.step2t.style.display="none",u.step2b.style.display="flex"),e==="medidas"&&(u.step3m.style.display="flex",u.step3c.style.display="none"),e==="correcao"&&(u.step3m.style.display="none",u.step3c.style.display="flex"),e==="calha"&&(u.step4c.style.display="flex",u.step4s.style.display="none"),e==="suporte"&&(u.step4c.style.display="none",u.step4s.style.display="flex"),e==="instalacao"&&(u.step5.style.display="flex")},$t=e=>{if((e==="largura"||e==="altura")&&(e="medidas"),e===y)return;let t=!1;if((e==="estoreLargura"||e==="estoreAltura"||e==="estoreCorrecao"||e==="estoreInstalacao"||e==="estoreProduto"||e==="medidasEstore"||d.inicio==="Estore")&&(t=!0),(e==="largura"||e==="altura"||e==="estoreLargura"||e==="estoreAltura"||e==="medidasEstore")&&(e="medidas"),e==="estoreCorrecao"&&(e="correcao"),e==="estoreInstalacao"&&(e="instalacao"),e==="estoreProduto"&&(e="tecido"),m[e].classList.contains("done")){switch(Dt(y),i(u[It(y)],!1),i(y==="calha"?n.tecido:n[y],!1),C(e),e){case"tecido":O(t?"Estore":"Cortina"),i(u.step1,!0),i(n.tecido,!0);break;case"tipo":i(u.step2,!0),i(n.tipo,!0);break;case"medidas":i(u.step3,!0),i(n.medidas,!0);break;case"calha":O("calha"),i(u.step4,!0),i(n.tecido,!0);break;case"instalacao":i(u.step5,!0),i(n.instalacao,!0);break}y=e,B(),S(e)}},De=()=>{d.inicio==="Cortina"&&(ke.style.display="block",Le.style.display="block",Pe.style.display="none",We.style.display="none"),d.inicio==="Estore"&&(ke.style.display="none",Le.style.display="none",Pe.style.display="block",We.style.display="block")},Tt=()=>{if(d.inicio==="Cortina")switch(y){case"inicio":B()&&(H("Cortina"),i(n.inicio,!1),C("tecido"),L&&f(!1),i(n.tecido,!0),y="tecido");break;case"tecido":B()&&(C("tecido"),v("tecido"),S("tipo"),i(u.step1,!1),L&&f(!1),i(n.tecido,!1),C("tipo"),i(u.step2,!0),i(n.tipo,!0),De(),y="tipo");break;case"tipo":B()&&(i(n.tipo,!1),d.tecido.startsWith("9")?(E(n.bainha,!0),L&&f(!1),v("tipo"),S("medidas"),i(u.step2,!1),C("medidas"),i(u.step3,!0),i(n.medidas,!0),y="medidas"):(C("bainha"),i(n.bainha,!0),y="bainha"));break;case"bainha":E(n.bainha,`${d.tecido.startsWith("9")?!0:d.bainha?d.bainha:!1}`),v("tipo"),S("medidas"),i(u.step2,!1),i(n.bainha,!1),L&&f(!1),C("medidas"),i(u.step3,!0),i(n.medidas,!0),y="medidas";break;case"medidas":B()&&(E(n.medidas,`${I?.value} X ${k?.value}`),i(n.medidas,!1),h.length>0?(L&&f(!1),O("Calha"),v("medidas"),S("calha"),i(u.step3,!1),C("calha"),i(u.step4,!0),i(n.tecido,!0),y="calha"):(C("correcao"),i(n.correcao,!0),y="correcao"));break;case"correcao":O("Calha"),v("medidas"),S("calha"),i(u.step3,!1),i(n.correcao,!1),L&&f(!1),C("calha"),i(u.step4,!0),i(n.tecido,!0),y="calha";break;case"calha":B()&&(i(n.tecido,!1),L&&f(!1),Wt(),C("suporte"),i(n.suporte,!0),y="suporte");break;case"suporte":E(n.suporte,_?.checked?"Parede":"Tecto"),B()&&(v("calha"),S("instalacao"),i(u.step4,!1),i(n.suporte,!1),C("instalacao"),h.length>0?(L&&(fe(),ie()),ne()):(i(u.step5,!0),i(n.instalacao,!0),y="instalacao"));break;case"instalacao":v("instalacao"),i(u.step5,!1),i(n.instalacao,!1),L&&(fe(),ie()),ne();break}else switch(y){case"inicio":B()&&(H("Estore"),i(n.inicio,!1),C("tecido"),L&&f(!1),i(n.tecido,!0),y="tecido");break;case"tecido":B()&&(v("tecido"),S("medidas"),i(u.step1,!1),i(n.tecido,!1),De(),L&&f(!1),C("medidas"),i(u.step3,!0),i(n.medidas,!0),y="medidas");break;case"medidas":B()&&(i(n.medidas,!1),h.length>0?(v("medidas"),S("instalacao"),i(u.step3,!1),C("instalacao"),i(u.step5,!0),i(n.instalacao,!0),y="instalacao"):(C("correcao"),i(n.correcao,!0),y="correcao"));break;case"correcao":v("medidas"),S("instalacao"),i(u.step3,!1),i(n.correcao,!1),h.length>0?(ie(),ne()):(i(u.step5,!0),i(n.instalacao,!0),y="instalacao");break;case"instalacao":v("instalacao"),i(u.step5,!1),i(n.instalacao,!1),L&&(fe(),ie()),ne();break}},ne=()=>{Ie.style.display="none",ze(h[h.length-1]),H(),Se.style.display="flex"},Ot=e=>{e.inicio==="Cortina"&&($e.style.display="none",Te.style.display="flex",W.tecido.textContent=e.tecido,W.tipo.textContent=e.tipo,W.bainha.textContent=e.tipo==="Ondas"||e.tipo==="Franzido"?"Ba\xEDnha de Chumbo inclu\xEDda":e.bainha?"Com Ba\xEDnha de Chumbo":"Sem Ba\xEDnha de Chumbo",W.largura.textContent=e.medidas.split(" X ")[0]+"cm Largura",W.altura.textContent=e.medidas.split(" X ")[1]+"cm Altura",W.correcao.textContent=h[0].correcao?"Com Verifica\xE7\xE3o":"Sem Verifica\xE7\xE3o",W.calha.textContent=e.calha,W.suporte.textContent="Suporte de "+e.suporte,W.instalacao.textContent=h[0].instalacao?"Com Instala\xE7\xE3o":"Sem Instala\xE7\xE3o"),e.inicio==="Estore"&&($e.style.display="flex",Te.style.display="none",W.estoreProduto.textContent=e.tecido,W.estoreLargura.textContent=e.medidas.split(" X ")[0]+"cm",W.estoreAltura.textContent=e.medidas.split(" X ")[1]+"cm",W.estoreCorrecao.textContent=h[0].correcao?"Com Verifica\xE7\xE3o":"Sem Verifica\xE7\xE3o",W.estoreInstalacao.textContent=h[0].instalacao?"Com Instala\xE7\xE3o":"Sem Instala\xE7\xE3o")},Ft=e=>{e.inicio==="Cortina"&&(v("tecido"),v("tipo"),v("medidas"),v("calha"),v("instalacao")),e.inicio==="Estore"&&(v("tecido"),v("medidas"),v("instalacao"))},ze=e=>{h.forEach(t=>{t.button&&t.button.classList.remove("active")}),e.button.classList.add("active"),Ot(e),St(e),xt(e),Ft(e)},Xe=e=>{Se.style.display="none",L&&Me(),H(),Ie.style.display="flex";let t=!1;switch((e==="estoreLargura"||e==="estoreAltura"||e==="estoreCorrecao"||e==="estoreInstalacao"||e==="estoreProduto"||d.inicio==="Estore")&&(t=!0),(e==="largura"||e==="altura"||e==="estoreLargura"||e==="estoreAltura")&&(e="medidas"),(e==="estoreCorrecao"||e==="correcao")&&(e="medidas"),(e==="estoreInstalacao"||e==="instalacao")&&(e="instalacao"),e==="estoreProduto"&&(e="tecido"),H(t?"Estore":"Cortina"),e){case"inicio":C("inicio"),i(u.step1,!0),i(n.inicio,!0);break;case"tecido":O(t?"Estore":"Cortina"),ye(d.tecido),C("tecido"),i(u.step1,!0),i(n.tecido,!0);break;case"tipo":C("tipo"),i(u.step2,!0),i(n.tipo,!0);break;case"medidas":C("medidas"),i(u.step3,!0),i(n.medidas,!0);break;case"calha":O("Calha"),C("calha"),i(u.step4,!0),i(n.tecido,!0);break;case"suporte":C("suporte"),i(u.step4,!0),i(n.suporte,!0);break;case"instalacao":C("instalacao"),i(u.step5,!0),i(n.instalacao,!0);break}if(y=e,y==="inicio")return S("tecido");t&&((e==="medidas"||e==="correcao")&&S("medidasEstore"),e==="instalacao"&&S("instalacaoEstore")),L=!1,S(e)},ya=async e=>{let t=Buffer.from(e,"base64"),a=await(await PDFDocument.load(t)).save();return Buffer.from(a).toString("base64")},ga=async e=>await(await fetch(e)).arrayBuffer(),_t=async()=>{let{PDFDocument:e,rgb:t}=PDFLib,o=await e.create(),a=o.addPage([595.28,841.89]),s=800,l=50,r=520,c=12,x=0,b=await o.embedFont(PDFLib.StandardFonts.Helvetica),p=await o.embedFont(PDFLib.StandardFonts.HelveticaBold),P=s,X=null;try{X=await At(it);let $=await fetch(X).then(st=>st.arrayBuffer()),re=await o.embedPng($),{width:Ce,height:Be}=re.scale(1),ae=100,ve=Be/Ce*ae,le=(a.getWidth()-ae)/2;a.drawImage(re,{x:le,y:P-10,width:ae,height:ve})}catch($){console.error("Error loading logo:",$)}let A="Cliente:",ce="Data:",Ke="Email:",Ze=new Date().toLocaleDateString(),sa=p.widthOfTextAtSize(A,8),Qe=p.widthOfTextAtSize(ce,8),ia=p.widthOfTextAtSize(Ke,8),na=b.widthOfTextAtSize(Ze,8);a.drawText(A,{x:l,y:P,size:8,font:p}),a.drawText(`${d.nome}`,{x:l+sa+2,y:P,size:8,font:b});let ca=Qe+na+2,et=r-ca;a.drawText(ce,{x:et,y:P,size:8,font:p}),a.drawText(Ze,{x:et+Qe+2,y:P,size:8,font:b});let xe=P-c;a.drawText(Ke,{x:l,y:xe,size:8,font:p}),a.drawText(`${d.email}`,{x:l+ia+2,y:xe,size:8,font:b}),s=xe-c*2,a.drawLine({start:{x:l,y:s},end:{x:r,y:s},thickness:.5,color:t(0,0,0)}),s-=c,a.drawText("Descri\xE7\xE3o",{x:l,y:s,size:8,fontBold:p}),a.drawText("Pre\xE7o",{x:r-100,y:s,size:8,fontBold:p}),s-=c,a.drawLine({start:{x:l,y:s},end:{x:r,y:s},thickness:.5,color:t(0,0,0)}),s-=c,h.forEach(($,re)=>{if(s<100){let de=o.addPage([595.28,841.89]);s=800}let{usedWidth:Ce,tecido:Be,calha:ae,instalacao:ve,total:le}=Je($);x+=le,a.drawText(`Janela ${re+1} - ${$.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(Ce).toFixed(2))} CM)`,{x:l,y:s,size:8,fontBold:p}),s-=c,[{label:"Tecido",price:Be,subItems:[{label:`Modelo: ${$.tecido}`},{label:`Tipo de Cortina: ${$.tipo}`},{label:`Ba\xEDnha: ${$.tecido.startsWith("9")?"Inclu\xEDda":$.bainha?"Sim":"N\xE3o"}`}]},{label:"Calha",price:ae,subItems:[{label:`Suporte: Suporte de ${$.suporte}`}]},{label:"Instala\xE7\xE3o",price:ve,subItems:[]}].forEach(de=>{a.drawText(`  - ${de.label}`,{x:l,y:s,size:8,font:p}),a.drawText(`${de.price.toFixed(2)}\u20AC`,{x:r-100,y:s,size:8,fontReg:b}),s-=c,de.subItems.forEach(pa=>{a.drawText(`      \u2022 ${pa.label}`,{x:l+20,y:s,size:8,font:b}),s-=c}),s-=c}),a.drawText("Total",{x:l,y:s,size:10,font:p}),a.drawText(`${le.toFixed(2)}\u20AC`,{x:r-100,y:s,size:10,fontReg:b}),s-=c,a.drawLine({start:{x:l,y:s},end:{x:r,y:s},thickness:.5,color:t(0,0,0)}),s-=c});let ra=h[0].correcao?"Com corre\xE7\xE3o de medidas":"Medidas facultadas pelo cliente";a.drawText(`Corre\xE7\xE3o: ${ra}`,{x:l,y:s,size:8,fontBold:p});let tt=h[0].correcao?30:0;x+=tt,a.drawText(`${tt.toFixed(2)}\u20AC`,{x:r-100,y:s,size:8,fontReg:b}),s-=c*2,a.drawText("Total:",{x:r-150,y:s,size:12,fontBold:p}),a.drawText(`${x.toFixed(2)}\u20AC`,{x:r-100,y:s,size:12,fontBold:p}),s-=c*4;let D=100;a.drawText("Valores com IVA incluido \xE0 taxa em vigor. Or\xE7amento v\xE1lido por 15 dias.",{x:l,y:D,size:8,fontReg:b}),a.drawText("Calhas j\xE1 incluem os rod\xEDzios e suportes necess\xE1rios para as medidas selecionadas.",{x:l,y:D-c,size:8,fontReg:b}),a.drawText("Valor referente \xE0 instala\xE7\xE3o e Rectifica\xE7\xE3o de Medidas sujeito a valida\xE7\xE3o do c\xF3digo postal.",{x:l,y:D-2*c,size:8,fontReg:b}),a.drawText("IBAN: PT50 0000 0000 0000 0000 0",{x:l,y:D-3*c,size:8,fontReg:b}),a.drawLine({start:{x:l,y:D-4*c},end:{x:r,y:D-4*c},thickness:.5,color:t(0,0,0)});let la="www.fabricstore.pt",at="Pag. 1 de 1",da=b.widthOfTextAtSize(at,8),ua=(a.getWidth()-da)/2;a.drawText(la,{x:l,y:D-5*c,size:10,fontReg:b}),a.drawText(at,{x:ua,y:D-5*c,size:8,fontReg:b});let ma=await o.save(),ot=new Blob([ma],{type:"application/pdf"}),be=document.createElement("a");return be.href=URL.createObjectURL(ot),be.download="Orcamento_Fabric-Store.pdf",be.click(),ot},Nt=async()=>{let e=0,t="";t+=`Data: ${new Date().toLocaleDateString()}
+"use strict";
+(() => {
+  // bin/live-reload.js
+  new EventSource(`${"http://localhost:3000"}/esbuild`).addEventListener("change", () => location.reload());
 
-`,t+=`Cliente: ${d.nome}
+  // src/index.ts
+  window.Webflow ||= [];
+  window.Webflow.push(() => {
+    const logoUrl = "https://cdn.prod.website-files.com/66aadbd497db3d8c63799460/66eb5ac454e950633d646ea2_testlogo.jpg";
+    let productsData = {};
+    const calhaColors = {
+      Branco: "B",
+      Inox: "I",
+      Bronze: "BZ",
+      Preto: "P",
+      Nogueira: "N",
+      Chumbo: "CH"
+    };
+    const productSizes = {
+      estores: {
+        width: [
+          80,
+          90,
+          100,
+          110,
+          120,
+          130,
+          140,
+          150,
+          160,
+          170,
+          180,
+          190,
+          200,
+          210,
+          220,
+          230,
+          240,
+          250,
+          260,
+          270,
+          280,
+          290,
+          300
+        ],
+        height: [80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320]
+      },
+      calhas: {
+        "5000-B": [120, 140, 160, 180, 200, 220, 240, 260, 300, 320, 340, 360, 400, 440, 500, 600],
+        "5000-I": [120, 140, 160, 180, 200, 220, 240, 260, 300, 320, 340, 360, 400, 440, 500, 600],
+        "5000-BZ": [120, 140, 160, 180, 200, 220, 240, 260, 300, 320, 340, 360, 400, 440, 500, 600],
+        "5000-P": [120, 140, 160, 180, 200, 220, 240, 260, 300, 320, 340, 360, 400, 440, 500, 600],
+        "5000-N": [120, 140, 160, 180, 200, 220, 240, 260, 300, 320, 340, 360, 400, 440, 500, 600],
+        "5000-CH": [120, 140, 160, 180, 200, 220, 240, 260, 300, 350, 400, 450, 500],
+        "1500-B": [120, 140, 160, 180, 200, 220, 240, 260, 300, 320, 340, 360, 400, 440, 500, 600],
+        "1500-I": [120, 140, 160, 180, 200, 220, 240, 260, 300, 320, 340, 360, 400, 440, 500, 600],
+        "1500-BZ": [120, 140, 160, 180, 200, 220, 240, 260, 300, 320, 340, 360, 400, 440, 500, 600],
+        "1500-P": [120, 140, 160, 180, 200, 220, 240, 260, 300, 320, 340, 360, 400, 440, 500, 600],
+        "1500-N": [120, 140, 160, 180, 200, 220, 240, 260, 300, 320, 340, 360, 400, 440, 500, 600],
+        "1500-CH": [120, 140, 160, 180, 200, 220, 240, 260, 300, 350, 400, 450, 500],
+        "9500M": [
+          150,
+          200,
+          250,
+          300,
+          350,
+          400,
+          450,
+          500,
+          600,
+          650,
+          700,
+          750,
+          800,
+          850,
+          900,
+          1e3,
+          1200
+        ],
+        KS: [160, 200, 240, 300, 400, 500, 600],
+        "DSXL-B": [160, 200, 240, 300, 400, 600],
+        "DSXL-CZ": [160, 200, 240, 300, 400, 600],
+        "DSXL-P": [160, 200, 240, 300, 400, 600]
+      }
+    };
+    const selectedColors = [];
+    const windows = [];
+    let currentStep = "inicio";
+    const selectorValues = {
+      inicio: "",
+      tecido: "",
+      tipo: "",
+      bainha: "",
+      medidas: "",
+      correcao: "",
+      calha: "",
+      suporte: "",
+      instalacao: "",
+      nome: "",
+      email: "",
+      contacto: ""
+    };
+    const MANUFACTURING_CONSTANTS = {
+      usedWidths: [
+        { name: "Franzido", widthRatio: 2.5 },
+        { name: "Ondas", widthRatio: 2.7 },
+        { name: "Macho Juntos", widthRatio: 3 },
+        { name: "Pregas", widthRatio: 2.5 }
+      ],
+      manufacturingPrices: [
+        {
+          name: "Franzido",
+          blackout: 9,
+          normal: 8,
+          alinhado: 8
+        },
+        {
+          name: "Ondas",
+          blackout: 8.5,
+          normal: 7.5,
+          alinhado: 7.5
+        },
+        {
+          name: "Macho Juntos",
+          normal: 12.5,
+          blackout: 13.5,
+          alinhado: 12.5
+        },
+        {
+          name: "Pregas",
+          normal: 12.5,
+          blackout: 13.5,
+          alinhado: 12.5
+        }
+      ],
+      bainhaPrice: {
+        price: 3.5,
+        widthMargin: 20
+      },
+      uniao: {
+        maxLength: 400,
+        price: 8.6,
+        calha9500M: 15
+      },
+      prolongadores: 3.7,
+      roletesPrice: 5,
+      minWindowWidthEstores: 80,
+      maxWindowWidthEstores: 300,
+      minWindowHeightEstores: 80,
+      maxWindowHeightEstores: 300,
+      maxWindowWidth: 650,
+      maxWindowHeight: 280,
+      maxCalhaWidth: 600,
+      measuresCheckPrice: 30,
+      instalation: [
+        { maxWidth: 300, price: 35 },
+        { maxWidth: 400, price: 40 },
+        { maxWidth: 500, price: 45 },
+        { maxWidth: 600, price: 50 },
+        { maxWidth: 650, price: 55 }
+      ]
+    };
+    let isNewWindow = true;
+    const simContainer = document.getElementById("sim-container");
+    const cortinaSteps = document.getElementById("steps-cortina");
+    const estoreSteps = document.getElementById("steps-estore");
+    const simulatorHeadings = {
+      step1: document.getElementById("simulator-heading-1"),
+      step1i: document.getElementById("inicio-description"),
+      step1c: document.getElementById("inicio-description-c"),
+      step1e: document.getElementById("inicio-description-e"),
+      step2: document.getElementById("simulator-heading-2"),
+      step2t: document.getElementById("tipo-description"),
+      step2b: document.getElementById("bainha-description"),
+      step3: document.getElementById("simulator-heading-3"),
+      step3m: document.getElementById("medidas-description"),
+      step3c: document.getElementById("correcao-description"),
+      step4: document.getElementById("simulator-heading-4"),
+      step4c: document.getElementById("calha-description"),
+      step4s: document.getElementById("suporte-description"),
+      step5: document.getElementById("simulator-heading-5"),
+      step5i: document.getElementById("instalacao-description")
+    };
+    const selectors = {
+      inicio: document.getElementById("inicio-selector"),
+      tecido: document.getElementById("tecido-selector"),
+      tipo: document.getElementById("tipo-selector"),
+      bainha: document.getElementById("bainha-selector"),
+      medidas: document.getElementById("medidas-selector"),
+      correcao: document.getElementById("correcao-selector"),
+      suporte: document.getElementById("suporte-selector"),
+      instalacao: document.getElementById("instalacao-selector")
+    };
+    const larguraInputDescrC = document.getElementById("largura-input-descr-c");
+    const alturaInputDescrC = document.getElementById("altura-input-descr-c");
+    const larguraInputDescrE = document.getElementById("largura-input-descr-e");
+    const alturaInputDescrE = document.getElementById("altura-input-descr-e");
+    const larguraInput = document.getElementById("largura-input");
+    const alturaInput = document.getElementById("altura-input");
+    const correcaoInput = document.querySelector("#correcao-switch");
+    const bainhaInput = document.querySelector("#bainha");
+    const tectoRadioBtn = document.getElementById("tecto-radio-btn");
+    const paredeRadioBtn = document.getElementById("parede-radio-btn");
+    const instalacaoInput = document.querySelector("#instalacao-switch");
+    const larguraMinErrorEstore = document.getElementById("largura-min-error-estore");
+    const alturaMinErrorEstore = document.getElementById("altura-min-error-estore");
+    const larguraMaxErrorEstore = document.getElementById("largura-max-error-estore");
+    const alturaMaxErrorEstore = document.getElementById("altura-max-error-estore");
+    const larguraMaxErrorCortina = document.getElementById("largura-error");
+    const alturaMaxErrorCortina = document.getElementById("altura-error");
+    const nextButton = document.getElementById("seguinte-btn");
+    const steps = {
+      tecido: document.getElementById("step-tecido"),
+      tipo: document.getElementById("step-tipo"),
+      medidas: document.getElementById("step-medidas"),
+      calha: document.getElementById("step-calha"),
+      instalacao: document.getElementById("step-instalacao"),
+      medidasEstore: document.getElementById("step-medidas-estore"),
+      instalacaoEstore: document.getElementById("step-instalacao-estore")
+    };
+    const userDetailsForm = document.getElementById("form");
+    const nomeInput = document.getElementById("nome-input");
+    const emailInput = document.getElementById("email-input");
+    const contactoSwitch = document.getElementById("contacto-switch");
+    const checkoutContain = document.getElementById("checkout-container");
+    const newWindowContain = document.getElementById("new-window-contain");
+    const checkoutFormContain = document.getElementById("checkout-input-contain");
+    const checkoutInfoEstore = document.getElementById("checkout-info-estore");
+    const checkoutInfoCortina = document.getElementById("checkout-info-cortina");
+    const newWindowButton = document.getElementById("new-window-btn");
+    const noWindowButton = document.getElementById("no-window-btn");
+    const enviarButton = document.getElementById("enviar-btn");
+    const enviarButtonContain = document.getElementById("enviar-btn-contain");
+    const checkoutChoices = {
+      tecido: document.getElementById("checkout-tecido"),
+      tipo: document.getElementById("checkout-tipo"),
+      bainha: document.getElementById("checkout-bainha"),
+      largura: document.getElementById("checkout-largura"),
+      altura: document.getElementById("checkout-altura"),
+      correcao: document.getElementById("checkout-correcao"),
+      calha: document.getElementById("checkout-calha"),
+      suporte: document.getElementById("checkout-suporte"),
+      instalacao: document.getElementById("checkout-instalacao"),
+      estoreProduto: document.getElementById("checkout-produto-estore"),
+      estoreLargura: document.getElementById("checkout-largura-estore"),
+      estoreAltura: document.getElementById("checkout-altura-estore"),
+      estoreCorrecao: document.getElementById("checkout-correcao-estore"),
+      estoreInstalacao: document.getElementById("checkout-instalacao-estore")
+    };
+    const feedbackMessage = document.getElementById("feedback-div");
+    const nameError = document.getElementById("name-error");
+    const emailError = document.getElementById("email-error");
+    const checkFieldError = document.getElementById("contacto-switch-error");
+    const cortinaRadioBtn = document.getElementById("cortina-radio-btn");
+    const estoreRadioBtn = document.getElementById("estore-radio-btn");
+    const calhaRadioBtn = document.getElementById("calha-radio-btn");
+    const initializeEventListeners = () => {
+      addOnClickNextButton();
+      addOnClickToInicioCards();
+      addOnClickToTecidoCards();
+      addOnClickToTipoCards();
+      addOnClickBainha();
+      addOnClickCorrecao();
+      addOnClickInstalacao();
+      addOnClickColor();
+      addOnClickEnviar();
+      addOnClickNewWindow();
+      addOnClickNoWindow();
+      addOnClickCheckoutChoices();
+      addOnClickStep();
+      addOnChangeMedidasInputs();
+      addOnChangeSuporteRadioBtns();
+      addOnChangeFormInputs();
+    };
+    const onInit = () => {
+      fetchProducts();
+      initializeEventListeners();
+    };
+    const getProductPrice = (window2) => {
+      let productPrice = 0, calhaPrice = 0, reference = "";
+      const productDetails = window2.tecido.split("-");
+      const product = productDetails[0];
+      const color = productDetails[1];
+      const calhaDetails = window2.calha ? window2.calha.split("-") : null;
+      const calha = calhaDetails ? calhaDetails[0] : null;
+      const calhaColor = calhaDetails ? calhaDetails[1] : null;
+      const width = window2.medidas ? window2.medidas.split(" X ")[0] : 0;
+      if (window2.inicio === "Cortina") {
+        reference = `${product}${color}`;
+      }
+      if (window2.inicio === "Estore") {
+        const height = window2.medidas ? window2.medidas.split(" X ")[1] : 0;
+        reference = getVariableEstoreReference(product, color, width, height);
+      }
+      productPrice = typeof productsData[reference].price === "string" ? parseFloat(productsData[reference].price) : productsData[reference].price;
+      if (window2.inicio === "Estore") {
+        return { product: productPrice, calha: 0 };
+      }
+      const calhaMultiplier = (width / MANUFACTURING_CONSTANTS.maxCalhaWidth | 0) + 1;
+      const calhaWidth = width <= MANUFACTURING_CONSTANTS.maxCalhaWidth ? width : width / calhaMultiplier;
+      const calhaReference = getVariableCalhaReference(
+        calha,
+        window2.tipo,
+        calhaColor,
+        calhaWidth,
+        window2?.suporte === "Parede" ? true : false
+      );
+      calhaPrice = !productsData[calhaReference] ? 0 : width < MANUFACTURING_CONSTANTS.maxCalhaWidth ? productsData[calhaReference].price : productsData[calhaReference].price * calhaMultiplier;
+      calhaPrice += width > MANUFACTURING_CONSTANTS.maxCalhaWidth ? MANUFACTURING_CONSTANTS.prolongadores * calhaMultiplier : width > MANUFACTURING_CONSTANTS.uniao.maxLength && window2.calha.startsWith("9500M") ? MANUFACTURING_CONSTANTS.uniao.calha9500M * calhaMultiplier : width > MANUFACTURING_CONSTANTS.uniao.maxLength ? MANUFACTURING_CONSTANTS.uniao.price * calhaMultiplier : 0;
+      (calhaReference.startsWith("5000") || calhaReference.startsWith("1500")) && (calhaPrice += width < MANUFACTURING_CONSTANTS.maxCalhaWidth ? MANUFACTURING_CONSTANTS.roletesPrice : MANUFACTURING_CONSTANTS.roletesPrice * calhaMultiplier);
+      return { product: productPrice, calha: calhaPrice };
+    };
+    const fetchProducts = () => {
+      fetch(
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vRnpR16s-LlJCttzFQBqDmgLYSIGtTKbBKbDGUXfvjwGHR2W3u66qn4TV8DkHr2280Oru6V4QVgFYJV/pub?output=csv"
+        // 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRnpR16s-LlJCttzFQBqDmgLYSIGtTKbBKbDGUXfvjwGHR2W3u66qn4TV8DkHr2280Oru6V4QVgFYJV/pub?gid=0&single=true&output=csv'
+        // 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSCprbghTI2dhOxsCMkcEHhI-DE5pOb5RnOKO3KPd5-ntAORtuPTuFonSvs9s4-ANy_VCezuEdcZ8pg/pub?gid=0&single=true&output=csv'
+        // 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSCprbghTI2dhOxsCMkcEHhI-DE5pOb5RnOKO3KPd5-ntAORtuPTuFonSvs9s4-ANy_VCezuEdcZ8pg/export?format=csv&gid=0&single=true'
+        // `https://docs.google.com/spreadsheets/d/1hkgiYOVj33yY6b--bJaNPZOvHFvQ4klM402z0xp-gjE/export?format=csv&gid=0&single=true`
+      ).then((response) => response.text()).then((csvData) => {
+        const lines = csvData.trim().split("\n");
+        const headers = lines[0].split(",");
+        const data = lines.slice(1).map((line) => line.split(","));
+        const jsonData = {};
+        data.forEach((row) => {
+          const [id, price] = row;
+          if (!jsonData[id]) {
+            jsonData[id] = { id, price: parseFloat(price) };
+          }
+        });
+        productsData = jsonData;
+      }).catch((error) => console.error("Error fetching CSV data:", error));
+    };
+    const updateSelectorValue = (selector, value) => {
+      selectorValues[selector.id.split("-")[0]] = value;
+    };
+    const updateCalhaValue = (value) => {
+      selectorValues.calha = value;
+    };
+    const updateSuporteValue = (value) => {
+      selectorValues.suporte = paredeRadioBtn.checked ? "Parede" : "Tecto";
+    };
+    const resetValues = () => {
+      selectorValues.inicio = "";
+      selectorValues.tecido = "";
+      selectorValues.tipo = "";
+      selectorValues.bainha = "";
+      selectorValues.medidas = "";
+      selectorValues.correcao = "";
+      selectorValues.calha = "";
+      selectorValues.suporte = "";
+      selectorValues.instalacao = "";
+    };
+    const populateSelectorValues = (window2) => {
+      if (window2.inicio === "Cortina") {
+        updateSelectorValue(selectors.inicio, "Cortina");
+        updateSelectorValue(selectors.tecido, window2.tecido);
+        updateSelectorValue(selectors.tipo, window2.tipo);
+        updateSelectorValue(selectors.bainha, window2.bainha);
+        updateSelectorValue(selectors.medidas, window2.medidas);
+        updateSelectorValue(selectors.correcao, window2.correcao);
+        updateSelectorValue(selectors.suporte, window2.suporte);
+        updateSelectorValue(selectors.instalacao, window2.instalacao);
+      }
+      if (window2.inicio === "Estore") {
+        updateSelectorValue(selectors.inicio, "Estore");
+        updateSelectorValue(selectors.tecido, window2.tecido);
+        updateSelectorValue(selectors.medidas, window2.medidas);
+        updateSelectorValue(selectors.correcao, window2.correcao);
+        updateSelectorValue(selectors.instalacao, window2.instalacao);
+      }
+    };
+    const storeValues = () => {
+      const newWindow = {
+        inicio: selectorValues.inicio,
+        bainha: selectorValues.bainha,
+        tecido: selectorValues.tecido,
+        tipo: selectorValues.tipo,
+        medidas: selectorValues.medidas,
+        correcao: selectorValues.correcao,
+        calha: selectorValues.calha,
+        suporte: selectorValues.suporte,
+        instalacao: selectorValues.instalacao
+      };
+      windows.push(newWindow);
+      isNewWindow = false;
+    };
+    const createWindow = () => {
+      updateProductsCMSFilter("Cortina");
+      resetValues();
+      resetInputs();
+      resetSteps();
+      navigateFromCheckoutToStep("inicio");
+      isNewWindow = true;
+    };
+    const validateSelector = () => {
+      switch (currentStep) {
+        case "inicio":
+          if (selectorValues.inicio === "") {
+            activateNextBtn(false);
+            return false;
+          }
+          activateNextBtn(true);
+          return true;
+        case "tecido":
+          if (selectorValues.tecido === "") {
+            activateNextBtn(false);
+            return false;
+          }
+          activateNextBtn(true);
+          return true;
+        case "tipo":
+          if (selectorValues.tipo === "") {
+            activateNextBtn(false);
+            return false;
+          }
+          activateNextBtn(true);
+          return true;
+        case "medidas":
+          if (larguraInput?.value === "" || alturaInput?.value === "") {
+            activateNextBtn(false);
+            return false;
+          }
+          if (selectorValues.inicio === "Cortina") {
+            if (parseInt(larguraInput?.value) > MANUFACTURING_CONSTANTS.maxWindowWidth || parseInt(alturaInput?.value) > MANUFACTURING_CONSTANTS.maxWindowHeight) {
+              parseInt(larguraInput?.value) > MANUFACTURING_CONSTANTS.maxWindowWidth ? larguraMaxErrorCortina.style.display = "block" : larguraMaxErrorCortina.style.display = "none";
+              parseInt(alturaInput?.value) > MANUFACTURING_CONSTANTS.maxWindowHeight ? alturaMaxErrorCortina.style.display = "block" : alturaMaxErrorCortina.style.display = "none";
+              activateNextBtn(false);
+              return false;
+            }
+            larguraMaxErrorCortina.style.display = "none";
+            alturaMaxErrorCortina.style.display = "none";
+            larguraMinErrorEstore.style.display = "none";
+            alturaMinErrorEstore.style.display = "none";
+            larguraMaxErrorEstore.style.display = "none";
+            alturaMaxErrorEstore.style.display = "none";
+            activateNextBtn(true);
+            return true;
+          }
+          if (selectorValues.inicio === "Estore") {
+            if (parseInt(larguraInput?.value) < MANUFACTURING_CONSTANTS.minWindowWidthEstores || parseInt(alturaInput?.value) < MANUFACTURING_CONSTANTS.minWindowHeightEstores) {
+              parseInt(larguraInput?.value) < MANUFACTURING_CONSTANTS.minWindowWidthEstores ? larguraMinErrorEstore.style.display = "block" : larguraMinErrorEstore.style.display = "none";
+              parseInt(alturaInput?.value) < MANUFACTURING_CONSTANTS.minWindowHeightEstores ? alturaMinErrorEstore.style.display = "block" : alturaMinErrorEstore.style.display = "none";
+              activateNextBtn(false);
+              return false;
+            }
+            if (parseInt(larguraInput?.value) > MANUFACTURING_CONSTANTS.maxWindowWidthEstores || parseInt(alturaInput?.value) > MANUFACTURING_CONSTANTS.maxWindowHeightEstores) {
+              larguraMinErrorEstore.style.display = "none";
+              alturaMinErrorEstore.style.display = "none";
+              parseInt(larguraInput?.value) > MANUFACTURING_CONSTANTS.maxWindowWidthEstores ? larguraMaxErrorEstore.style.display = "block" : larguraMaxErrorEstore.style.display = "none";
+              parseInt(alturaInput?.value) > MANUFACTURING_CONSTANTS.maxWindowHeightEstores ? alturaMaxErrorEstore.style.display = "block" : alturaMaxErrorEstore.style.display = "none";
+              activateNextBtn(false);
+              return false;
+            }
+            larguraMaxErrorCortina.style.display = "none";
+            alturaMaxErrorCortina.style.display = "none";
+            larguraMinErrorEstore.style.display = "none";
+            alturaMinErrorEstore.style.display = "none";
+            larguraMaxErrorEstore.style.display = "none";
+            alturaMaxErrorEstore.style.display = "none";
+            activateNextBtn(true);
+            return true;
+          }
+          larguraMaxErrorCortina.style.display = "none";
+          alturaMaxErrorCortina.style.display = "none";
+          larguraMinErrorEstore.style.display = "none";
+          alturaMinErrorEstore.style.display = "none";
+          larguraMaxErrorEstore.style.display = "none";
+          alturaMaxErrorEstore.style.display = "none";
+          activateNextBtn(true);
+          return true;
+        case "calha":
+          if (selectorValues.calha === "") {
+            activateNextBtn(false);
+            return false;
+          }
+          activateNextBtn(true);
+          return true;
+        case "suporte":
+          if (selectorValues.suporte === "") {
+            activateNextBtn(false);
+            return false;
+          }
+          activateNextBtn(true);
+          return true;
+      }
+      activateNextBtn(true);
+      return true;
+    };
+    const getVariableEstoreReference = (product, color, width, height) => {
+      const closestWidth = productSizes.estores.width.find((w) => w >= width);
+      const closestHeight = productSizes.estores.height.find((h) => h >= height);
+      return `${product}${closestHeight}${closestWidth}`;
+    };
+    const getVariableCalhaReference = (product, type, color, width, isWallMounted) => {
+      if (product === "KS") {
+        if (isWallMounted) {
+          const closestWidth3 = productSizes.calhas[product]?.find((w) => w >= width);
+          return `${product}${type === "Franzido" ? "F" : "O"}${closestWidth3}SP`;
+        }
+        const closestWidth2 = productSizes.calhas[product]?.find((w) => w >= width);
+        return `${product}${type === "Franzido" ? "F" : "O"}${closestWidth2}`;
+      }
+      if (product === "DSXL") {
+        if (isWallMounted) {
+          const closestWidth3 = productSizes.calhas[`${product}-${color}`]?.find((w) => w >= width);
+          return `${product}${type === "Franzido" ? "F" : "O"}${closestWidth3}${color}SP`;
+        }
+        const closestWidth2 = productSizes.calhas[`${product}-${color}`]?.find((w) => w >= width);
+        return `${product}${type === "Franzido" ? "F" : "O"}${closestWidth2}${color}`;
+      }
+      if (product === "9500M") {
+        if (isWallMounted) {
+          const closestWidth3 = productSizes.calhas[product].find((w) => w >= width);
+          return `${product}${closestWidth3}SP`;
+        }
+        const closestWidth2 = productSizes.calhas[product].find((w) => w >= width);
+        return `${product}${closestWidth2}`;
+      }
+      if (isWallMounted) {
+        const closestWidth2 = productSizes.calhas[`${product}-${color}`].find((w) => w >= width);
+        return `${product}${closestWidth2}${color}SP`;
+      }
+      const closestWidth = productSizes.calhas[`${product}-${color}`].find((w) => w >= width);
+      return `${product}${closestWidth}${color}`;
+    };
+    const getColorFromCard = (card) => {
+      const colorText = card.getElementsByClassName("color_name");
+      return colorText.length > 0 ? colorText[0].textContent : null;
+    };
+    const getProductFromCard = (card) => {
+      const productText = card.getElementsByClassName("product_name");
+      return productText.length > 0 ? productText[0].textContent : null;
+    };
+    const convertStepInStepNumber = (step) => {
+      switch (step) {
+        case "tecido":
+        case "inicio":
+          return "step1";
+        case "tipo":
+        case "bainha":
+          return "step2";
+        case "medidas":
+        case "correcao":
+          return "step3";
+        case "calha":
+          return "step4";
+        case "instalacao":
+          return "step5";
+      }
+    };
+    const updateProductsCMSFilter = (productType) => {
+      if (productType === "Estore") {
+        estoreRadioBtn?.click();
+      }
+      if (productType === "Cortina") {
+        cortinaRadioBtn?.click();
+      }
+      if (productType === "Calha") {
+        calhaRadioBtn?.click();
+      }
+    };
+    const resetInputs = () => {
+      const inicioCards = document.querySelectorAll("[id^='inicio-card']");
+      const tipoCards = document.querySelectorAll("[id^='tipo-card']");
+      const productCards = document.querySelectorAll("[id^='tecido-card']");
+      const productColors = document.querySelectorAll(".tecido_color");
+      inicioCards.forEach((card) => {
+        deactivateCard(card);
+      });
+      tipoCards.forEach((card) => {
+        deactivateCard(card);
+      });
+      productCards.forEach((card) => {
+        deactivateCard(card);
+      });
+      productColors.forEach((color) => {
+        deactivateColor(color);
+      });
+      larguraInput.value = "";
+      alturaInput.value = "";
+      correcaoInput.checked = false;
+      instalacaoInput.checked = false;
+      paredeRadioBtn?.click();
+      bainhaInput.checked = false;
+    };
+    const selectInicio = (value) => {
+      const inicioCards = document.querySelectorAll("[id^='inicio-card']");
+      inicioCards.forEach((card) => {
+        if (card.getElementsByTagName("h1")[0].textContent === value) {
+          activateCard(card);
+        } else {
+          deactivateCard(card);
+        }
+      });
+    };
+    const selectProduct = (value) => {
+      const productCards = document.querySelectorAll("[id^='tecido-card']");
+      productCards.forEach((card) => {
+        if (getProductFromCard(card).startsWith(value)) {
+          activateCard(card);
+        } else {
+          deactivateCard(card);
+        }
+      });
+    };
+    const selectTipo = (value) => {
+      const tipoCards = document.querySelectorAll("[id^='tipo-card']");
+      tipoCards.forEach((card) => {
+        if (card.getElementsByTagName("h1")[0].textContent === value) {
+          activateCard(card);
+        } else {
+          deactivateCard(card);
+        }
+      });
+    };
+    const selectSuporte = (value) => {
+      if (value === "Parede") {
+        paredeRadioBtn.click();
+      } else {
+        tectoRadioBtn.click();
+      }
+    };
+    const clearSuporteRadioBtns = () => {
+      tectoRadioBtn.checked = false;
+      paredeRadioBtn.checked = false;
+    };
+    const createWindowBtnCheckout = () => {
+      const windowBtn = document.querySelector("#checkout-window-btn");
+      const windowbtnsContainer = document.getElementById("window-btns-container");
+      if (windows.length === 1) {
+        windows[0].button = windowBtn;
+        addOnClickToWindowBtn(windows[0]);
+      }
+      if (windows.length > 1) {
+        if (windowBtn) {
+          const clonedBtn = windowBtn.cloneNode(true);
+          clonedBtn.querySelector(".checkout_info_title").textContent = `Janela ${windows.length}`;
+          windows[windows.length - 1].button = clonedBtn;
+          addOnClickToWindowBtn(windows[windows.length - 1]);
+          windowbtnsContainer?.appendChild(clonedBtn);
+        }
+      }
+    };
+    const populateInputValues = (window2) => {
+      if (window2.inicio === "Cortina") {
+        selectInicio(window2.inicio);
+        selectProduct(window2.tecido);
+        selectTipo(window2.tipo);
+        bainhaInput.checked = window2.bainha;
+        larguraInput.value = window2.medidas.split(" X ")[0];
+        alturaInput.value = window2.medidas.split(" X ")[1];
+        correcaoInput.checked = window2.correcao;
+        selectSuporte(window2.suporte);
+        instalacaoInput.checked = window2.instalacao;
+      }
+      if (window2.inicio === "Estore") {
+        selectInicio(window2.inicio);
+        selectProduct(window2.tecido);
+        larguraInput.value = window2.medidas.split(" X ")[0];
+        alturaInput.value = window2.medidas.split(" X ")[1];
+        correcaoInput.checked = window2.correcao;
+        instalacaoInput.checked = window2.instalacao;
+      }
+    };
+    const updateHeadingSubtitles = (step) => {
+      if (step === "inicio") {
+        simulatorHeadings.step1i.style.display = "flex";
+        simulatorHeadings.step1c.style.display = "none";
+        simulatorHeadings.step1e.style.display = "none";
+      }
+      if (step === "tecido" && selectorValues.inicio === "Cortina") {
+        simulatorHeadings.step1i.style.display = "none";
+        simulatorHeadings.step1c.style.display = "flex";
+        simulatorHeadings.step1e.style.display = "none";
+      }
+      if (step === "tecido" && selectorValues.inicio === "Estore") {
+        simulatorHeadings.step1i.style.display = "none";
+        simulatorHeadings.step1c.style.display = "none";
+        simulatorHeadings.step1e.style.display = "flex";
+      }
+      if (step === "tipo") {
+        simulatorHeadings.step2t.style.display = "flex";
+        simulatorHeadings.step2b.style.display = "none";
+      }
+      if (step === "bainha") {
+        simulatorHeadings.step2t.style.display = "none";
+        simulatorHeadings.step2b.style.display = "flex";
+      }
+      if (step === "medidas") {
+        simulatorHeadings.step3m.style.display = "flex";
+        simulatorHeadings.step3c.style.display = "none";
+      }
+      if (step === "correcao") {
+        simulatorHeadings.step3m.style.display = "none";
+        simulatorHeadings.step3c.style.display = "flex";
+      }
+      if (step === "calha") {
+        simulatorHeadings.step4c.style.display = "flex";
+        simulatorHeadings.step4s.style.display = "none";
+      }
+      if (step === "suporte") {
+        simulatorHeadings.step4c.style.display = "none";
+        simulatorHeadings.step4s.style.display = "flex";
+      }
+      if (step === "instalacao") {
+        simulatorHeadings.step5.style.display = "flex";
+      }
+    };
+    const navigateToStep = (step) => {
+      if (step === "largura" || step === "altura") {
+        step = "medidas";
+      }
+      if (step === currentStep) {
+        return;
+      }
+      let isEstore = false;
+      if (step === "estoreLargura" || step === "estoreAltura" || step === "estoreCorrecao" || step === "estoreInstalacao" || step === "estoreProduto" || step === "medidasEstore" || selectorValues.inicio === "Estore") {
+        isEstore = true;
+      }
+      if (step === "largura" || step === "altura" || step === "estoreLargura" || step === "estoreAltura" || step === "medidasEstore") {
+        step = "medidas";
+      }
+      if (step === "estoreCorrecao") {
+        step = "correcao";
+      }
+      if (step === "estoreInstalacao") {
+        step = "instalacao";
+      }
+      if (step === "estoreProduto") {
+        step = "tecido";
+      }
+      if (steps[step].classList.contains("done")) {
+        markStepAsNext(currentStep);
+        changeSelectorVisibility(simulatorHeadings[convertStepInStepNumber(currentStep)], false);
+        if (currentStep === "calha") {
+          changeSelectorVisibility(selectors.tecido, false);
+        } else {
+          changeSelectorVisibility(selectors[currentStep], false);
+        }
+        updateHeadingSubtitles(step);
+        switch (step) {
+          case "tecido":
+            isEstore ? updateProductsCMSFilter("Estore") : updateProductsCMSFilter("Cortina");
+            changeSelectorVisibility(simulatorHeadings.step1, true);
+            changeSelectorVisibility(selectors.tecido, true);
+            break;
+          case "tipo":
+            changeSelectorVisibility(simulatorHeadings.step2, true);
+            changeSelectorVisibility(selectors.tipo, true);
+            break;
+          case "medidas":
+            changeSelectorVisibility(simulatorHeadings.step3, true);
+            changeSelectorVisibility(selectors.medidas, true);
+            break;
+          case "calha":
+            updateProductsCMSFilter("calha");
+            changeSelectorVisibility(simulatorHeadings.step4, true);
+            changeSelectorVisibility(selectors.tecido, true);
+            break;
+          case "instalacao":
+            changeSelectorVisibility(simulatorHeadings.step5, true);
+            changeSelectorVisibility(selectors.instalacao, true);
+            break;
+        }
+        currentStep = step;
+        validateSelector();
+        markStepAsActive(step);
+      }
+    };
+    const updateMedidasDescriptions = () => {
+      if (selectorValues.inicio === "Cortina") {
+        larguraInputDescrC.style.display = "block";
+        alturaInputDescrC.style.display = "block";
+        larguraInputDescrE.style.display = "none";
+        alturaInputDescrE.style.display = "none";
+      }
+      if (selectorValues.inicio === "Estore") {
+        larguraInputDescrC.style.display = "none";
+        alturaInputDescrC.style.display = "none";
+        larguraInputDescrE.style.display = "block";
+        alturaInputDescrE.style.display = "block";
+      }
+    };
+    const advanceStep = () => {
+      if (selectorValues.inicio === "Cortina") {
+        switch (currentStep) {
+          case "inicio":
+            if (validateSelector()) {
+              toggleSteps("Cortina");
+              changeSelectorVisibility(selectors.inicio, false);
+              updateHeadingSubtitles("tecido");
+              if (isNewWindow)
+                activateNextBtn(false);
+              changeSelectorVisibility(selectors.tecido, true);
+              currentStep = "tecido";
+            }
+            break;
+          case "tecido":
+            if (validateSelector()) {
+              updateHeadingSubtitles("tecido");
+              markStepAsCompleted("tecido");
+              markStepAsActive("tipo");
+              changeSelectorVisibility(simulatorHeadings.step1, false);
+              if (isNewWindow)
+                activateNextBtn(false);
+              changeSelectorVisibility(selectors.tecido, false);
+              updateHeadingSubtitles("tipo");
+              changeSelectorVisibility(simulatorHeadings.step2, true);
+              changeSelectorVisibility(selectors.tipo, true);
+              updateMedidasDescriptions();
+              currentStep = "tipo";
+            }
+            break;
+          case "tipo":
+            if (validateSelector()) {
+              changeSelectorVisibility(selectors.tipo, false);
+              if (selectorValues.tecido.startsWith("9")) {
+                updateSelectorValue(selectors.bainha, true);
+                if (isNewWindow)
+                  activateNextBtn(false);
+                markStepAsCompleted("tipo");
+                markStepAsActive("medidas");
+                changeSelectorVisibility(simulatorHeadings.step2, false);
+                updateHeadingSubtitles("medidas");
+                changeSelectorVisibility(simulatorHeadings.step3, true);
+                changeSelectorVisibility(selectors.medidas, true);
+                currentStep = "medidas";
+              } else {
+                updateHeadingSubtitles("bainha");
+                changeSelectorVisibility(selectors.bainha, true);
+                currentStep = "bainha";
+              }
+            }
+            break;
+          case "bainha":
+            updateSelectorValue(
+              selectors.bainha,
+              `${selectorValues.tecido.startsWith("9") ? true : selectorValues.bainha ? selectorValues.bainha : false}`
+            );
+            markStepAsCompleted("tipo");
+            markStepAsActive("medidas");
+            changeSelectorVisibility(simulatorHeadings.step2, false);
+            changeSelectorVisibility(selectors.bainha, false);
+            if (isNewWindow)
+              activateNextBtn(false);
+            updateHeadingSubtitles("medidas");
+            changeSelectorVisibility(simulatorHeadings.step3, true);
+            changeSelectorVisibility(selectors.medidas, true);
+            currentStep = "medidas";
+            break;
+          case "medidas":
+            if (validateSelector()) {
+              updateSelectorValue(
+                selectors.medidas,
+                `${larguraInput?.value} X ${alturaInput?.value}`
+              );
+              changeSelectorVisibility(selectors.medidas, false);
+              if (windows.length > 0) {
+                if (isNewWindow)
+                  activateNextBtn(false);
+                updateProductsCMSFilter("Calha");
+                markStepAsCompleted("medidas");
+                markStepAsActive("calha");
+                changeSelectorVisibility(simulatorHeadings.step3, false);
+                updateHeadingSubtitles("calha");
+                changeSelectorVisibility(simulatorHeadings.step4, true);
+                changeSelectorVisibility(selectors.tecido, true);
+                currentStep = "calha";
+              } else {
+                updateHeadingSubtitles("correcao");
+                changeSelectorVisibility(selectors.correcao, true);
+                currentStep = "correcao";
+              }
+            }
+            break;
+          case "correcao":
+            updateProductsCMSFilter("Calha");
+            markStepAsCompleted("medidas");
+            markStepAsActive("calha");
+            changeSelectorVisibility(simulatorHeadings.step3, false);
+            changeSelectorVisibility(selectors.correcao, false);
+            if (isNewWindow)
+              activateNextBtn(false);
+            updateHeadingSubtitles("calha");
+            changeSelectorVisibility(simulatorHeadings.step4, true);
+            changeSelectorVisibility(selectors.tecido, true);
+            currentStep = "calha";
+            break;
+          case "calha":
+            if (validateSelector()) {
+              changeSelectorVisibility(selectors.tecido, false);
+              if (isNewWindow)
+                activateNextBtn(false);
+              clearSuporteRadioBtns();
+              updateHeadingSubtitles("suporte");
+              changeSelectorVisibility(selectors.suporte, true);
+              currentStep = "suporte";
+            }
+            break;
+          case "suporte":
+            updateSelectorValue(selectors.suporte, paredeRadioBtn?.checked ? "Parede" : "Tecto");
+            if (validateSelector()) {
+              markStepAsCompleted("calha");
+              markStepAsActive("instalacao");
+              changeSelectorVisibility(simulatorHeadings.step4, false);
+              changeSelectorVisibility(selectors.suporte, false);
+              updateHeadingSubtitles("instalacao");
+              if (windows.length > 0) {
+                if (isNewWindow) {
+                  storeValues();
+                  createWindowBtnCheckout();
+                }
+                navigateToCheckout();
+              } else {
+                changeSelectorVisibility(simulatorHeadings.step5, true);
+                changeSelectorVisibility(selectors.instalacao, true);
+                currentStep = "instalacao";
+              }
+            }
+            break;
+          case "instalacao":
+            markStepAsCompleted("instalacao");
+            changeSelectorVisibility(simulatorHeadings.step5, false);
+            changeSelectorVisibility(selectors.instalacao, false);
+            if (isNewWindow) {
+              storeValues();
+              createWindowBtnCheckout();
+            }
+            navigateToCheckout();
+            break;
+        }
+      } else {
+        switch (currentStep) {
+          case "inicio":
+            if (validateSelector()) {
+              toggleSteps("Estore");
+              changeSelectorVisibility(selectors.inicio, false);
+              updateHeadingSubtitles("tecido");
+              if (isNewWindow)
+                activateNextBtn(false);
+              changeSelectorVisibility(selectors.tecido, true);
+              currentStep = "tecido";
+            }
+            break;
+          case "tecido":
+            if (validateSelector()) {
+              markStepAsCompleted("tecido");
+              markStepAsActive("medidas");
+              changeSelectorVisibility(simulatorHeadings.step1, false);
+              changeSelectorVisibility(selectors.tecido, false);
+              updateMedidasDescriptions();
+              if (isNewWindow)
+                activateNextBtn(false);
+              updateHeadingSubtitles("medidas");
+              changeSelectorVisibility(simulatorHeadings.step3, true);
+              changeSelectorVisibility(selectors.medidas, true);
+              currentStep = "medidas";
+            }
+            break;
+          case "medidas":
+            if (validateSelector()) {
+              changeSelectorVisibility(selectors.medidas, false);
+              if (windows.length > 0) {
+                markStepAsCompleted("medidas");
+                markStepAsActive("instalacao");
+                changeSelectorVisibility(simulatorHeadings.step3, false);
+                updateHeadingSubtitles("instalacao");
+                changeSelectorVisibility(simulatorHeadings.step5, true);
+                changeSelectorVisibility(selectors.instalacao, true);
+                currentStep = "instalacao";
+              } else {
+                updateHeadingSubtitles("correcao");
+                changeSelectorVisibility(selectors.correcao, true);
+                currentStep = "correcao";
+              }
+            }
+            break;
+          case "correcao":
+            markStepAsCompleted("medidas");
+            markStepAsActive("instalacao");
+            changeSelectorVisibility(simulatorHeadings.step3, false);
+            changeSelectorVisibility(selectors.correcao, false);
+            if (windows.length > 0) {
+              createWindowBtnCheckout();
+              navigateToCheckout();
+            } else {
+              changeSelectorVisibility(simulatorHeadings.step5, true);
+              changeSelectorVisibility(selectors.instalacao, true);
+              currentStep = "instalacao";
+            }
+            break;
+          case "instalacao":
+            markStepAsCompleted("instalacao");
+            changeSelectorVisibility(simulatorHeadings.step5, false);
+            changeSelectorVisibility(selectors.instalacao, false);
+            if (isNewWindow) {
+              storeValues();
+              createWindowBtnCheckout();
+            }
+            navigateToCheckout();
+            break;
+        }
+      }
+    };
+    const navigateToCheckout = () => {
+      simContainer.style.display = "none";
+      selectWindow(windows[windows.length - 1]);
+      toggleSteps();
+      checkoutContain.style.display = "flex";
+    };
+    const populateCheckoutChoices = (window2) => {
+      if (window2.inicio === "Cortina") {
+        checkoutInfoEstore.style.display = "none";
+        checkoutInfoCortina.style.display = "flex";
+        checkoutChoices.tecido.textContent = window2.tecido;
+        checkoutChoices.tipo.textContent = window2.tipo;
+        checkoutChoices.bainha.textContent = window2.tipo === "Ondas" || window2.tipo === "Franzido" ? "Ba\xEDnha de Chumbo inclu\xEDda" : window2.bainha ? "Com Ba\xEDnha de Chumbo" : "Sem Ba\xEDnha de Chumbo";
+        checkoutChoices.largura.textContent = window2.medidas.split(" X ")[0] + "cm Largura";
+        checkoutChoices.altura.textContent = window2.medidas.split(" X ")[1] + "cm Altura";
+        checkoutChoices.correcao.textContent = windows[0].correcao ? "Com Verifica\xE7\xE3o" : "Sem Verifica\xE7\xE3o";
+        checkoutChoices.calha.textContent = window2.calha;
+        checkoutChoices.suporte.textContent = "Suporte de " + window2.suporte;
+        checkoutChoices.instalacao.textContent = windows[0].instalacao ? "Com Instala\xE7\xE3o" : "Sem Instala\xE7\xE3o";
+      }
+      if (window2.inicio === "Estore") {
+        checkoutInfoEstore.style.display = "flex";
+        checkoutInfoCortina.style.display = "none";
+        checkoutChoices.estoreProduto.textContent = window2.tecido;
+        checkoutChoices.estoreLargura.textContent = window2.medidas.split(" X ")[0] + "cm";
+        checkoutChoices.estoreAltura.textContent = window2.medidas.split(" X ")[1] + "cm";
+        checkoutChoices.estoreCorrecao.textContent = windows[0].correcao ? "Com Verifica\xE7\xE3o" : "Sem Verifica\xE7\xE3o";
+        checkoutChoices.estoreInstalacao.textContent = windows[0].instalacao ? "Com Instala\xE7\xE3o" : "Sem Instala\xE7\xE3o";
+      }
+    };
+    const populateSteps = (window2) => {
+      if (window2.inicio === "Cortina") {
+        markStepAsCompleted("tecido");
+        markStepAsCompleted("tipo");
+        markStepAsCompleted("medidas");
+        markStepAsCompleted("calha");
+        markStepAsCompleted("instalacao");
+      }
+      if (window2.inicio === "Estore") {
+        markStepAsCompleted("tecido");
+        markStepAsCompleted("medidas");
+        markStepAsCompleted("instalacao");
+      }
+    };
+    const selectWindow = (window2) => {
+      windows.forEach((w) => {
+        if (w.button) {
+          w.button.classList.remove("active");
+        }
+      });
+      window2.button.classList.add("active");
+      populateCheckoutChoices(window2);
+      populateInputValues(window2);
+      populateSelectorValues(window2);
+      populateSteps(window2);
+    };
+    const navigateFromCheckoutToStep = (step) => {
+      checkoutContain.style.display = "none";
+      if (isNewWindow)
+        resetSteps();
+      toggleSteps();
+      simContainer.style.display = "flex";
+      let isEstore = false;
+      if (step === "estoreLargura" || step === "estoreAltura" || step === "estoreCorrecao" || step === "estoreInstalacao" || step === "estoreProduto" || selectorValues.inicio === "Estore") {
+        isEstore = true;
+      }
+      if (step === "largura" || step === "altura" || step === "estoreLargura" || step === "estoreAltura") {
+        step = "medidas";
+      }
+      if (step === "estoreCorrecao" || step === "correcao") {
+        step = "medidas";
+      }
+      if (step === "estoreInstalacao" || step === "instalacao") {
+        step = "instalacao";
+      }
+      if (step === "estoreProduto") {
+        step = "tecido";
+      }
+      isEstore ? toggleSteps("Estore") : toggleSteps("Cortina");
+      switch (step) {
+        case "inicio":
+          updateHeadingSubtitles("inicio");
+          changeSelectorVisibility(simulatorHeadings.step1, true);
+          changeSelectorVisibility(selectors.inicio, true);
+          break;
+        case "tecido":
+          isEstore ? updateProductsCMSFilter("Estore") : updateProductsCMSFilter("Cortina");
+          selectProduct(selectorValues.tecido);
+          updateHeadingSubtitles("tecido");
+          changeSelectorVisibility(simulatorHeadings.step1, true);
+          changeSelectorVisibility(selectors.tecido, true);
+          break;
+        case "tipo":
+          updateHeadingSubtitles("tipo");
+          changeSelectorVisibility(simulatorHeadings.step2, true);
+          changeSelectorVisibility(selectors.tipo, true);
+          break;
+        case "medidas":
+          updateHeadingSubtitles("medidas");
+          changeSelectorVisibility(simulatorHeadings.step3, true);
+          changeSelectorVisibility(selectors.medidas, true);
+          break;
+        case "calha":
+          updateProductsCMSFilter("Calha");
+          updateHeadingSubtitles("calha");
+          changeSelectorVisibility(simulatorHeadings.step4, true);
+          changeSelectorVisibility(selectors.tecido, true);
+          break;
+        case "suporte":
+          updateHeadingSubtitles("suporte");
+          changeSelectorVisibility(simulatorHeadings.step4, true);
+          changeSelectorVisibility(selectors.suporte, true);
+          break;
+        case "instalacao":
+          updateHeadingSubtitles("instalacao");
+          changeSelectorVisibility(simulatorHeadings.step5, true);
+          changeSelectorVisibility(selectors.instalacao, true);
+          break;
+      }
+      currentStep = step;
+      if (currentStep === "inicio") {
+        return markStepAsActive("tecido");
+      }
+      if (isEstore) {
+        if (step === "medidas" || step === "correcao") {
+          markStepAsActive("medidasEstore");
+        }
+        if (step === "instalacao") {
+          markStepAsActive("instalacaoEstore");
+        }
+      }
+      isNewWindow = false;
+      markStepAsActive(step);
+    };
+    const compressPdf = async (base64Pdf) => {
+      const pdfBytes = Buffer.from(base64Pdf, "base64");
+      const pdfDoc = await PDFDocument.load(pdfBytes);
+      const compressedPdfBytes = await pdfDoc.save();
+      return Buffer.from(compressedPdfBytes).toString("base64");
+    };
+    const fetchImage = async (url) => {
+      const response = await fetch(url);
+      const imageBytes = await response.arrayBuffer();
+      return imageBytes;
+    };
+    const generateAndDownloadPdfLIB = async () => {
+      const { PDFDocument: PDFDocument2, rgb } = PDFLib;
+      const pdfDoc = await PDFDocument2.create();
+      let page = pdfDoc.addPage([595.28, 841.89]);
+      let y = 800;
+      const x = 50;
+      const rightMargin = 520;
+      const lineHeight = 12;
+      const lineSpacing = 3;
+      let total = 0;
+      const fontReg = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+      const fontBold = await pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaBold);
+      const clientY = y;
+      let logoTest = null;
+      try {
+        logoTest = await loadImageFromWebflow(logoUrl);
+        const pngImageBytes = await fetch(logoTest).then((res) => res.arrayBuffer());
+        const pngImage = await pdfDoc.embedPng(pngImageBytes);
+        const { width: originalWidth, height: originalHeight } = pngImage.scale(1);
+        const logoWidth = 100;
+        const logoHeight = originalHeight / originalWidth * logoWidth;
+        const logoX = (page.getWidth() - logoWidth) / 2;
+        page.drawImage(pngImage, {
+          x: logoX,
+          y: clientY - 10,
+          // Align with text (slight offset to adjust for font size)
+          width: logoWidth,
+          height: logoHeight
+        });
+      } catch (error) {
+        console.error("Error loading logo:", error);
+      }
+      const labelCliente = "Cliente:";
+      const labelData = "Data:";
+      const labelEmail = "Email:";
+      const dateString = (/* @__PURE__ */ new Date()).toLocaleDateString();
+      const labelClienteWidth = fontBold.widthOfTextAtSize(labelCliente, 8);
+      const labelDataWidth = fontBold.widthOfTextAtSize(labelData, 8);
+      const labelEmailWidth = fontBold.widthOfTextAtSize(labelEmail, 8);
+      const dateStringWidth = fontReg.widthOfTextAtSize(dateString, 8);
+      page.drawText(labelCliente, {
+        x,
+        y: clientY,
+        size: 8,
+        font: fontBold
+      });
+      page.drawText(`${selectorValues.nome}`, {
+        x: x + labelClienteWidth + 2,
+        // Adjust X based on the width of "Cliente:"
+        y: clientY,
+        size: 8,
+        font: fontReg
+        // Regular font for the value
+      });
+      const totalTextWidth = labelDataWidth + dateStringWidth + 2;
+      const textX = rightMargin - totalTextWidth;
+      page.drawText(labelData, {
+        x: textX,
+        y: clientY,
+        size: 8,
+        font: fontBold
+        // Bold font for the label
+      });
+      page.drawText(dateString, {
+        x: textX + labelDataWidth + 2,
+        // Add a small space after "Data:"
+        y: clientY,
+        size: 8,
+        font: fontReg
+      });
+      const emailY = clientY - lineHeight;
+      page.drawText(labelEmail, {
+        x,
+        y: emailY,
+        size: 8,
+        font: fontBold
+      });
+      page.drawText(`${selectorValues.email}`, {
+        x: x + labelEmailWidth + 2,
+        // Adjust X based on the width of "Email:"
+        y: emailY,
+        size: 8,
+        font: fontReg
+      });
+      y = emailY - lineHeight * 2;
+      y -= lineSpacing;
+      page.drawLine({
+        start: { x, y },
+        end: { x: rightMargin, y },
+        thickness: 0.5,
+        color: rgb(0, 0, 0)
+      });
+      y -= lineSpacing + lineHeight;
+      page.drawText("Descri\xE7\xE3o", { x, y, size: 8, font: fontBold });
+      page.drawText("Pre\xE7o", { x: rightMargin - 100, y, size: 8, font: fontBold });
+      y -= lineHeight;
+      y -= lineSpacing;
+      page.drawLine({
+        start: { x, y },
+        end: { x: rightMargin, y },
+        thickness: 0.5,
+        color: rgb(0, 0, 0)
+      });
+      y -= lineSpacing + lineHeight;
+      windows.forEach((window2, index) => {
+        if (y < 100) {
+          const newPage = pdfDoc.addPage([595.28, 841.89]);
+          page = newPage;
+          y = 800;
+        }
+        const {
+          usedWidth,
+          tecido,
+          calha,
+          instalacao,
+          total: windowTotal
+        } = calculateWindowPrice(window2);
+        total += windowTotal;
+        page.drawText(`Janela ${index + 1} -`, { x, y, size: 8, font: fontBold });
+        page.drawText(` ${window2.medidas} CM`, {
+          x: x + fontBold.widthOfTextAtSize(`Janela ${index + 1} -`, 8),
+          y,
+          size: 8,
+          font: fontReg
+        });
+        y -= lineHeight;
+        let items = [];
+        if (window2.inicio === "Cortina") {
+          items = [
+            {
+              label: `Cortinado`,
+              price: tecido,
+              subItems: [
+                { label: `Tipo de tecido: ${window2.tecido}` },
+                { label: `Modelo de Cortina: ${window2.tipo}` },
+                {
+                  label: `Ba\xEDnha de chumbo: ${window2.tecido.startsWith("9") ? "Inclu\xEDda" : window2.bainha ? "Sim" : "N\xE3o"}`
+                }
+              ]
+            },
+            {
+              label: `Calha`,
+              price: calha,
+              subItems: [
+                { label: `Modelo de calha: ${window2.tipo}` },
+                { label: `Suporte da calha: ${window2.suporte}` }
+              ]
+            },
+            {
+              label: `Instala\xE7\xE3o`,
+              price: instalacao,
+              subItems: []
+            }
+          ];
+        }
+        if (window2.inicio === "Estore") {
+          items = [
+            {
+              label: `Estore`,
+              price: tecido,
+              subItems: [{ label: `Modelo de Estore: ${window2.tecido}` }]
+            },
+            {
+              label: `Instala\xE7\xE3o`,
+              price: instalacao,
+              subItems: []
+            }
+          ];
+        }
+        items.forEach((item) => {
+          page.drawText(`  - ${item.label}`, { x, y, size: 8, font: fontBold });
+          page.drawText(`${item.price.toFixed(2)}\u20AC`, { x: rightMargin - 100, y, size: 8, fontReg });
+          y -= lineHeight;
+          item.subItems.forEach((subItem) => {
+            page.drawText(`      \u2022 ${subItem.label}`, { x: x + 20, y, size: 8, font: fontReg });
+            y -= lineHeight;
+          });
+          y -= lineHeight;
+        });
+        page.drawText(`Total`, { x, y, size: 8, font: fontBold });
+        page.drawText(`${windowTotal.toFixed(2)}\u20AC`, { x: rightMargin - 100, y, size: 10, fontReg });
+        y -= lineHeight;
+        y -= lineSpacing;
+        page.drawLine({
+          start: { x, y },
+          end: { x: rightMargin, y },
+          thickness: 0.5,
+          color: rgb(0, 0, 0)
+        });
+        y -= lineSpacing + lineHeight;
+      });
+      const correctionLabel = !windows[0].correcao ? "Facultadas pelo cliente" : "Sim";
+      page.drawText("Retifica\xE7\xE3o de medidas:", { x, y, size: 8, font: fontBold });
+      page.drawText(correctionLabel, {
+        x: x + fontBold.widthOfTextAtSize("Retifica\xE7\xE3o de medidas:", 8) + 2,
+        y,
+        size: 8,
+        font: fontReg
+      });
+      const correctionPrice = windows[0].correcao ? 30 : 0;
+      total += correctionPrice;
+      page.drawText(`${correctionPrice.toFixed(2)}\u20AC`, { x: rightMargin - 100, y, size: 8, fontReg });
+      y -= lineHeight * 2;
+      y -= lineSpacing;
+      page.drawLine({
+        start: { x, y },
+        end: { x: rightMargin, y },
+        thickness: 0.5,
+        color: rgb(0, 0, 0)
+      });
+      y -= lineSpacing + lineHeight;
+      page.drawText("Total:", { x: rightMargin - 150, y, size: 10, font: fontBold });
+      page.drawText(`${total.toFixed(2)}\u20AC`, { x: rightMargin - 100, y, size: 10, fontBold });
+      y -= lineHeight * 4;
+      page.drawText("Observa\xE7\xF5es:", {
+        x,
+        y,
+        size: 10,
+        font: fontBold
+      });
+      const bulletPoint = "\u2022 ";
+      const bulletIndent = 10;
+      page.drawText(
+        `${bulletPoint}Valores com IVA incluido \xE0 taxa em vigor. Or\xE7amento v\xE1lido por 15 dias.`,
+        {
+          x: x + bulletIndent,
+          y: y - lineHeight,
+          size: 8,
+          font: fontReg
+        }
+      );
+      page.drawText(
+        `${bulletPoint}Calhas j\xE1 incluem os rod\xEDzios e suportes necess\xE1rios para as medidas selecionadas.`,
+        { x: x + bulletIndent, y: y - 2 * lineHeight, size: 8, font: fontReg }
+      );
+      page.drawText(
+        `${bulletPoint}Valor referente \xE0 instala\xE7\xE3o e rectifica\xE7\xE3o de medidas sujeito a valida\xE7\xE3o do c\xF3digo postal.`,
+        { x: x + bulletIndent, y: y - 3 * lineHeight, size: 8, font: fontReg }
+      );
+      page.drawText(`${bulletPoint}IBAN: PT50 0000 0000 0000 0000 0`, {
+        x: x + bulletIndent,
+        y: y - 4 * lineHeight,
+        size: 8,
+        font: fontReg
+      });
+      const footerY = 100;
+      y -= lineSpacing;
+      page.drawLine({
+        start: { x, y: footerY - 4 * lineHeight },
+        end: { x: rightMargin, y: footerY - 4 * lineHeight },
+        thickness: 0.5,
+        color: rgb(0, 0, 0)
+      });
+      y -= lineSpacing + lineHeight;
+      const footerText = "www.fabricstore.pt";
+      const totalPages = pdfDoc.getPageCount();
+      const pages = pdfDoc.getPages();
+      const currentPageNumber = pages.indexOf(page) + 1;
+      const paginationText = `Pag. ${currentPageNumber} de ${totalPages}`;
+      const paginationWidth = fontReg.widthOfTextAtSize(paginationText, 8);
+      const paginationCenterX = (page.getWidth() - paginationWidth) / 2;
+      page.drawText(footerText, { x, y: footerY - 5 * lineHeight, size: 10, fontReg });
+      page.drawText(paginationText, {
+        x: paginationCenterX,
+        y: footerY - 5 * lineHeight,
+        size: 8,
+        fontReg
+      });
+      const pdfBytes = await pdfDoc.save();
+      const blob = new Blob([pdfBytes], { type: "application/pdf" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "Orcamento_Fabric-Store.pdf";
+      link.click();
+      return blob;
+    };
+    const generateTxt = async () => {
+      let total = 0;
+      let txtContent = "";
+      txtContent += `Data: ${(/* @__PURE__ */ new Date()).toLocaleDateString()}
 
-`,t+=`Email: ${d.email}
+`;
+      txtContent += `Cliente: ${selectorValues.nome}
 
-`;let o=h[0].correcao?"  Com corre\xE7\xE3o de medidas:":"  Medidas facultadas pelo cliente:",a=h[0].correcao?30:0;h.forEach((r,c)=>{let{usedWidth:x,tecido:b,calha:p,instalacao:P,total:X}=Je(r);e+=X,t+=`Janela ${c+1} - ${r.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(x).toFixed(2))} CM): ${X.toFixed(2)}\u20AC
+`;
+      txtContent += `Email: ${selectorValues.email}
 
-`,t+=`  Tecido: ${b.toFixed(2)}\u20AC
-`,t+=`    Modelo: ${r.tecido}
-`,t+=`    Tipo de Cortina: ${r.tipo}
-`,t+=`    Ba\xEDnha: ${r.tecido.startsWith("9")?"Inclu\xEDda":r.bainha?"Sim":"N\xE3o"}
-`,t+=`  Calha: ${p.toFixed(2)}\u20AC
-`,t+=`  Instala\xE7\xE3o: ${P.toFixed(2)}\u20AC
+`;
+      const correctionLabel = !windows[0].correcao ? "  Medidas facultadas pelo cliente:" : "  Com corre\xE7\xE3o de medidas:";
+      const correctionPrice = windows[0].correcao ? 30 : 0;
+      windows.forEach((window2, index) => {
+        const {
+          usedWidth,
+          tecido,
+          calha,
+          instalacao,
+          total: windowTotal
+        } = calculateWindowPrice(window2);
+        total += windowTotal;
+        txtContent += `Janela ${index + 1} - ${window2.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(usedWidth).toFixed(2))} CM): ${windowTotal.toFixed(2)}\u20AC
 
-`}),t+=`Corre\xE7\xE3o:
-${o} ${a.toFixed(2)}\u20AC
+`;
+        txtContent += `  Tecido: ${tecido.toFixed(2)}\u20AC
+`;
+        txtContent += `    Modelo: ${window2.tecido}
+`;
+        txtContent += `    Tipo de Cortina: ${window2.tipo}
+`;
+        txtContent += `    Ba\xEDnha: ${window2.tecido.startsWith("9") ? "Inclu\xEDda" : window2.bainha ? "Sim" : "N\xE3o"}
+`;
+        txtContent += `  Calha: ${calha.toFixed(2)}\u20AC
+`;
+        txtContent += `  Instala\xE7\xE3o: ${instalacao.toFixed(2)}\u20AC
 
-`,e+=a,t+=`Total: ${e.toFixed(2)}\u20AC
+`;
+      });
+      txtContent += `Corre\xE7\xE3o:
+${correctionLabel} ${correctionPrice.toFixed(2)}\u20AC
 
-`;let s=new Blob([t],{type:"text/plain"}),l=document.createElement("a");return l.href=URL.createObjectURL(s),l.download="Orcamento_Fabric-Store.txt",l.click(),s},At=e=>new Promise((t,o)=>{let a=new Image;a.crossOrigin="Anonymous",a.src=e,a.onload=()=>{let s=document.createElement("canvas");s.width=a.width,s.height=a.height,s.getContext("2d").drawImage(a,0,0);let r=s.toDataURL("image/png");t(r)},a.onerror=s=>{o(new Error(`Failed to load image from ${e}: ${s.message}`))}}),Ea=e=>{e.classList.add("show"),gsap.fromTo(e,{opacity:0},{opacity:1,duration:1,ease:"power1.in"})},H=e=>{e||(me.style.display="none",pe.style.display="none"),e==="Cortina"&&(me.style.display="flex",pe.style.display="none"),e==="Estore"&&(me.style.display="none",pe.style.display="flex")},i=(e,t)=>{e.style.display=t?"flex":"none"},Me=()=>{Object.keys(m).forEach(e=>{m[e].classList.remove("active"),m[e].classList.add("next"),m[e].classList.remove("done"),m[e].getElementsByClassName("step_number")[0].classList.remove("active"),m[e].getElementsByClassName("step_description")[0].textContent="Escolha"})},v=e=>{m[e].classList.remove("active"),m[e].classList.remove("next"),m[e].classList.add("done"),m[e].getElementsByClassName("step_number")[0].classList.remove("active"),m[e].getElementsByClassName("step_description")[0].classList.contains("next")&&m[e].getElementsByClassName("step_description")[0].classList.remove("next"),m[e].getElementsByClassName("step_description")[0].textContent=d[e],e==="instala\xE7\xE3o"&&(m.instalacaoEstore?.classList.remove("active"),m.instalacaoEstore?.classList.remove("next"),m.instalacaoEstore?.classList.add("done"),m.instalacaoEstore?.getElementsByClassName("step_number")[0].classList.remove("active"),m.instalacaoEstore.getElementsByClassName("step_description")[0].textContent=d.instalacao?"c/Instala\xE7\xE3o":"s/Instala\xE7\xE3o"),e==="medidas"&&(h.length>0?m[e].getElementsByClassName("step_description")[0].innerHTML+=h[0].correcao?"<br>c/Verifica\xE7\xE3o":"<br>s/Verifica\xE7\xE3o":m[e].getElementsByClassName("step_description")[0].innerHTML+=d.correcao?"<br>c/Verifica\xE7\xE3o":"<br>s/Verifica\xE7\xE3o",m.medidasEstore?.classList.remove("active"),m.medidasEstore?.classList.remove("next"),m.medidasEstore?.classList.add("done"),m.medidasEstore?.getElementsByClassName("step_number")[0].classList.remove("active"),m.medidasEstore.getElementsByClassName("step_description")[0].textContent=`${I?.value} X ${k?.value}cm`,m.medidasEstore.getElementsByClassName("step_description")[0].innerHTML+=`${d.correcao?"<br>c/Verifica\xE7\xE3o":"<br>s/Verifica\xE7\xE3o"}`),e==="tipo"&&(m[e].getElementsByClassName("step_description")[0].innerHTML+=`${d.bainha?"<br>c/Ba\xEDnha de Chumbo":"<br>s/Ba\xEDnha de Chumbo"}`)},S=e=>{m[e].classList.remove("next"),m[e].classList.add("active"),m[e].getElementsByClassName("step_number")[0].classList.add("active"),e==="instalacao"&&(m.instalacaoEstore?.classList.remove("next"),m.instalacaoEstore?.classList.add("active"),m.instalacaoEstore?.getElementsByClassName("step_number")[0].classList.add("active")),e==="medidas"&&(m.medidasEstore?.classList.remove("next"),m.medidasEstore?.classList.add("active"),m.medidasEstore?.getElementsByClassName("step_number")[0].classList.add("active"))},Dt=e=>{let t=e;if(t==="suporte"&&(t="calha"),m[t].classList.contains("active")&&(m[t].classList.remove("active"),m[t].getElementsByClassName("step_number")[0].classList.remove("active")),t==="instalacao"&&(m.instalacaoEstore?.classList.remove("active"),m.instalacaoEstore?.getElementsByClassName("step_number")[0].classList.remove("active")),t==="medidas"&&(m.medidasEstore?.classList.remove("active"),m.medidasEstore?.getElementsByClassName("step_number")[0].classList.remove("active")),!L||B())return v(t);m[t].classList.add("next"),m[t].querySelector("step_description")&&!m[t].querySelector("step_description")[0].classList.contains("next")&&m[t].querySelector("step_description")[0].classList.add("next"),t==="instalacao"&&m.instalacaoEstore?.classList.add("next"),t==="medidas"&&m.medidasEstore?.classList.add("next")},f=e=>{e&&Z?.classList.contains("inactive")&&Z.classList.remove("inactive"),e||Z?.classList.contains("inactive")||Z.classList.add("inactive")},ge=e=>{e.classList.add("active")},Ee=e=>{e.classList.remove("active")},q=e=>{let t=e.getElementsByTagName("h1")[0],o=e.getElementsByClassName("tecido_image_contain")[0];e.classList.add("selected"),t.classList.add("active"),o.classList.add("active")},F=e=>{let t=e.getElementsByTagName("h1")[0],o=e.getElementsByClassName("tecido_image_contain")[0];e.classList.remove("selected"),t.classList.remove("active"),o.classList.remove("active")},zt=()=>{let e=document.querySelectorAll("[id^='inicio-card']");e.forEach(t=>{t.addEventListener("click",()=>{let o=t.getElementsByTagName("h1")[0].textContent;q(t,n.inicio),e.forEach(a=>{a!==t&&F(a)}),O(o),E(n.inicio,o),B()&&f(!0)})})},Xt=()=>{let e=document.querySelectorAll("[id^='tecido-card']"),t=document.querySelectorAll(".tecido_color");e.forEach(o=>{o.addEventListener("click",()=>{let a=Ne(o),s=vt(o),l=ue.find(c=>c.product===a),r=o.getElementsByClassName("tecido_color");if(t.forEach(c=>Ee(c)),q(o,n.tecido),e.forEach(c=>{c!==o&&F(c)}),l){for(let c=0;c<r.length;c++)r.item(c).id===`${l.color}`&&ge(r.item(c));y==="tecido"&&E(n.tecido,l.color),y==="calha"&&he(l.color)}else r.length>0&&ge(r[0]),y==="tecido"&&s!==""&&E(n.tecido,`${s}`),y==="calha"&&s!==""&&he(s);B()&&f(!0)})})},Mt=()=>{let e=document.querySelectorAll(".tecido_color");e.forEach(t=>{t.addEventListener("click",o=>{let a=o.currentTarget,s=a&&a.id;ge(a),e.forEach(x=>{x!==a&&Ee(x)});let l=s?s.split("-")[0]:"",r=ue.find(x=>x.product===l);r?r.color=`${s}`:ue.push({product:l,color:`${s}`});let c=a.parentElement.parentElement.parentElement.parentElement.parentElement.getElementsByClassName("tecido_image")[0];for(let x=0;x<e.length;x++)if(e[x].getAttribute("id")===s){let b=e[x].querySelector(".source");b?c.setAttribute("src",b.getAttribute("src")):c.setAttribute("src",e[x].getElementsByTagName("img")[0].getAttribute("src")),c.setAttribute("srcset","");break}return y==="calha"&&s!==""?he(s):y==="tecido"&&s!==""?E(n.tecido,s):console.log("No color was stored")})})},Vt=()=>{let e=document.querySelectorAll("[id^='tipo-card']");e.forEach(t=>{t.addEventListener("click",()=>{q(t,n.tipo),e.forEach(o=>{o!==t&&F(o)}),E(n.tipo,t.getElementsByTagName("h1")[0].textContent),B()&&f(!0)})})},Rt=()=>{oe.addEventListener("change",function(e){E(n.bainha,oe.checked)})},Ht=()=>{_?.addEventListener("change",e=>{(_?.checked===!0||j?.checked===!0)&&(_e("Parede"),B()&&f(!0))}),j?.addEventListener("change",e=>{(_?.checked===!0||j?.checked===!0)&&(_e("Tecto"),B()&&f(!0))})},qt=()=>{I?.addEventListener("input",e=>{I?.value===""||k?.value===""||(B()&&E(n.medidas,`${I?.value} X ${k?.value}`),I?.value!==""&&k?.value!==""&&(B()?f(!0):f(!1)))}),k?.addEventListener("input",e=>{I?.value===""||k?.value===""||(B()&&E(n.medidas,`${I?.value} X ${k?.value}`),I?.value!==""&&k?.value!==""&&(B()?f(!0):f(!1)))})},Ut=()=>{U.addEventListener("change",function(e){E(n.correcao,U.checked)})},jt=()=>{J.addEventListener("change",function(e){E(n.instalacao,J.checked)})},Jt=()=>{Object.keys(m).forEach(e=>{m[e].addEventListener("click",()=>{$t(e)})})},Yt=()=>{Object.keys(W).forEach(e=>{W[e].addEventListener("click",()=>{e==="correcao"||e==="estoreCorrecao"||e!=="suporte"&&e!=="bainha"&&Xe(e)})})},Ve=e=>{e.button.addEventListener("click",()=>{ze(e)})},wt=()=>{te.addEventListener("click",async()=>{d.nome=Q.value,d.email=ee.value,d.contacto=nt.checked;let e=await _t(),t=await Nt();await oa(d.nome,d.email,d.contacto,e,t)})},Gt=()=>{lt.addEventListener("click",bt)},Kt=()=>{dt.addEventListener("click",()=>{ct.style.display="none",rt.style.display="flex"})},Zt=()=>{Z.addEventListener("click",Tt)},Re=e=>{let t=g.usedWidths.find(o=>e.tipo===o.name);return t?(e.medidas?parseInt(e.medidas.split(" X ")[0]):0)*t.widthRatio+g.bainhaPrice.widthMargin:0},He=(e,t)=>{let o=e.medidas.split(" X ")[0],a=0,s=0,l=yt(e);return e.inicio==="Cortina"&&(a=l.product*(t/100),s=l.calha),e.inicio==="Estore"&&(a=l.product),{product:a,calha:s}},qe=(e,t)=>{if(e.inicio==="Estore")return 0;let o=g.manufacturingPrices.find(a=>e.tipo===a.name);return o?e.tecido.startsWith("8")?o.blackout*(t/100):e.tecido.startsWith("9")&&(e.tipo==="Ondas"||e.tipo==="Franzido")?o.alinhado*(t/100):o.normal*(t/100):0},Ue=(e,t)=>e.inicio==="Cortina"&&e.tecido.startsWith("9")||e.inicio==="Estore"?0:e.bainha?g.bainhaPrice.price*(t/100):0,xa=e=>e.correcao?g.measuresCheckPrice:0,je=e=>{if(!h[0].instalacao)return 0;let t=0,o=parseInt(e.medidas.split(" X ")[0]),a=g.instalation.find(s=>o<=s.maxWidth);return a&&(t=a.price),a&&e.inicio==="Cortina"&&e.calha.startsWith("9500")&&(t*=2),t||0},Je=e=>{let t=Re(e),o=He(e,t),a=qe(e,t),s=Ue(e,t),l=je(e),r=o.product+a+s+o.calha+l;return e.totalPrice=r,{usedWidth:t,tecido:o.product+a+s,calha:o.calha,instalacao:l,total:r}},ba=e=>{let t=Re(e),o=He(e,t),a=qe(e,t),s=Ue(e,t),l=je(e),r=o.product+a+s+o.calha+l;return e.totalPrice=r,{usedWidth:t,productPrice:o.product,manufacturingPrice:a,bainhaPrice:s,calhaPrice:o.calha,instalationPrice:l,windowTotal:r}},Qt=e=>{let t=e.indexOf("@");return t>0&&t<e.length-1},Ye=e=>new Promise((t,o)=>{let a=new FileReader;a.onloadend=()=>t(a.result),a.onerror=o,a.readAsDataURL(e)}),ea=()=>{let e=()=>Q.value.trim()===""?(R.textContent="Preencher este campo obrigat\xF3rio",R.classList.add("u-text-main"),!0):(R.textContent="",R.classList.remove("u-text-main"),!1),t=()=>{let a=ee.value.trim();return a===""?(N.textContent="Preencher este campo obrigat\xF3rio",N.classList.add("u-text-main"),!0):Qt(a)?(N.textContent="",N.classList.remove("u-text-main"),!1):(N.textContent="Insira um email v\xE1lido",N.classList.add("u-text-main"),!0)},o=()=>{ta();let a=e(),s=t();aa(a||s)};Q?.addEventListener("input",o),ee?.addEventListener("input",o)},ta=()=>{R.textContent="",N.textContent="",Fe.textContent="",R.classList.remove("u-text-main"),N.classList.remove("u-text-main"),Fe.classList.remove("u-text-main")},aa=e=>{e&&Oe?.classList.add("inactive"),e||Oe?.classList.remove("inactive")},oa=async(e,t,o,a,s)=>{let l=document.getElementById("feedback-div"),r=null,c=null;try{let p=await a,P=await s;r=await Ye(p),c=await Ye(P)}catch{console.error("Failed to load PDF"),r=null}let x={name:e,email:t,check:o,file:r,to_company_email:"contact@fabricstore.pt",to_user_email:t,reply_to:"general@brightweb.tech"},b={name:e,email:t,check:o,file:c,to_company_email:"contact@fabricstore.pt",reply_to:"general@brightweb.tech"};emailjs.send("service_fabricstore","template_quote_pdf",x).then(function(p){console.log("SUCCESS!",p.status,p.text),se.style.display="none",te.style.display="none",l.textContent="Obrigado pelo seu contacto!"},function(p){console.log("FAILED...",p),se.style.display="none",te.style.display="none",l.textContent="Oops! Algo correu mal!"}),emailjs.send("service_fabricstore","template_quote_txt",b).then(function(p){console.log("SUCCESS!",p.status,p.text),se.style.display="none",te.style.display="none",l.textContent="Obrigado pelo seu contacto!"},function(p){console.log("FAILED...",p),se.style.display="none",te.style.display="none",l.textContent="Oops! Algo correu mal!"})},we={spaceBetween:12,allowTouchMove:!1,resistanceRatio:0,watchOverflow:!0,keyboard:{enabled:!0,onlyInViewport:!1},navigation:{nextEl:".slider-main_button.swiper-btn-next",prevEl:".slider-main_button.swiper-btn-prev"},breakpoints:{320:{slidesPerView:1},480:{slidesPerView:2},640:{slidesPerView:3},1024:{slidesPerView:6}}},Ge=new Swiper(".swiper",we),Ca=()=>{Ge.destroy(),Ge=new Swiper(".swiper",we)},Ba=()=>{let e=125;for(let t=0;t<5;t++)e=125+t*125,h.push({inicio:"Cortina",tecido:"101015-003",tipo:"Ondas",medidas:`${e} X 250`,correcao:t%2!==0,calha:"5000-Branco",instalacao:t%2===0})},va=()=>{h.push({inicio:"Cortina",tecido:"120100-008",tipo:"Franzido",medidas:"200 X 250",correcao:!0,calha:"5000-B",instalacao:!0})},Ia=()=>{let e=[{inicio:"Cortina",tecido:"120100-008",tipo:"Ondas",bainha:!0,medidas:"285 X 150",correcao:!0,calha:"5000-B",suporte:"Parede",instalacao:!0},{inicio:"Cortina",tecido:"120100-008",tipo:"Ondas",bainha:!0,medidas:"240 X 268",correcao:!0,calha:"5000-B",suporte:"Parede",instalacao:!0},{inicio:"Cortina",tecido:"120100-008",tipo:"Ondas",bainha:!0,medidas:"285 X 268",correcao:!0,calha:"5000-B",suporte:"Parede",instalacao:!0},{inicio:"Cortina",tecido:"120100-008",tipo:"Ondas",bainha:!0,medidas:"280 X 268",correcao:!0,calha:"5000-B",suporte:"Parede",instalacao:!0},{inicio:"Cortina",tecido:"120100-008",tipo:"Ondas",bainha:!0,medidas:"285 X 268",correcao:!0,calha:"5000-B",suporte:"Parede",instalacao:!0}];ee.value="ritabreu@test.pt",Q.value="Rita Abreu",h.push(...e)},ka=()=>{let e=[{inicio:"Cortina",tecido:"118060-024",tipo:"Ondas",bainha:!0,medidas:"285 X 150",correcao:!0,calha:"5000-B",suporte:"Parede",instalacao:!0},{inicio:"Cortina",tecido:"118060-024",tipo:"Ondas",bainha:!0,medidas:"348 X 268",correcao:!0,calha:"5000-B",suporte:"Parede",instalacao:!0},{inicio:"Cortina",tecido:"118060-024",tipo:"Ondas",bainha:!0,medidas:"240 X 268",correcao:!0,calha:"5000-B",suporte:"Parede",instalacao:!0},{inicio:"Cortina",tecido:"118060-024",tipo:"Ondas",bainha:!0,medidas:"285 X 268",correcao:!0,calha:"5000-B",suporte:"Parede",instalacao:!0},{inicio:"Cortina",tecido:"118060-024",tipo:"Ondas",bainha:!0,medidas:"280 X 268",correcao:!0,calha:"5000-B",suporte:"Parede",instalacao:!0},{inicio:"Cortina",tecido:"118060-024",tipo:"Ondas",bainha:!0,medidas:"285 X 268",correcao:!0,calha:"5000-B",suporte:"Parede",instalacao:!0}];ee.value="ritabreu@test.pt",Q.value="Rita Abreu",h.push(...e)},La=()=>{let e=[{inicio:"Cortina",tecido:"120100-008",tipo:"Ondas",medidas:"360 X 150",correcao:!1,calha:"5000-B",instalacao:!1}];h.push(...e)},Pa=()=>{let e=[{inicio:"Cortina",tecido:"120100-008",tipo:"Ondas",medidas:"350 X 240",correcao:!0,calha:"5000-B",instalacao:!0}];h.push(...e)};ft()});})();
+`;
+      total += correctionPrice;
+      txtContent += `Total: ${total.toFixed(2)}\u20AC
+
+`;
+      const txtBlob = new Blob([txtContent], { type: "text/plain" });
+      const txtLink = document.createElement("a");
+      txtLink.href = URL.createObjectURL(txtBlob);
+      txtLink.download = "Orcamento_Fabric-Store.txt";
+      txtLink.click();
+      return txtBlob;
+    };
+    const loadImageFromWebflow = (url) => {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = "Anonymous";
+        img.src = url;
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const context = canvas.getContext("2d");
+          context.drawImage(img, 0, 0);
+          const dataURL = canvas.toDataURL("image/png");
+          resolve(dataURL);
+        };
+        img.onerror = (error) => {
+          reject(new Error(`Failed to load image from ${url}: ${error.message}`));
+        };
+      });
+    };
+    const animateOpacity = (element) => {
+      element.classList.add("show");
+      gsap.fromTo(element, { opacity: 0 }, { opacity: 1, duration: 1, ease: "power1.in" });
+    };
+    const toggleSteps = (productType) => {
+      if (!productType) {
+        cortinaSteps.style.display = "none";
+        estoreSteps.style.display = "none";
+      }
+      if (productType === "Cortina") {
+        cortinaSteps.style.display = "flex";
+        estoreSteps.style.display = "none";
+      }
+      if (productType === "Estore") {
+        cortinaSteps.style.display = "none";
+        estoreSteps.style.display = "flex";
+      }
+    };
+    const changeSelectorVisibility = (selector, visible) => {
+      selector.style.display = visible ? "flex" : "none";
+    };
+    const resetSteps = () => {
+      Object.keys(steps).forEach((key) => {
+        steps[key].classList.remove("active");
+        steps[key].classList.add("next");
+        steps[key].classList.remove("done");
+        steps[key].getElementsByClassName("step_number")[0].classList.remove("active");
+        steps[key].getElementsByClassName("step_description")[0].textContent = "Escolha";
+      });
+    };
+    const markStepAsCompleted = (step) => {
+      steps[step].classList.remove("active");
+      steps[step].classList.remove("next");
+      steps[step].classList.add("done");
+      steps[step].getElementsByClassName("step_number")[0].classList.remove("active");
+      if (steps[step].getElementsByClassName("step_description")[0].classList.contains("next")) {
+        steps[step].getElementsByClassName("step_description")[0].classList.remove("next");
+      }
+      steps[step].getElementsByClassName("step_description")[0].textContent = selectorValues[step];
+      if (step === "instala\xE7\xE3o") {
+        steps.instalacaoEstore?.classList.remove("active");
+        steps.instalacaoEstore?.classList.remove("next");
+        steps.instalacaoEstore?.classList.add("done");
+        steps.instalacaoEstore?.getElementsByClassName("step_number")[0].classList.remove("active");
+        steps.instalacaoEstore.getElementsByClassName("step_description")[0].textContent = selectorValues.instalacao ? "c/Instala\xE7\xE3o" : "s/Instala\xE7\xE3o";
+      }
+      if (step === "medidas") {
+        if (windows.length > 0) {
+          steps[step].getElementsByClassName("step_description")[0].innerHTML += windows[0].correcao ? "<br>c/Verifica\xE7\xE3o" : "<br>s/Verifica\xE7\xE3o";
+        } else {
+          steps[step].getElementsByClassName("step_description")[0].innerHTML += selectorValues.correcao ? "<br>c/Verifica\xE7\xE3o" : "<br>s/Verifica\xE7\xE3o";
+        }
+        steps.medidasEstore?.classList.remove("active");
+        steps.medidasEstore?.classList.remove("next");
+        steps.medidasEstore?.classList.add("done");
+        steps.medidasEstore?.getElementsByClassName("step_number")[0].classList.remove("active");
+        steps.medidasEstore.getElementsByClassName("step_description")[0].textContent = `${larguraInput?.value} X ${alturaInput?.value}cm`;
+        steps.medidasEstore.getElementsByClassName("step_description")[0].innerHTML += `${selectorValues.correcao ? "<br>c/Verifica\xE7\xE3o" : "<br>s/Verifica\xE7\xE3o"}`;
+      }
+      if (step === "tipo") {
+        steps[step].getElementsByClassName("step_description")[0].innerHTML += `${selectorValues.bainha ? "<br>c/Ba\xEDnha de Chumbo" : "<br>s/Ba\xEDnha de Chumbo"}`;
+      }
+    };
+    const markStepAsActive = (step) => {
+      steps[step].classList.remove("next");
+      steps[step].classList.add("active");
+      steps[step].getElementsByClassName("step_number")[0].classList.add("active");
+      if (step === "instalacao") {
+        steps.instalacaoEstore?.classList.remove("next");
+        steps.instalacaoEstore?.classList.add("active");
+        steps.instalacaoEstore?.getElementsByClassName("step_number")[0].classList.add("active");
+      }
+      if (step === "medidas") {
+        steps.medidasEstore?.classList.remove("next");
+        steps.medidasEstore?.classList.add("active");
+        steps.medidasEstore?.getElementsByClassName("step_number")[0].classList.add("active");
+      }
+    };
+    const markStepAsNext = (stepToMark) => {
+      let step = stepToMark;
+      if (step === "suporte") {
+        step = "calha";
+      }
+      if (steps[step].classList.contains("active")) {
+        steps[step].classList.remove("active");
+        steps[step].getElementsByClassName("step_number")[0].classList.remove("active");
+      }
+      if (step === "instalacao") {
+        steps.instalacaoEstore?.classList.remove("active");
+        steps.instalacaoEstore?.getElementsByClassName("step_number")[0].classList.remove("active");
+      }
+      if (step === "medidas") {
+        steps.medidasEstore?.classList.remove("active");
+        steps.medidasEstore?.getElementsByClassName("step_number")[0].classList.remove("active");
+      }
+      if (!isNewWindow || validateSelector())
+        return markStepAsCompleted(step);
+      steps[step].classList.add("next");
+      if (steps[step].querySelector("step_description") && !steps[step].querySelector("step_description")[0].classList.contains("next")) {
+        steps[step].querySelector("step_description")[0].classList.add("next");
+      }
+      if (step === "instalacao") {
+        steps.instalacaoEstore?.classList.add("next");
+      }
+      if (step === "medidas") {
+        steps.medidasEstore?.classList.add("next");
+      }
+    };
+    const activateNextBtn = (isActive) => {
+      if (isActive) {
+        if (nextButton?.classList.contains("inactive")) {
+          nextButton.classList.remove("inactive");
+        }
+      }
+      if (!isActive) {
+        if (!nextButton?.classList.contains("inactive")) {
+          nextButton.classList.add("inactive");
+        }
+      }
+    };
+    const activateColor = (color) => {
+      color.classList.add("active");
+    };
+    const deactivateColor = (color) => {
+      color.classList.remove("active");
+    };
+    const activateCard = (card) => {
+      const title = card.getElementsByTagName("h1")[0];
+      const imageContain = card.getElementsByClassName("tecido_image_contain")[0];
+      card.classList.add("selected");
+      title.classList.add("active");
+      imageContain.classList.add("active");
+    };
+    const deactivateCard = (card) => {
+      const title = card.getElementsByTagName("h1")[0];
+      const imageContain = card.getElementsByClassName("tecido_image_contain")[0];
+      card.classList.remove("selected");
+      title.classList.remove("active");
+      imageContain.classList.remove("active");
+    };
+    const addOnClickToInicioCards = () => {
+      const cards = document.querySelectorAll("[id^='inicio-card']");
+      cards.forEach((card) => {
+        card.addEventListener("click", () => {
+          const productType = card.getElementsByTagName("h1")[0].textContent;
+          activateCard(card, selectors.inicio);
+          cards.forEach((cardFromList) => {
+            if (cardFromList !== card) {
+              deactivateCard(cardFromList);
+            }
+          });
+          updateProductsCMSFilter(productType);
+          updateSelectorValue(selectors.inicio, productType);
+          if (validateSelector())
+            activateNextBtn(true);
+        });
+      });
+    };
+    const addOnClickToTecidoCards = () => {
+      const cards = document.querySelectorAll("[id^='tecido-card']");
+      const colors = document.querySelectorAll(".tecido_color");
+      cards.forEach((card) => {
+        card.addEventListener("click", () => {
+          const cardProduct = getProductFromCard(card);
+          const cardColor = getColorFromCard(card);
+          const existingSelection = selectedColors.find((color) => color.product === cardProduct);
+          const cardColors = card.getElementsByClassName("tecido_color");
+          colors.forEach((color) => deactivateColor(color));
+          activateCard(card, selectors.tecido);
+          cards.forEach((cardFromList) => {
+            if (cardFromList !== card) {
+              deactivateCard(cardFromList);
+            }
+          });
+          if (existingSelection) {
+            for (let i = 0; i < cardColors.length; i++) {
+              if (cardColors.item(i).id === `${existingSelection.color}`) {
+                activateColor(cardColors.item(i));
+              }
+            }
+            if (currentStep === "tecido") {
+              updateSelectorValue(selectors.tecido, existingSelection.color);
+            }
+            if (currentStep === "calha") {
+              updateCalhaValue(existingSelection.color);
+            }
+          } else {
+            cardColors.length > 0 && activateColor(cardColors[0]);
+            if (currentStep === "tecido" && cardColor !== "") {
+              updateSelectorValue(selectors.tecido, `${cardColor}`);
+            }
+            if (currentStep === "calha" && cardColor !== "") {
+              updateCalhaValue(cardColor);
+            }
+          }
+          if (validateSelector())
+            activateNextBtn(true);
+        });
+      });
+    };
+    const addOnClickColor = () => {
+      const colors = document.querySelectorAll(".tecido_color");
+      colors.forEach((color) => {
+        color.addEventListener("click", (event) => {
+          const selectedDiv = event.currentTarget;
+          const selectedColor = selectedDiv && selectedDiv.id;
+          activateColor(selectedDiv);
+          colors.forEach((colorFromList) => {
+            if (colorFromList !== selectedDiv) {
+              deactivateColor(colorFromList);
+            }
+          });
+          const product = selectedColor ? selectedColor.split("-")[0] : "";
+          const latestSelection = selectedColors.find((color2) => color2.product === product);
+          if (latestSelection) {
+            latestSelection.color = `${selectedColor}`;
+          } else {
+            selectedColors.push({ product, color: `${selectedColor}` });
+          }
+          const cardThumbnailImage = selectedDiv.parentElement.parentElement.parentElement.parentElement.parentElement.getElementsByClassName(
+            "tecido_image"
+          )[0];
+          for (let i = 0; i < colors.length; i++) {
+            if (colors[i].getAttribute("id") === selectedColor) {
+              const displayImg = colors[i].querySelector(".source");
+              if (displayImg) {
+                cardThumbnailImage.setAttribute("src", displayImg.getAttribute("src"));
+              } else {
+                cardThumbnailImage.setAttribute(
+                  "src",
+                  colors[i].getElementsByTagName("img")[0].getAttribute("src")
+                );
+              }
+              cardThumbnailImage.setAttribute("srcset", "");
+              break;
+            }
+          }
+          if (currentStep === "calha" && selectedColor !== "") {
+            return updateCalhaValue(selectedColor);
+          }
+          if (currentStep === "tecido" && selectedColor !== "") {
+            return updateSelectorValue(selectors.tecido, selectedColor);
+          }
+          return console.log("No color was stored");
+        });
+      });
+    };
+    const addOnClickToTipoCards = () => {
+      const cards = document.querySelectorAll("[id^='tipo-card']");
+      cards.forEach((card) => {
+        card.addEventListener("click", () => {
+          activateCard(card, selectors.tipo);
+          cards.forEach((cardFromList) => {
+            if (cardFromList !== card) {
+              deactivateCard(cardFromList);
+            }
+          });
+          updateSelectorValue(selectors.tipo, card.getElementsByTagName("h1")[0].textContent);
+          if (validateSelector())
+            activateNextBtn(true);
+        });
+      });
+    };
+    const addOnClickBainha = () => {
+      bainhaInput.addEventListener("change", function(event) {
+        updateSelectorValue(selectors.bainha, bainhaInput.checked);
+      });
+    };
+    const addOnChangeSuporteRadioBtns = () => {
+      paredeRadioBtn?.addEventListener("change", (event) => {
+        if (paredeRadioBtn?.checked === true || tectoRadioBtn?.checked === true) {
+          updateSuporteValue("Parede");
+          if (validateSelector())
+            activateNextBtn(true);
+        }
+      });
+      tectoRadioBtn?.addEventListener("change", (event) => {
+        if (paredeRadioBtn?.checked === true || tectoRadioBtn?.checked === true) {
+          updateSuporteValue("Tecto");
+          if (validateSelector())
+            activateNextBtn(true);
+        }
+      });
+    };
+    const addOnChangeMedidasInputs = () => {
+      larguraInput?.addEventListener("input", (event) => {
+        if (larguraInput?.value === "" || alturaInput?.value === "") {
+          return;
+        }
+        validateSelector() && updateSelectorValue(selectors.medidas, `${larguraInput?.value} X ${alturaInput?.value}`);
+        if (!(larguraInput?.value === "") && !(alturaInput?.value === "")) {
+          validateSelector() ? activateNextBtn(true) : activateNextBtn(false);
+        }
+      });
+      alturaInput?.addEventListener("input", (event) => {
+        if (larguraInput?.value === "" || alturaInput?.value === "") {
+          return;
+        }
+        validateSelector() && updateSelectorValue(selectors.medidas, `${larguraInput?.value} X ${alturaInput?.value}`);
+        if (!(larguraInput?.value === "") && !(alturaInput?.value === "")) {
+          validateSelector() ? activateNextBtn(true) : activateNextBtn(false);
+        }
+      });
+    };
+    const addOnClickCorrecao = () => {
+      correcaoInput.addEventListener("change", function(event) {
+        updateSelectorValue(selectors.correcao, correcaoInput.checked);
+      });
+    };
+    const addOnClickInstalacao = () => {
+      instalacaoInput.addEventListener("change", function(event) {
+        updateSelectorValue(selectors.instalacao, instalacaoInput.checked);
+      });
+    };
+    const addOnClickStep = () => {
+      Object.keys(steps).forEach((key) => {
+        steps[key].addEventListener("click", () => {
+          navigateToStep(key);
+        });
+      });
+    };
+    const addOnClickCheckoutChoices = () => {
+      Object.keys(checkoutChoices).forEach((key) => {
+        checkoutChoices[key].addEventListener("click", () => {
+          if (key === "correcao" || key === "estoreCorrecao") {
+            return;
+          }
+          if (key === "suporte") {
+            return;
+          }
+          if (key === "bainha") {
+            return;
+          }
+          navigateFromCheckoutToStep(key);
+        });
+      });
+    };
+    const addOnClickToWindowBtn = (window2) => {
+      window2.button.addEventListener("click", () => {
+        selectWindow(window2);
+      });
+    };
+    const addOnClickEnviar = () => {
+      enviarButton.addEventListener("click", async () => {
+        selectorValues.nome = nomeInput.value;
+        selectorValues.email = emailInput.value;
+        selectorValues.contacto = contactoSwitch.checked;
+        const pdfBytes = await generateAndDownloadPdfLIB();
+        const txtBytes = await generateTxt();
+      });
+    };
+    const addOnClickNewWindow = () => {
+      newWindowButton.addEventListener("click", createWindow);
+    };
+    const addOnClickNoWindow = () => {
+      noWindowButton.addEventListener("click", () => {
+        newWindowContain.style.display = "none";
+        checkoutFormContain.style.display = "flex";
+      });
+    };
+    const addOnClickNextButton = () => {
+      nextButton.addEventListener("click", advanceStep);
+    };
+    const calculateUsedWidth = (window2) => {
+      const usedWidth = MANUFACTURING_CONSTANTS.usedWidths.find((usedWidth2) => {
+        return window2.tipo === usedWidth2.name;
+      });
+      if (usedWidth) {
+        const width = window2.medidas ? parseInt(window2.medidas.split(" X ")[0]) : 0;
+        return width * usedWidth.widthRatio + MANUFACTURING_CONSTANTS.bainhaPrice.widthMargin;
+      }
+      return 0;
+    };
+    const calculateMaterialPrice = (window2, usedWidth) => {
+      const width = window2.medidas.split(" X ")[0];
+      let productPrice = 0, calhaPrice = 0;
+      const prices = getProductPrice(window2);
+      if (window2.inicio === "Cortina") {
+        productPrice = prices.product * (usedWidth / 100);
+        calhaPrice = prices.calha;
+      }
+      if (window2.inicio === "Estore") {
+        productPrice = prices.product;
+      }
+      return { product: productPrice, calha: calhaPrice };
+    };
+    const calculateManufacturingPrice = (window2, usedWidth) => {
+      if (window2.inicio === "Estore") {
+        return 0;
+      }
+      const manufacturingPrice = MANUFACTURING_CONSTANTS.manufacturingPrices.find(
+        (price) => window2.tipo === price.name
+      );
+      if (manufacturingPrice) {
+        return window2.tecido.startsWith("8") ? manufacturingPrice.blackout * (usedWidth / 100) : (
+          // : (window2.tecido.startsWith('120') || window2.tecido.startsWith('122')) &&
+          window2.tecido.startsWith("9") && // Alinhado
+          (window2.tipo === "Ondas" || window2.tipo === "Franzido") ? manufacturingPrice.alinhado * (usedWidth / 100) : manufacturingPrice.normal * (usedWidth / 100)
+        );
+      }
+      return 0;
+    };
+    const calculateBainhaPrice = (window2, usedWidth) => {
+      if (window2.inicio === "Cortina" && window2.tecido.startsWith("9")) {
+        return 0;
+      }
+      if (window2.inicio === "Estore") {
+        return 0;
+      }
+      if (window2.bainha) {
+        return MANUFACTURING_CONSTANTS.bainhaPrice.price * (usedWidth / 100);
+      }
+      return 0;
+    };
+    const calculateMeasuresCheckPrice = (window2) => {
+      return !window2.correcao ? 0 : MANUFACTURING_CONSTANTS.measuresCheckPrice;
+    };
+    const calculateInstalationPrice = (window2) => {
+      if (!windows[0].instalacao) {
+        return 0;
+      }
+      let instalationPrice = 0;
+      const largura = parseInt(window2.medidas.split(" X ")[0]);
+      const instalationPriceDetails = MANUFACTURING_CONSTANTS.instalation.find(
+        (price) => largura <= price.maxWidth
+      );
+      instalationPriceDetails && (instalationPrice = instalationPriceDetails.price);
+      instalationPriceDetails && window2.inicio === "Cortina" && window2.calha.startsWith("9500") && (instalationPrice *= 2);
+      return instalationPrice ? instalationPrice : 0;
+    };
+    const calculateWindowPrice = (window2) => {
+      const totalWidth = calculateUsedWidth(window2);
+      const materialPrice = calculateMaterialPrice(window2, totalWidth);
+      const manufacturingPrice = calculateManufacturingPrice(window2, totalWidth);
+      const bainhaPrice = calculateBainhaPrice(window2, totalWidth);
+      const instalationPrice = calculateInstalationPrice(window2);
+      const result = materialPrice.product + manufacturingPrice + bainhaPrice + materialPrice.calha + instalationPrice;
+      window2.totalPrice = result;
+      return {
+        usedWidth: totalWidth,
+        tecido: materialPrice.product + manufacturingPrice + bainhaPrice,
+        calha: materialPrice.calha,
+        instalacao: instalationPrice,
+        total: result
+      };
+    };
+    const calculateWindowPriceTxt = (window2) => {
+      const totalWidth = calculateUsedWidth(window2);
+      const materialPrice = calculateMaterialPrice(window2, totalWidth);
+      const manufacturingPrice = calculateManufacturingPrice(window2, totalWidth);
+      const bainhaPrice = calculateBainhaPrice(window2, totalWidth);
+      const instalationPrice = calculateInstalationPrice(window2);
+      const result = materialPrice.product + manufacturingPrice + bainhaPrice + materialPrice.calha + instalationPrice;
+      window2.totalPrice = result;
+      return {
+        usedWidth: totalWidth,
+        productPrice: materialPrice.product,
+        manufacturingPrice,
+        bainhaPrice,
+        calhaPrice: materialPrice.calha,
+        instalationPrice,
+        windowTotal: result
+      };
+    };
+    const isValidEmail = (email) => {
+      const atPosition = email.indexOf("@");
+      return atPosition > 0 && atPosition < email.length - 1;
+    };
+    const blobToBase64 = (blob) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    };
+    const addOnChangeFormInputs = () => {
+      const validateNameInput = () => {
+        if (nomeInput.value.trim() === "") {
+          nameError.textContent = "Preencher este campo obrigat\xF3rio";
+          nameError.classList.add("u-text-main");
+          return true;
+        }
+        nameError.textContent = "";
+        nameError.classList.remove("u-text-main");
+        return false;
+      };
+      const validateEmailInput = () => {
+        const emailValue = emailInput.value.trim();
+        if (emailValue === "") {
+          emailError.textContent = "Preencher este campo obrigat\xF3rio";
+          emailError.classList.add("u-text-main");
+          return true;
+        }
+        if (!isValidEmail(emailValue)) {
+          emailError.textContent = "Insira um email v\xE1lido";
+          emailError.classList.add("u-text-main");
+          return true;
+        }
+        emailError.textContent = "";
+        emailError.classList.remove("u-text-main");
+        return false;
+      };
+      const validateInputs = () => {
+        resetCheckoutErrors();
+        const nameErrorExists = validateNameInput();
+        const emailErrorExists = validateEmailInput();
+        activateEnviarBtn(nameErrorExists || emailErrorExists);
+      };
+      nomeInput?.addEventListener("input", validateInputs);
+      emailInput?.addEventListener("input", validateInputs);
+    };
+    const resetCheckoutErrors = () => {
+      nameError.textContent = "";
+      emailError.textContent = "";
+      checkFieldError.textContent = "";
+      nameError.classList.remove("u-text-main");
+      emailError.classList.remove("u-text-main");
+      checkFieldError.classList.remove("u-text-main");
+    };
+    const activateEnviarBtn = (isError) => {
+      if (isError) {
+        enviarButtonContain?.classList.add("inactive");
+      }
+      if (!isError) {
+        enviarButtonContain?.classList.remove("inactive");
+      }
+    };
+    const sendQuoteEmail = async (name, email, allowsContact, base64PdfPromise, base64TxtPromise) => {
+      const feedbackMessage2 = document.getElementById("feedback-div");
+      let pdfFile = null;
+      let txtFile = null;
+      try {
+        const base64Pdf = await base64PdfPromise;
+        const base64Txt = await base64TxtPromise;
+        pdfFile = await blobToBase64(base64Pdf);
+        txtFile = await blobToBase64(base64Txt);
+      } catch {
+        console.error("Failed to load PDF");
+        pdfFile = null;
+      }
+      const templateParamsPdf = {
+        name,
+        email,
+        check: allowsContact,
+        file: pdfFile,
+        to_company_email: "contact@fabricstore.pt",
+        // The company's email
+        to_user_email: email,
+        // Send a copy to the user
+        reply_to: "general@brightweb.tech"
+      };
+      const templateParamsTxt = {
+        name,
+        email,
+        check: allowsContact,
+        file: txtFile,
+        to_company_email: "contact@fabricstore.pt",
+        reply_to: "general@brightweb.tech"
+      };
+      emailjs.send("service_fabricstore", "template_quote_pdf", templateParamsPdf).then(
+        function(response) {
+          console.log("SUCCESS!", response.status, response.text);
+          userDetailsForm.style.display = "none";
+          enviarButton.style.display = "none";
+          feedbackMessage2.textContent = "Obrigado pelo seu contacto!";
+        },
+        function(error) {
+          console.log("FAILED...", error);
+          userDetailsForm.style.display = "none";
+          enviarButton.style.display = "none";
+          feedbackMessage2.textContent = "Oops! Algo correu mal!";
+        }
+      );
+      emailjs.send("service_fabricstore", "template_quote_txt", templateParamsTxt).then(
+        function(response) {
+          console.log("SUCCESS!", response.status, response.text);
+          userDetailsForm.style.display = "none";
+          enviarButton.style.display = "none";
+          feedbackMessage2.textContent = "Obrigado pelo seu contacto!";
+        },
+        function(error) {
+          console.log("FAILED...", error);
+          userDetailsForm.style.display = "none";
+          enviarButton.style.display = "none";
+          feedbackMessage2.textContent = "Oops! Algo correu mal!";
+        }
+      );
+    };
+    const swiperConfiguration = {
+      spaceBetween: 12,
+      allowTouchMove: false,
+      // Disable touch-based swiping (optional)
+      resistanceRatio: 0,
+      // Prevents users from dragging/swiping past the last slide
+      watchOverflow: true,
+      // Disables swiper if the slides are fewer than the container width
+      keyboard: {
+        enabled: true,
+        onlyInViewport: false
+      },
+      navigation: {
+        nextEl: ".slider-main_button.swiper-btn-next",
+        prevEl: ".slider-main_button.swiper-btn-prev"
+      },
+      breakpoints: {
+        320: {
+          slidesPerView: 1
+        },
+        480: {
+          slidesPerView: 2
+        },
+        640: {
+          slidesPerView: 3
+          // Adjust according to your design
+        },
+        1024: {
+          slidesPerView: 6
+        }
+      }
+    };
+    let swiper = new Swiper(".swiper", swiperConfiguration);
+    const resetSwiper = () => {
+      swiper.destroy();
+      swiper = new Swiper(".swiper", swiperConfiguration);
+    };
+    const createDummyWindows = () => {
+      let windowWidth = 125;
+      for (let i = 0; i < 5; i++) {
+        windowWidth = 125 + i * 125;
+        windows.push({
+          inicio: "Cortina",
+          tecido: "101015-003",
+          tipo: "Ondas",
+          medidas: `${windowWidth} X 250`,
+          correcao: i % 2 === 0 ? false : true,
+          calha: "5000-Branco",
+          instalacao: i % 2 === 0 ? true : false
+        });
+      }
+    };
+    const createEddieWoodWindows = () => {
+      windows.push({
+        inicio: "Cortina",
+        tecido: "120100-008",
+        tipo: "Franzido",
+        medidas: `200 X 250`,
+        correcao: true,
+        calha: "5000-B",
+        instalacao: true
+      });
+    };
+    const createRitaAbreuWindows = () => {
+      const ritaAbreuWindows = [
+        {
+          inicio: "Cortina",
+          tecido: "120100-008",
+          tipo: "Ondas",
+          bainha: true,
+          medidas: `285 X 150`,
+          correcao: true,
+          calha: "5000-B",
+          suporte: "Parede",
+          instalacao: true
+        },
+        {
+          inicio: "Cortina",
+          tecido: "120100-008",
+          tipo: "Ondas",
+          bainha: true,
+          medidas: `240 X 268`,
+          correcao: true,
+          calha: "5000-B",
+          suporte: "Parede",
+          instalacao: true
+        },
+        {
+          inicio: "Cortina",
+          tecido: "120100-008",
+          tipo: "Ondas",
+          bainha: true,
+          medidas: `285 X 268`,
+          correcao: true,
+          calha: "5000-B",
+          suporte: "Parede",
+          instalacao: true
+        },
+        {
+          inicio: "Cortina",
+          tecido: "120100-008",
+          tipo: "Ondas",
+          bainha: true,
+          medidas: `280 X 268`,
+          correcao: true,
+          calha: "5000-B",
+          suporte: "Parede",
+          instalacao: true
+        },
+        {
+          inicio: "Cortina",
+          tecido: "120100-008",
+          tipo: "Ondas",
+          bainha: true,
+          medidas: `285 X 268`,
+          correcao: true,
+          calha: "5000-B",
+          suporte: "Parede",
+          instalacao: true
+        }
+      ];
+      emailInput.value = "ritabreu@test.pt";
+      nomeInput.value = "Rita Abreu";
+      windows.push(...ritaAbreuWindows);
+    };
+    const createRitaAbreuWindows2 = () => {
+      const ritaAbreuWindows = [
+        {
+          inicio: "Cortina",
+          tecido: "118060-024",
+          tipo: "Ondas",
+          bainha: true,
+          medidas: `285 X 150`,
+          correcao: true,
+          calha: "5000-B",
+          suporte: "Parede",
+          instalacao: true
+        },
+        {
+          inicio: "Cortina",
+          tecido: "118060-024",
+          tipo: "Ondas",
+          bainha: true,
+          medidas: `348 X 268`,
+          correcao: true,
+          calha: "5000-B",
+          suporte: "Parede",
+          instalacao: true
+        },
+        {
+          inicio: "Cortina",
+          tecido: "118060-024",
+          tipo: "Ondas",
+          bainha: true,
+          medidas: `240 X 268`,
+          correcao: true,
+          calha: "5000-B",
+          suporte: "Parede",
+          instalacao: true
+        },
+        {
+          inicio: "Cortina",
+          tecido: "118060-024",
+          tipo: "Ondas",
+          bainha: true,
+          medidas: `285 X 268`,
+          correcao: true,
+          calha: "5000-B",
+          suporte: "Parede",
+          instalacao: true
+        },
+        {
+          inicio: "Cortina",
+          tecido: "118060-024",
+          tipo: "Ondas",
+          bainha: true,
+          medidas: `280 X 268`,
+          correcao: true,
+          calha: "5000-B",
+          suporte: "Parede",
+          instalacao: true
+        },
+        {
+          inicio: "Cortina",
+          tecido: "118060-024",
+          tipo: "Ondas",
+          bainha: true,
+          medidas: `285 X 268`,
+          correcao: true,
+          calha: "5000-B",
+          suporte: "Parede",
+          instalacao: true
+        }
+      ];
+      emailInput.value = "ritabreu@test.pt";
+      nomeInput.value = "Rita Abreu";
+      windows.push(...ritaAbreuWindows);
+    };
+    const createMafaldaCoelhoWindows = () => {
+      const mafaldaCoelhoWindows = [
+        {
+          inicio: "Cortina",
+          tecido: "120100-008",
+          tipo: "Ondas",
+          medidas: `360 X 150`,
+          correcao: false,
+          calha: "5000-B",
+          instalacao: false
+        }
+      ];
+      windows.push(...mafaldaCoelhoWindows);
+    };
+    const createHelderPintoWindows = () => {
+      const helderPintoWindows = [
+        {
+          inicio: "Cortina",
+          tecido: "120100-008",
+          tipo: "Ondas",
+          medidas: `350 X 240`,
+          correcao: true,
+          calha: "5000-B",
+          instalacao: true
+        }
+      ];
+      windows.push(...helderPintoWindows);
+    };
+    onInit();
+  });
+})();
+//# sourceMappingURL=index.js.map

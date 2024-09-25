@@ -1551,14 +1551,7 @@ window.Webflow.push(() => {
           {
             label: `Estore`,
             price: tecido,
-            subItems: [
-              { label: `Modelo de Estore: ${window2.tecido}` },
-              {
-                label: `Baínha de chumbo: ${
-                  window2.tecido.startsWith('9') ? 'Incluída' : window2.bainha ? 'Sim' : 'Não'
-                }`,
-              },
-            ],
+            subItems: [{ label: `Modelo de Estore: ${window2.tecido}` }],
           },
           {
             label: `Instalação`,
@@ -1584,7 +1577,7 @@ window.Webflow.push(() => {
       });
 
       // Draw Total for the window
-      page.drawText(`Total`, { x, y, size: 10, font: fontBold });
+      page.drawText(`Total`, { x, y, size: 8, font: fontBold });
       page.drawText(`${windowTotal.toFixed(2)}€`, { x: rightMargin - 100, y, size: 10, fontReg });
       y -= lineHeight;
 
