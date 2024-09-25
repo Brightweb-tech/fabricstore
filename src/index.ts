@@ -1504,27 +1504,24 @@ window.Webflow.push(() => {
       page.drawText(`Janela ${index + 1} -`, { x, y, size: 8, font: fontBold });
 
       // Draw the rest of the text in regular font
-      page.drawText(
-        ` ${window2.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(usedWidth).toFixed(2))} CM)`,
-        {
-          x: x + fontBold.widthOfTextAtSize(`Janela ${index + 1} -`, 8),
-          y,
-          size: 8,
-          font: fontReg,
-        }
-      );
+      page.drawText(` ${window2.medidas} CM`, {
+        x: x + fontBold.widthOfTextAtSize(`Janela ${index + 1} -`, 8),
+        y,
+        size: 8,
+        font: fontReg,
+      });
       y -= lineHeight;
 
       // Create priced items with their respective subitems
       const items = [
         {
-          label: `Tecido`,
+          label: `Cortinado`,
           price: tecido,
           subItems: [
-            { label: `Modelo: ${window2.tecido}` },
-            { label: `Tipo de Cortina: ${window2.tipo}` },
+            { label: `Tipo de tecido: ${window2.tecido}` },
+            { label: `Modelo de Cortina: ${window2.tipo}` },
             {
-              label: `Baínha: ${
+              label: `Baínha de chumbo: ${
                 window2.tecido.startsWith('9') ? 'Incluída' : window2.bainha ? 'Sim' : 'Não'
               }`,
             },
@@ -1533,7 +1530,10 @@ window.Webflow.push(() => {
         {
           label: `Calha`,
           price: calha,
-          subItems: [{ label: `Suporte: Suporte de ${window2.suporte}` }],
+          subItems: [
+            { label: `Modelo de calha: ${window2.tipo}` },
+            { label: `Suporte da calha: ${window2.suporte}` },
+          ],
         },
         {
           label: `Instalação`,
@@ -1574,12 +1574,10 @@ window.Webflow.push(() => {
     });
 
     // Draw Correction
-    const correctionLabel = !windows[0].correcao
-      ? 'Medidas facultadas pelo cliente'
-      : 'Com correção de medidas';
-    page.drawText('Correção:', { x, y, size: 8, font: fontBold });
+    const correctionLabel = !windows[0].correcao ? 'Facultadas pelo cliente' : 'Sim';
+    page.drawText('Retificação de medidas:', { x, y, size: 8, font: fontBold });
     page.drawText(correctionLabel, {
-      x: x + fontBold.widthOfTextAtSize('Correção:', 8) + 2,
+      x: x + fontBold.widthOfTextAtSize('Retificação de medidas:', 8) + 2,
       y,
       size: 8,
       font: fontReg,
@@ -1600,32 +1598,46 @@ window.Webflow.push(() => {
     y -= lineSpacing + lineHeight;
 
     // Draw Total
-    page.drawText('Total:', { x: rightMargin - 150, y, size: 12, fontBold });
-    page.drawText(`${total.toFixed(2)}€`, { x: rightMargin - 100, y, size: 12, fontBold });
+    page.drawText('Total:', { x: rightMargin - 150, y, size: 10, font: fontBold });
+    page.drawText(`${total.toFixed(2)}€`, { x: rightMargin - 100, y, size: 10, fontBold });
     y -= lineHeight * 4;
+
+    //Observações
+    page.drawText('Observações:', {
+      x: x,
+      y: y,
+      size: 10,
+      font: fontBold,
+    });
+    const bulletPoint = '• ';
+    const bulletIndent = 10;
+
+    page.drawText(
+      `${bulletPoint}Valores com IVA incluido à taxa em vigor. Orçamento válido por 15 dias.`,
+      {
+        x: x + bulletIndent,
+        y: y - lineHeight,
+        size: 8,
+        font: fontReg,
+      }
+    );
+    page.drawText(
+      `${bulletPoint}Calhas já incluem os rodízios e suportes necessários para as medidas selecionadas.`,
+      { x: x + bulletIndent, y: y - 2 * lineHeight, size: 8, font: fontReg }
+    );
+    page.drawText(
+      `${bulletPoint}Valor referente à instalação e rectificação de medidas sujeito a validação do código postal.`,
+      { x: x + bulletIndent, y: y - 3 * lineHeight, size: 8, font: fontReg }
+    );
+    page.drawText(`${bulletPoint}IBAN: PT50 0000 0000 0000 0000 0`, {
+      x: x + bulletIndent,
+      y: y - 4 * lineHeight,
+      size: 8,
+      font: fontReg,
+    });
 
     // Footer
     const footerY = 100;
-    page.drawText('Valores com IVA incluido à taxa em vigor. Orçamento válido por 15 dias.', {
-      x: x,
-      y: footerY,
-      size: 8,
-      fontReg,
-    });
-    page.drawText(
-      'Calhas já incluem os rodízios e suportes necessários para as medidas selecionadas.',
-      { x: x, y: footerY - lineHeight, size: 8, fontReg }
-    );
-    page.drawText(
-      'Valor referente à instalação e Rectificação de Medidas sujeito a validação do código postal.',
-      { x: x, y: footerY - 2 * lineHeight, size: 8, fontReg }
-    );
-    page.drawText('IBAN: PT50 0000 0000 0000 0000 0', {
-      x: x,
-      y: footerY - 3 * lineHeight,
-      size: 8,
-      fontReg,
-    });
 
     y -= lineSpacing;
     page.drawLine({
