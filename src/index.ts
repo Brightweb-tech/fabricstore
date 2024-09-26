@@ -1522,7 +1522,7 @@ window.Webflow.push(() => {
             price: tecido,
             subItems: [
               { label: `Tipo de tecido: ${window2.tecido}` },
-              { label: `Modelo de Cortina: ${window2.tipo}` },
+              { label: `Modelo de cortina: ${window2.tipo}` },
               {
                 label: `Baínha de chumbo: ${
                   window2.tecido.startsWith('9') ? 'Incluída' : window2.bainha ? 'Sim' : 'Não'
@@ -1551,7 +1551,7 @@ window.Webflow.push(() => {
           {
             label: `Estore`,
             price: tecido,
-            subItems: [{ label: `Modelo de Estore: ${window2.tecido}` }],
+            subItems: [{ label: `Modelo de estore: ${window2.tecido}` }],
           },
           {
             label: `Instalação`,
@@ -1742,9 +1742,7 @@ window.Webflow.push(() => {
     txtContent += `Data: ${new Date().toLocaleDateString()}\n\n`;
     txtContent += `Cliente: ${selectorValues.nome}\n\n`;
     txtContent += `Email: ${selectorValues.email}\n\n`;
-    const correctionLabel = !windows[0].correcao
-      ? '  Medidas facultadas pelo cliente:'
-      : '  Com correção de medidas:';
+    const correctionLabel = !windows[0].correcao ? '  Facultadas pelo cliente:' : '  Sim:';
     const correctionPrice = windows[0].correcao ? 30 : 0;
     windows.forEach((window2, index) => {
       const {
@@ -1755,19 +1753,27 @@ window.Webflow.push(() => {
         total: windowTotal,
       } = calculateWindowPrice(window2);
       total += windowTotal;
-      // Add window description and details
-      txtContent += `Janela ${index + 1} - ${window2.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(usedWidth).toFixed(2))} CM): ${windowTotal.toFixed(2)}€\n\n`;
-      txtContent += `  Tecido: ${tecido.toFixed(2)}€\n`;
-      txtContent += `    Modelo: ${window2.tecido}\n`;
-      txtContent += `    Tipo de Cortina: ${window2.tipo}\n`;
-      txtContent += `    Baínha: ${
-        window2.tecido.startsWith('9') ? 'Incluída' : window2.bainha ? 'Sim' : 'Não'
-      }\n`;
-      txtContent += `  Calha: ${calha.toFixed(2)}€\n`;
+      if (window2.inicio === 'Cortina') {
+        txtContent += `Janela ${index + 1} - ${window2.medidas} CM: ${windowTotal.toFixed(2)}€\n\n`;
+        txtContent += `  Cortinado: ${tecido.toFixed(2)}€\n`;
+        txtContent += `    Tipo de tecido: ${window2.tecido}\n`;
+        txtContent += `    Modelo de Cortina: ${window2.tipo}\n`;
+        txtContent += `    Baínha de chumbo: ${
+          window2.tecido.startsWith('9') ? 'Incluída' : window2.bainha ? 'Sim' : 'Não'
+        }\n`;
+        txtContent += `  Calha: ${calha.toFixed(2)}€\n`;
+        txtContent += `    Modelo de calha: ${window2.tipo}\n`;
+        txtContent += `    Suporte da calha: ${window2.suporte}\n`;
+      }
+      if (window2.inicio === 'Estore') {
+        txtContent += `Janela ${index + 1} - ${window2.medidas} CM: ${windowTotal.toFixed(2)}€\n\n`;
+        txtContent += `  Estore: ${tecido.toFixed(2)}€\n`;
+        txtContent += `    Modelo de estore: ${window2.tecido}\n`;
+      }
       txtContent += `  Instalação: ${instalacao.toFixed(2)}€\n\n`;
     });
     // Add correction and total
-    txtContent += `Correção:\n${correctionLabel} ${correctionPrice.toFixed(2)}€\n\n`;
+    txtContent += `Retificação de medidas:\n${correctionLabel} ${correctionPrice.toFixed(2)}€\n\n`;
     total += correctionPrice;
     // Add final total
     txtContent += `Total: ${total.toFixed(2)}€\n\n`;
