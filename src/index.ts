@@ -1693,49 +1693,6 @@ window.Webflow.push(() => {
     return blob;
   };
 
-  /*const generateTxt = async () => {
-    let total = 0;
-    let txtContent = '';
-    txtContent += `Data: ${new Date().toLocaleDateString()}\n\n`;
-    txtContent += `Cliente: ${selectorValues.nome}\n\n`;
-    txtContent += `Email: ${selectorValues.email}\n\n`;
-    const correctionLabel = !windows[0].correcao
-      ? '  Medidas facultadas pelo cliente:'
-      : '  Com correção de medidas:';
-    const correctionPrice = windows[0].correcao ? 30 : 0;
-    windows.forEach((window2, index) => {
-      const {
-        usedWidth,
-        productPrice,
-        manufacturingPrice,
-        bainhaPrice,
-        calhaPrice,
-        instalationPrice,
-        total: windowTotal,
-      } = calculateWindowPriceTxt(window2);
-      total += windowTotal;
-      // Add window description and details
-      txtContent += `Janela ${index + 1} - ${window2.medidas} CM - (Largura Utilizada: ${parseInt(parseFloat(usedWidth).toFixed(2))} CM): ${windowTotal.toFixed(2)}€\n\n`;
-      txtContent += `  Preço do Produto: ${productPrice.toFixed(2)}€\n`;
-      txtContent += `  Preço de Fabricação: ${manufacturingPrice.toFixed(2)}€\n`;
-      txtContent += `  Preço da Bainha: ${bainhaPrice.toFixed(2)}€\n`;
-      txtContent += `  Preço da Calha: ${calhaPrice.toFixed(2)}€\n`;
-      txtContent += `  Preço da Instalação: ${instalationPrice.toFixed(2)}€\n\n`;
-    });
-    // Add correction and total
-    txtContent += `Correção:\n${correctionLabel} ${correctionPrice.toFixed(2)}€\n\n`;
-    total += correctionPrice;
-    // Add final total
-    txtContent += `Total: ${total.toFixed(2)}€\n\n`;
-    // Create and download the txt file
-    const txtBlob = new Blob([txtContent], { type: 'text/plain' });
-    const txtLink = document.createElement('a');
-    txtLink.href = URL.createObjectURL(txtBlob);
-    txtLink.download = 'Orcamento_Fabric-Store.txt';
-    txtLink.click();
-    return txtBlob;
-  };*/
-
   const generateTxt = async () => {
     let total = 0;
     let txtContent = '';
@@ -1760,15 +1717,15 @@ window.Webflow.push(() => {
         txtContent += `    Modelo de Cortina: ${window2.tipo}\n`;
         txtContent += `    Baínha de chumbo: ${
           window2.tecido.startsWith('9') ? 'Incluída' : window2.bainha ? 'Sim' : 'Não'
-        }\n`;
+        }\n\n`;
         txtContent += `  Calha: ${calha.toFixed(2)}€\n`;
         txtContent += `    Modelo de calha: ${window2.tipo}\n`;
-        txtContent += `    Suporte da calha: ${window2.suporte}\n`;
+        txtContent += `    Suporte da calha: ${window2.suporte}\n\n`;
       }
       if (window2.inicio === 'Estore') {
         txtContent += `Janela ${index + 1} - ${window2.medidas} CM: ${windowTotal.toFixed(2)}€\n\n`;
         txtContent += `  Estore: ${tecido.toFixed(2)}€\n`;
-        txtContent += `    Modelo de estore: ${window2.tecido}\n`;
+        txtContent += `    Modelo de estore: ${window2.tecido}\n\n`;
       }
       txtContent += `  Instalação: ${instalacao.toFixed(2)}€\n\n`;
     });
