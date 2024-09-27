@@ -9,7 +9,8 @@ window.Webflow.push(() => {
   //   'https://cdn.prod.website-files.com/66aadbd497db3d8c63799460/66e9c13dd03e9404b10a0393_fabric-store-logo.png';
 
   const logoUrl =
-    'https://cdn.prod.website-files.com/66aadbd497db3d8c63799460/66eb5ac454e950633d646ea2_testlogo.jpg';
+    'https://cdn.prod.website-files.com/66aadbd497db3d8c63799460/66f69f0aaa45e095bd2e0f3f_LOGOTIPO%20FABRICSTORE_color%201.png';
+  // 'https://cdn.prod.website-files.com/66aadbd497db3d8c63799460/66eb5ac454e950633d646ea2_testlogo.jpg';
   let productsData = {};
   const calhaColors = {
     Branco: 'B',
@@ -1768,11 +1769,6 @@ window.Webflow.push(() => {
     });
   };
 
-  const animateOpacity = (element) => {
-    element.classList.add('show');
-    gsap.fromTo(element, { opacity: 0 }, { opacity: 1, duration: 1, ease: 'power1.in' });
-  };
-
   const toggleSteps = (productType) => {
     if (!productType) {
       cortinaSteps.style.display = 'none';
@@ -1789,7 +1785,40 @@ window.Webflow.push(() => {
   };
 
   const changeSelectorVisibility = (selector, visible) => {
-    selector.style.display = visible ? 'flex' : 'none';
+    // selector.style.display = visible ? 'flex' : 'none';
+    // if (visible) {
+    //   gsap.fromTo(
+    //     selector,
+    //     { opacity: 0, display: 'none' },
+    //     { opacity: 1, display: 'flex', duration: 0.8, delay: 0.5 }
+    //   );
+    // } else {
+    //   gsap.to(selector, { opacity: 0, display: 'none', duration: 0.4 });
+    // }
+    if (visible) {
+      gsap.fromTo(
+        selector,
+        { opacity: 0 },
+        {
+          opacity: 1,
+          duration: 0.8,
+          delay: 0.2,
+          ease: 'power2.inOut', // Added Power2 ease
+          onStart: () => {
+            selector.style.display = 'flex'; // Set display to flex before animation starts
+          },
+        }
+      );
+    } else {
+      gsap.to(selector, {
+        opacity: 0,
+        duration: 0.2,
+        ease: 'power2.inOut', // Added Power2 ease
+        onComplete: () => {
+          selector.style.display = 'none'; // Set display to none after animation ends
+        },
+      });
+    }
   };
 
   const resetSteps = () => {
@@ -1933,6 +1962,39 @@ window.Webflow.push(() => {
     card.classList.remove('selected');
     title.classList.remove('active');
     imageContain.classList.remove('active');
+  };
+
+  // GSAP ANIMATIONS
+  // ---------------
+
+  const animateOpacity = (element) => {
+    // const element = document.getElementById(element);
+    element.classList.add('show');
+    gsap.fromTo(element, { opacity: 0 }, { opacity: 1, duration: 1, ease: 'power1.in' });
+  };
+
+  const animateSlideFromLeft = (element) => {
+    // const element = document.getElementById(element);
+    element.classList.add('show');
+    gsap.fromTo(
+      element,
+      { x: -100, opacity: 0 },
+      { x: 0, opacity: 1, duration: 1, ease: 'power1.inOut' }
+    );
+  };
+
+  const animateOpacityAndSlide = (elementIds, staggerTime = 0) => {
+    gsap.fromTo(
+      elementIds.map((id) => `#${id}`),
+      { opacity: 0, x: -300 },
+      {
+        opacity: 1,
+        x: 0,
+        duration: 1,
+        ease: 'power1.inOut',
+        stagger: staggerTime,
+      }
+    );
   };
 
   // EVENT LISTENERS
