@@ -1691,8 +1691,8 @@ window.Webflow.push(() => {
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = 'Orcamento_Fabric-Store.pdf';
-    link.click();
-    return blob;
+    // link.click();
+    return { blob: blob, pdfDoc: pdfDoc, link: link };
   };
 
   const generateTxt = async () => {
@@ -2239,15 +2239,17 @@ window.Webflow.push(() => {
       selectorValues.nome = nomeInput.value;
       selectorValues.email = emailInput.value;
       selectorValues.contacto = contactoSwitch.checked;
-      const pdfBytes = await generateAndDownloadPdfLIB(); // base64 -> data:application/pdf;base64,JVBERi0xLjMKJbrfrOAKM   to remove metadata pdfbytes.split(',')[1]
+      const { blob, pdfDoc, link } = await generateAndDownloadPdfLIB(); // base64 -> data:application/pdf;base64,JVBERi0xLjMKJbrfrOAKM   to remove metadata pdfbytes.split(',')[1]
       const txtBytes = await generateTxt();
       await sendQuoteEmail(
         selectorValues.nome,
         selectorValues.email,
-        selectorValues.contacto,
-        pdfBytes,
+        selectorValues.contacto ? 'Aceita' : 'Não aceita',
+        blob,
         txtBytes
-      );
+      ).finally(() => {
+        link.click();
+      });
     });
   };
 
