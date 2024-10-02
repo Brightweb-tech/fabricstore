@@ -947,6 +947,7 @@ window.Webflow.push(() => {
   };
 
   const advanceStep = () => {
+    // scrollToTop();
     if (selectorValues.inicio === 'Cortina') {
       switch (currentStep) {
         case 'inicio':
@@ -1473,7 +1474,7 @@ window.Webflow.push(() => {
 
     page.drawText('Descrição', { x: x, y, size: 8, font: fontBold });
     page.drawText('Preço', { x: rightMargin - 100, y, size: 8, font: fontBold });
-    y -= lineHeight;
+    y -= lineHeight - 4;
 
     y -= lineSpacing;
     page.drawLine({
@@ -1535,7 +1536,7 @@ window.Webflow.push(() => {
             label: `Calha`,
             price: calha,
             subItems: [
-              { label: `Modelo de calha: ${window2.tipo}` },
+              { label: `Modelo de calha: ${window2.calha}` },
               { label: `Suporte da calha: ${window2.suporte}` },
             ],
           },
@@ -1605,7 +1606,7 @@ window.Webflow.push(() => {
     const correctionPrice = windows[0].correcao ? 30 : 0;
     total += correctionPrice;
     page.drawText(`${correctionPrice.toFixed(2)}€`, { x: rightMargin - 100, y, size: 8, fontReg });
-    y -= lineHeight * 2;
+    y -= lineHeight - 4;
 
     // Draw horizontal line
     y -= lineSpacing;
@@ -1615,7 +1616,7 @@ window.Webflow.push(() => {
       thickness: 0.5,
       color: rgb(0, 0, 0),
     });
-    y -= lineSpacing + lineHeight;
+    y -= lineSpacing + lineHeight * 2;
 
     // Draw Total
     page.drawText('Total:', { x: rightMargin - 150, y, size: 10, font: fontBold });
@@ -1649,7 +1650,7 @@ window.Webflow.push(() => {
       `${bulletPoint}Valor referente à instalação e rectificação de medidas sujeito a validação do código postal.`,
       { x: x + bulletIndent, y: y - 3 * lineHeight, size: 8, font: fontReg }
     );
-    page.drawText(`${bulletPoint}IBAN: PT50 0000 0000 0000 0000 0`, {
+    page.drawText(`${bulletPoint}IBAN: PT50 0007 0000 0041 4543 3722 3`, {
       x: x + bulletIndent,
       y: y - 4 * lineHeight,
       size: 8,
@@ -1737,10 +1738,10 @@ window.Webflow.push(() => {
     txtContent += `Total: ${total.toFixed(2)}€\n\n`;
     // Create and download the txt file
     const txtBlob = new Blob([txtContent], { type: 'text/plain' });
-    const txtLink = document.createElement('a');
-    txtLink.href = URL.createObjectURL(txtBlob);
-    txtLink.download = 'Orcamento_Fabric-Store.txt';
-    txtLink.click();
+    // const txtLink = document.createElement('a');
+    // txtLink.href = URL.createObjectURL(txtBlob);
+    // txtLink.download = 'Orcamento_Fabric-Store.txt';
+    // txtLink.click();
     return txtBlob;
   };
 
@@ -1784,6 +1785,12 @@ window.Webflow.push(() => {
     }
   };
 
+  const scrollToTop = () => {
+    gsap.registerPlugin(ScrollToPlugin);
+
+    gsap.to(window, { duration: 1, scrollTo: { y: 0 }, ease: 'power2.inOut' });
+  };
+
   const changeSelectorVisibility = (selector, visible) => {
     // selector.style.display = visible ? 'flex' : 'none';
     // if (visible) {
@@ -1816,6 +1823,7 @@ window.Webflow.push(() => {
         ease: 'power2.inOut', // Added Power2 ease
         onComplete: () => {
           selector.style.display = 'none'; // Set display to none after animation ends
+          scrollToTop();
         },
       });
     }
@@ -2233,13 +2241,13 @@ window.Webflow.push(() => {
       selectorValues.contacto = contactoSwitch.checked;
       const pdfBytes = await generateAndDownloadPdfLIB(); // base64 -> data:application/pdf;base64,JVBERi0xLjMKJbrfrOAKM   to remove metadata pdfbytes.split(',')[1]
       const txtBytes = await generateTxt();
-      // await sendQuoteEmail(
-      //   selectorValues.nome,
-      //   selectorValues.email,
-      //   selectorValues.contacto,
-      //   pdfBytes,
-      //   txtBytes
-      // );
+      await sendQuoteEmail(
+        selectorValues.nome,
+        selectorValues.email,
+        selectorValues.contacto,
+        pdfBytes,
+        txtBytes
+      );
     });
   };
 
@@ -2496,7 +2504,7 @@ window.Webflow.push(() => {
       file: pdfFile,
       to_company_email: 'contact@fabricstore.pt', // The company's email
       to_user_email: email, // Send a copy to the user
-      reply_to: 'general@brightweb.tech',
+      reply_to: 'contact@fabricstore.pt',
     };
 
     const templateParamsTxt = {
@@ -2505,7 +2513,7 @@ window.Webflow.push(() => {
       check: allowsContact,
       file: txtFile,
       to_company_email: 'contact@fabricstore.pt',
-      reply_to: 'general@brightweb.tech',
+      reply_to: 'contact@fabricstore.pt',
     };
 
     emailjs.send('service_fabricstore', 'template_quote_pdf', templateParamsPdf).then(
