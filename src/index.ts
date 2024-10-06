@@ -227,6 +227,7 @@ window.Webflow.push(() => {
   const newWindowButton = document.getElementById('new-window-btn');
   const noWindowButton = document.getElementById('no-window-btn');
   const enviarButton = document.getElementById('enviar-btn');
+  const downloadButton = document.getElementById('download-btn');
   const enviarButtonContain = document.getElementById('enviar-btn-contain');
   const checkoutChoices = {
     tecido: document.getElementById('checkout-tecido'),
@@ -2266,10 +2267,9 @@ window.Webflow.push(() => {
         selectorValues.email,
         selectorValues.contacto ? 'Aceita' : 'Não aceita',
         blob,
-        txtBytes
-      ).finally(() => {
-        link.click();
-      });
+        txtBytes,
+        link
+      );
     });
   };
 
@@ -2505,7 +2505,14 @@ window.Webflow.push(() => {
     }
   };
 
-  const sendQuoteEmail = async (name, email, allowsContact, base64PdfPromise, base64TxtPromise) => {
+  const sendQuoteEmail = async (
+    name,
+    email,
+    allowsContact,
+    base64PdfPromise,
+    base64TxtPromise,
+    downloadLink
+  ) => {
     const feedbackMessage = document.getElementById('feedback-div');
     let pdfFile = null;
     let txtFile = null;
@@ -2541,9 +2548,11 @@ window.Webflow.push(() => {
     emailjs.send('service_fabricstore', 'template_quote_pdf', templateParamsPdf).then(
       function (response) {
         console.log('SUCCESS!', response.status, response.text);
+        downloadLink.click();
         userDetailsForm.style.display = 'none';
         enviarButton.style.display = 'none';
         feedbackMessage.textContent = 'Obrigado pelo seu contacto!';
+        // downloadButton.style.display = 'block';
       },
       function (error) {
         console.log('FAILED...', error);
