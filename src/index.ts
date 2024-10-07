@@ -51,6 +51,7 @@ window.Webflow.push(() => {
     },
   };
   const selectedColors = [];
+  const files = [];
   const windows = [];
   let currentStep = 'inicio';
   const selectorValues = {
@@ -229,6 +230,7 @@ window.Webflow.push(() => {
   const enviarButton = document.getElementById('enviar-btn');
   const downloadButton = document.getElementById('download-btn');
   const enviarButtonContain = document.getElementById('enviar-btn-contain');
+  const downloadButtonContain = document.getElementById('download-btn-contain');
   const checkoutChoices = {
     tecido: document.getElementById('checkout-tecido'),
     tipo: document.getElementById('checkout-tipo'),
@@ -248,6 +250,7 @@ window.Webflow.push(() => {
 
   // Send Email Form
   const feedbackMessage = document.getElementById('feedback-div');
+  const feedbackSuccess = document.getElementById('feedback-success');
   const nameError = document.getElementById('name-error');
   const emailError = document.getElementById('email-error');
   const checkFieldError = document.getElementById('contacto-switch-error');
@@ -276,6 +279,7 @@ window.Webflow.push(() => {
     addOnClickInstalacao();
     addOnClickColor();
     addOnClickEnviar();
+    addOnClickDownloadBtn();
     addOnClickNewWindow();
     addOnClickNoWindow();
     addOnClickCheckoutChoices();
@@ -288,6 +292,7 @@ window.Webflow.push(() => {
   const onInit = () => {
     fetchProducts();
     initializeEventListeners();
+    validateInputs();
   };
 
   // DATA FUNCTIONS
@@ -1674,6 +1679,9 @@ window.Webflow.push(() => {
       `${bulletPoint}Valor referente à instalação e rectificação de medidas sujeito a validação do código postal.`,
       { x: x + bulletIndent, y: y - 3 * lineHeight, size: 8, font: fontReg }
     );
+    page.drawText(
+      `${bulletPoint}Valor da Rectificação de Medidas é deduzido do orçamento na adjudicação do mesmo.`
+    );
     page.drawText(`${bulletPoint}IBAN: PT50 0007 0000 0041 4543 3722 3`, {
       x: x + bulletIndent,
       y: y - 4 * lineHeight,
@@ -2255,20 +2263,29 @@ window.Webflow.push(() => {
     });
   };
 
+  const addOnClickDownloadBtn = () => {
+    downloadButton.addEventListener('click', async () => {
+      const { blob, pdfDoc, link } = await generateAndDownloadPdfLIB();
+      files.push({ blob: blob, pdf: pdfDoc, link: link });
+      files[files.length - 1].link.click();
+    });
+  };
+
   const addOnClickEnviar = () => {
     enviarButton.addEventListener('click', async () => {
       selectorValues.nome = nomeInput.value;
       selectorValues.email = emailInput.value;
       selectorValues.contacto = contactoSwitch.checked;
       const { blob, pdfDoc, link } = await generateAndDownloadPdfLIB(); // base64 -> data:application/pdf;base64,JVBERi0xLjMKJbrfrOAKM   to remove metadata pdfbytes.split(',')[1]
+      files.push({ blob: blob, pdf: pdfDoc, link: link });
       const txtBytes = await generateTxt();
       await sendQuoteEmail(
         selectorValues.nome,
         selectorValues.email,
         selectorValues.contacto ? 'Aceita' : 'Não aceita',
-        blob,
+        files[files.length - 1].blob,
         txtBytes,
-        link
+        files[files.length - 1].link
       );
     });
   };
@@ -2444,42 +2461,43 @@ window.Webflow.push(() => {
     });
   };
 
+  const validateNameInput = () => {
+    if (nomeInput.value.trim() === '') {
+      nameError.textContent = 'Preencher este campo obrigatório';
+      nameError.classList.add('u-text-main');
+      return true;
+    }
+    nameError.textContent = '';
+    nameError.classList.remove('u-text-main');
+    return false;
+  };
+
+  const validateEmailInput = () => {
+    const emailValue = emailInput.value.trim();
+    if (emailValue === '') {
+      emailError.textContent = 'Preencher este campo obrigatório';
+      emailError.classList.add('u-text-main');
+      return true;
+    }
+    if (!isValidEmail(emailValue)) {
+      emailError.textContent = 'Insira um email válido';
+      emailError.classList.add('u-text-main');
+      return true;
+    }
+    emailError.textContent = '';
+    emailError.classList.remove('u-text-main');
+    return false;
+  };
+
+  const validateInputs = () => {
+    resetCheckoutErrors(); // Clear previous error messages
+    const nameErrorExists = validateNameInput();
+    const emailErrorExists = validateEmailInput();
+    activateEnviarBtn(nameErrorExists || emailErrorExists);
+    activateDownloadBtn(nameErrorExists || emailErrorExists);
+  };
+
   const addOnChangeFormInputs = () => {
-    const validateNameInput = () => {
-      if (nomeInput.value.trim() === '') {
-        nameError.textContent = 'Preencher este campo obrigatório';
-        nameError.classList.add('u-text-main');
-        return true;
-      }
-      nameError.textContent = '';
-      nameError.classList.remove('u-text-main');
-      return false;
-    };
-
-    const validateEmailInput = () => {
-      const emailValue = emailInput.value.trim();
-      if (emailValue === '') {
-        emailError.textContent = 'Preencher este campo obrigatório';
-        emailError.classList.add('u-text-main');
-        return true;
-      }
-      if (!isValidEmail(emailValue)) {
-        emailError.textContent = 'Insira um email válido';
-        emailError.classList.add('u-text-main');
-        return true;
-      }
-      emailError.textContent = '';
-      emailError.classList.remove('u-text-main');
-      return false;
-    };
-
-    const validateInputs = () => {
-      resetCheckoutErrors(); // Clear previous error messages
-      const nameErrorExists = validateNameInput();
-      const emailErrorExists = validateEmailInput();
-      activateEnviarBtn(nameErrorExists || emailErrorExists);
-    };
-
     nomeInput?.addEventListener('input', validateInputs);
     emailInput?.addEventListener('input', validateInputs);
   };
@@ -2505,6 +2523,15 @@ window.Webflow.push(() => {
     }
   };
 
+  const activateDownloadBtn = (isError) => {
+    if (isError) {
+      downloadButtonContain?.classList.add('inactive');
+    }
+    if (!isError) {
+      downloadButtonContain?.classList.remove('inactive');
+    }
+  };
+
   const sendQuoteEmail = async (
     name,
     email,
@@ -2513,7 +2540,7 @@ window.Webflow.push(() => {
     base64TxtPromise,
     downloadLink
   ) => {
-    const feedbackMessage = document.getElementById('feedback-div');
+    // const feedbackMessage = document.getElementById('feedback-div');
     let pdfFile = null;
     let txtFile = null;
 
@@ -2545,35 +2572,37 @@ window.Webflow.push(() => {
       reply_to: 'contact@fabricstore.pt',
     };
 
-    emailjs.send('service_fabricstore', 'template_quote_pdf', templateParamsPdf).then(
+    emailjs.send('service_test', 'template_quote_pdf', templateParamsPdf).then(
       function (response) {
-        console.log('SUCCESS!', response.status, response.text);
-        downloadLink.click();
+        // console.log('SUCCESS!', response.status, response.text);
         userDetailsForm.style.display = 'none';
-        enviarButton.style.display = 'none';
-        feedbackMessage.textContent = 'Obrigado pelo seu contacto!';
-        // downloadButton.style.display = 'block';
+        feedbackMessage.style.display = 'none';
+        feedbackSuccess.textContent = 'Obrigado pelo seu contacto!';
+        feedbackSuccess.style.display = 'block';
       },
       function (error) {
         console.log('FAILED...', error);
-        userDetailsForm.style.display = 'none';
-        enviarButton.style.display = 'none';
-        feedbackMessage.textContent = 'Oops! Algo correu mal!';
+        feedbackSuccess.style.display = 'none';
+        feedbackMessage.textContent =
+          'Aconteceu um erro durante o envio. Tente novamente ou entre em contacto connosco.';
+        feedbackMessage.style.display = 'block';
       }
     );
 
-    emailjs.send('service_fabricstore', 'template_quote_txt', templateParamsTxt).then(
+    emailjs.send('service_test', 'template_quote_txt', templateParamsTxt).then(
       function (response) {
-        console.log('SUCCESS!', response.status, response.text);
+        // console.log('SUCCESS!', response.status, response.text);
         userDetailsForm.style.display = 'none';
-        enviarButton.style.display = 'none';
-        feedbackMessage.textContent = 'Obrigado pelo seu contacto!';
+        feedbackMessage.style.display = 'none';
+        feedbackSuccess.textContent = 'Obrigado pelo seu contacto!';
+        feedbackSuccess.style.display = 'block';
       },
       function (error) {
         console.log('FAILED...', error);
-        userDetailsForm.style.display = 'none';
-        enviarButton.style.display = 'none';
-        feedbackMessage.textContent = 'Oops! Algo correu mal!';
+        feedbackSuccess.style.display = 'none';
+        feedbackMessage.textContent =
+          'Aconteceu um erro durante o envio. Tente novamente ou entre em contacto connosco.';
+        feedbackMessage.style.display = 'block';
       }
     );
   };
