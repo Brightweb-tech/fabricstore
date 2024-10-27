@@ -2294,6 +2294,8 @@ window.Webflow.push(() => {
       selectorValues.nome = nomeInput.value;
       selectorValues.email = emailInput.value;
       selectorValues.contacto = contactoSwitch.checked;
+      const txtBytes = await generateTxt();
+      sendQuoteDataWhenDownload(txtBytes);
       const { blob, pdfDoc, link } = await generateAndDownloadPdfLIB();
       files.push({ blob: blob, pdf: pdfDoc, link: link });
       files[files.length - 1].link.click();
@@ -2561,6 +2563,43 @@ window.Webflow.push(() => {
     }
   };
 
+  const sendQuoteDataWhenDownload = async (base64TxtPromise) => {
+    let txtFile = null;
+    try {
+      const base64Txt = await base64TxtPromise;
+      txtFile = await blobToBase64(base64Txt);
+    } catch {
+      console.error('Failed to load txt');
+      txtFile = null;
+    }
+
+    const templateParamsTxt = {
+      name: selectorValues.nome,
+      email: selectorValues.email,
+      check: selectorValues.contacto ? 'Aceita' : 'Não aceita',
+      file: txtFile,
+      to_company_email: 'contact@fabricstore.pt',
+      reply_to: 'contact@fabricstore.pt',
+    };
+
+    emailjs.send('service_fabricstore', 'template_quote_txt', templateParamsTxt).then(
+      function (response) {
+        console.log('TXT DL SUCCESS!', response.status, response.text);
+        // userDetailsForm.style.display = 'none';
+        // feedbackMessage.style.display = 'none';
+        // feedbackSuccess.textContent = 'Obrigado pelo seu contacto!';
+        // feedbackSuccess.style.display = 'block';
+      },
+      function (error) {
+        console.log('TXT DL FAILED...', error);
+        // feedbackSuccess.style.display = 'none';
+        // feedbackMessage.textContent =
+        //   'Aconteceu um erro durante o envio. Tente novamente ou entre em contacto connosco.';
+        // feedbackMessage.style.display = 'block';
+      }
+    );
+  };
+
   const sendQuoteEmail = async (
     name,
     email,
@@ -2603,14 +2642,14 @@ window.Webflow.push(() => {
 
     emailjs.send('service_fabricstore', 'template_quote_pdf', templateParamsPdf).then(
       function (response) {
-        // console.log('SUCCESS!', response.status, response.text);
+        console.log('PDF EMAIL SUCCESS!', response.status, response.text);
         userDetailsForm.style.display = 'none';
         feedbackMessage.style.display = 'none';
         feedbackSuccess.textContent = 'Obrigado pelo seu contacto!';
         feedbackSuccess.style.display = 'block';
       },
       function (error) {
-        console.log('FAILED...', error);
+        console.log('PDF EMAIL FAILED...', error);
         feedbackSuccess.style.display = 'none';
         feedbackMessage.textContent =
           'Aconteceu um erro durante o envio. Tente novamente ou entre em contacto connosco.';
@@ -2620,18 +2659,18 @@ window.Webflow.push(() => {
 
     emailjs.send('service_fabricstore', 'template_quote_txt', templateParamsTxt).then(
       function (response) {
-        // console.log('SUCCESS!', response.status, response.text);
-        userDetailsForm.style.display = 'none';
-        feedbackMessage.style.display = 'none';
-        feedbackSuccess.textContent = 'Obrigado pelo seu contacto!';
-        feedbackSuccess.style.display = 'block';
+        console.log('TXT SUCCESS!', response.status, response.text);
+        // userDetailsForm.style.display = 'none';
+        // feedbackMessage.style.display = 'none';
+        // feedbackSuccess.textContent = 'Obrigado pelo seu contacto!';
+        // feedbackSuccess.style.display = 'block';
       },
       function (error) {
-        console.log('FAILED...', error);
-        feedbackSuccess.style.display = 'none';
-        feedbackMessage.textContent =
-          'Aconteceu um erro durante o envio. Tente novamente ou entre em contacto connosco.';
-        feedbackMessage.style.display = 'block';
+        console.log('TXT FAILED...', error);
+        // feedbackSuccess.style.display = 'none';
+        // feedbackMessage.textContent =
+        //   'Aconteceu um erro durante o envio. Tente novamente ou entre em contacto connosco.';
+        // feedbackMessage.style.display = 'block';
       }
     );
   };
