@@ -53,6 +53,7 @@ window.Webflow.push(() => {
   const selectedColors = [];
   const files = [];
   const windows = [];
+  let currentWindowIndex = 0;
   let currentStep = 'inicio';
   const selectorValues = {
     inicio: '',
@@ -75,32 +76,35 @@ window.Webflow.push(() => {
       { name: 'Macho Juntos', widthRatio: 3 },
       { name: 'Pregas', widthRatio: 2.5 },
     ],
-    manufacturingPrices: [
-      {
-        name: 'Franzido',
-        blackout: 9,
-        normal: 8,
-        alinhado: 8,
-      },
-      {
-        name: 'Ondas',
-        blackout: 8.5,
-        normal: 7.5,
-        alinhado: 7.5,
-      },
-      {
-        name: 'Macho Juntos',
-        normal: 12.5,
-        blackout: 13.5,
-        alinhado: 12.5,
-      },
-      {
-        name: 'Pregas',
-        normal: 12.5,
-        blackout: 13.5,
-        alinhado: 12.5,
-      },
-    ],
+    manufacturingPrices: {
+      japaneseBlind: 20,
+      curtains: [
+        {
+          name: 'Franzido',
+          blackout: 9,
+          normal: 8,
+          alinhado: 8,
+        },
+        {
+          name: 'Ondas',
+          blackout: 8.5,
+          normal: 7.5,
+          alinhado: 7.5,
+        },
+        {
+          name: 'Macho Juntos',
+          normal: 12.5,
+          blackout: 13.5,
+          alinhado: 12.5,
+        },
+        {
+          name: 'Pregas',
+          normal: 12.5,
+          blackout: 13.5,
+          alinhado: 12.5,
+        },
+      ],
+    },
     bainhaPrice: {
       price: 3.5,
       widthMargin: 20,
@@ -310,7 +314,7 @@ window.Webflow.push(() => {
     const calhaColor = calhaDetails ? calhaDetails[1] : null;
     const width = window2.medidas ? window2.medidas.split(' X ')[0] : 0;
 
-    if (window2.inicio === 'Cortina') {
+    if (window2.inicio === 'Cortina' || window2.inicio === 'Estore Japonês') {
       reference = `${product}${color}`;
     }
 
@@ -324,7 +328,7 @@ window.Webflow.push(() => {
         ? parseFloat(productsData[reference].price)
         : productsData[reference].price;
 
-    if (window2.inicio === 'Estore') {
+    if (window2.inicio.startsWith('Estore')) {
       return { product: productPrice, calha: 0 };
     }
 
@@ -368,10 +372,6 @@ window.Webflow.push(() => {
   const fetchProducts = () => {
     fetch(
       'https://docs.google.com/spreadsheets/d/e/2PACX-1vRnpR16s-LlJCttzFQBqDmgLYSIGtTKbBKbDGUXfvjwGHR2W3u66qn4TV8DkHr2280Oru6V4QVgFYJV/pub?output=csv'
-      // 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRnpR16s-LlJCttzFQBqDmgLYSIGtTKbBKbDGUXfvjwGHR2W3u66qn4TV8DkHr2280Oru6V4QVgFYJV/pub?gid=0&single=true&output=csv'
-      // 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSCprbghTI2dhOxsCMkcEHhI-DE5pOb5RnOKO3KPd5-ntAORtuPTuFonSvs9s4-ANy_VCezuEdcZ8pg/pub?gid=0&single=true&output=csv'
-      // 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSCprbghTI2dhOxsCMkcEHhI-DE5pOb5RnOKO3KPd5-ntAORtuPTuFonSvs9s4-ANy_VCezuEdcZ8pg/export?format=csv&gid=0&single=true'
-      // `https://docs.google.com/spreadsheets/d/1hkgiYOVj33yY6b--bJaNPZOvHFvQ4klM402z0xp-gjE/export?format=csv&gid=0&single=true`
     )
       .then((response) => response.text())
       .then((csvData) => {
@@ -416,7 +416,7 @@ window.Webflow.push(() => {
 
   const populateSelectorValues = (window) => {
     if (window.inicio === 'Cortina') {
-      updateSelectorValue(selectors.inicio, 'Cortina');
+      updateSelectorValue(selectors.inicio, window.inicio);
       updateSelectorValue(selectors.tecido, window.tecido);
       updateSelectorValue(selectors.tipo, window.tipo);
       updateSelectorValue(selectors.bainha, window.bainha);
@@ -427,8 +427,8 @@ window.Webflow.push(() => {
       updateSelectorValue(selectors.instalacao, window.instalacao);
     }
 
-    if (window.inicio === 'Estore') {
-      updateSelectorValue(selectors.inicio, 'Estore');
+    if (window.inicio.startsWith('Estore')) {
+      updateSelectorValue(selectors.inicio, window.inicio);
       updateSelectorValue(selectors.tecido, window.tecido);
       updateSelectorValue(selectors.medidas, window.medidas);
       updateSelectorValue(selectors.correcao, window.correcao);
@@ -436,8 +436,23 @@ window.Webflow.push(() => {
     }
   };
 
+  const updateValues = () => {
+    if (!isNewWindow) {
+      windows[currentWindowIndex].inicio = selectorValues.inicio;
+      windows[currentWindowIndex].bainha = selectorValues.bainha;
+      windows[currentWindowIndex].tecido = selectorValues.tecido;
+      windows[currentWindowIndex].tipo = selectorValues.tipo;
+      windows[currentWindowIndex].medidas = selectorValues.medidas;
+      windows[currentWindowIndex].correcao = selectorValues.correcao;
+      windows[currentWindowIndex].calha = selectorValues.calha;
+      windows[currentWindowIndex].suporte = selectorValues.suporte;
+      windows[currentWindowIndex].instalacao = selectorValues.instalacao;
+    }
+  };
+
   const storeValues = () => {
     const newWindow = {
+      index: windows.length,
       inicio: selectorValues.inicio,
       bainha: selectorValues.bainha,
       tecido: selectorValues.tecido,
@@ -457,6 +472,7 @@ window.Webflow.push(() => {
     resetValues();
     resetInputs();
     resetSteps();
+    currentWindowIndex = windows.length;
     navigateFromCheckoutToStep('inicio');
     isNewWindow = true;
   };
@@ -485,34 +501,6 @@ window.Webflow.push(() => {
         activateNextBtn(true);
         return true;
       case 'medidas':
-        // if (selectorValues.inicio === 'Estore') {
-        //   !(larguraInput?.value === '') &&
-        //   larguraInput?.value > MANUFACTURING_CONSTANTS.maxWindowWidthEstores
-        //     ? (larguraMaxErrorEstore.style.display = 'block')
-        //     : (larguraMaxErrorEstore.style.display = 'none');
-        //   !(alturaInput?.value === '') &&
-        //   alturaInput?.value > MANUFACTURING_CONSTANTS.maxWindowHeightEstores
-        //     ? (alturaMaxErrorEstore.style.display = 'block')
-        //     : (alturaMaxErrorEstore.style.display = 'none');
-        //   !(larguraInput?.value === '') &&
-        //   larguraInput?.value < MANUFACTURING_CONSTANTS.minWindowWidthEstores
-        //     ? (larguraMinErrorEstore.style.display = 'block')
-        //     : (larguraMinErrorEstore.style.display = 'none');
-        //   !(alturaInput?.value === '') &&
-        //   alturaInput?.value < MANUFACTURING_CONSTANTS.minWindowHeightEstores
-        //     ? (alturaMinErrorEstore.style.display = 'block')
-        //     : (alturaMinErrorEstore.style.display = 'none');
-        // }
-        // if (selectorValues.inicio === 'Cortina') {
-        //   !(larguraInput?.value === '') &&
-        //   larguraInput?.value > MANUFACTURING_CONSTANTS.maxWindowWidth
-        //     ? (larguraMaxErrorCortina.style.display = 'block')
-        //     : (larguraMaxErrorCortina.style.display = 'none');
-        //   !(alturaInput?.value === '') &&
-        //   alturaInput?.value > MANUFACTURING_CONSTANTS.maxWindowHeight
-        //     ? (alturaMaxErrorCortina.style.display = 'block')
-        //     : (alturaMaxErrorCortina.style.display = 'none');
-        // }
         if (larguraInput?.value === '' || alturaInput?.value === '') {
           activateNextBtn(false);
           return false;
@@ -690,6 +678,9 @@ window.Webflow.push(() => {
     if (productType === 'Calha') {
       calhaRadioBtn?.click();
     }
+    if (productType === 'Estore Japonês') {
+      cortinaRadioBtn?.click();
+    }
   };
 
   // INPUTS HANDLERS
@@ -734,7 +725,7 @@ window.Webflow.push(() => {
   const selectProduct = (value) => {
     const productCards = document.querySelectorAll("[id^='tecido-card']");
     productCards.forEach((card) => {
-      if (getProductFromCard(card).startsWith(value)) {
+      if (getProductFromCard(card).split('-')[0].startsWith(value.split('-')[0])) {
         activateCard(card);
       } else {
         deactivateCard(card);
@@ -799,7 +790,7 @@ window.Webflow.push(() => {
       selectSuporte(window.suporte);
       instalacaoInput.checked = window.instalacao;
     }
-    if (window.inicio === 'Estore') {
+    if (window.inicio.startsWith('Estore')) {
       selectInicio(window.inicio);
       selectProduct(window.tecido);
       larguraInput.value = window.medidas.split(' X ')[0];
@@ -909,7 +900,11 @@ window.Webflow.push(() => {
       updateHeadingSubtitles(step);
       switch (step) {
         case 'tecido':
-          isEstore ? updateProductsCMSFilter('Estore') : updateProductsCMSFilter('Cortina');
+          selectorValues.inicio === 'Estore Japonês'
+            ? updateProductsCMSFilter('Cortina')
+            : isEstore
+              ? updateProductsCMSFilter('Estore')
+              : updateProductsCMSFilter('Cortina');
           changeSelectorVisibility(simulatorHeadings.step1, true);
           changeSelectorVisibility(selectors.tecido, true);
           break;
@@ -944,7 +939,7 @@ window.Webflow.push(() => {
       larguraInputDescrE.style.display = 'none';
       alturaInputDescrE.style.display = 'none';
     }
-    if (selectorValues.inicio === 'Estore') {
+    if (selectorValues.inicio === 'Estore' || selectorValues.inicio === 'Estore Japonês') {
       larguraInputDescrC.style.display = 'none';
       alturaInputDescrC.style.display = 'none';
       larguraInputDescrE.style.display = 'block';
@@ -1171,6 +1166,7 @@ window.Webflow.push(() => {
   };
 
   const navigateToCheckout = () => {
+    if (!isNewWindow) updateValues();
     simContainer.style.display = 'none';
     selectWindow(windows[windows.length - 1]);
     toggleSteps();
@@ -1204,7 +1200,7 @@ window.Webflow.push(() => {
         : 'Sem Instala\xE7\xE3o';
     }
 
-    if (window2.inicio === 'Estore') {
+    if (window2.inicio.startsWith('Estore')) {
       checkoutInfoEstore.style.display = 'flex';
       checkoutInfoCortina.style.display = 'none';
       checkoutChoices.estoreProduto.textContent = window2.tecido;
@@ -1227,7 +1223,7 @@ window.Webflow.push(() => {
       markStepAsCompleted('calha');
       markStepAsCompleted('instalacao');
     }
-    if (window2.inicio === 'Estore') {
+    if (window2.inicio.startsWith('Estore')) {
       markStepAsCompleted('tecido');
       markStepAsCompleted('medidas');
       markStepAsCompleted('instalacao');
@@ -1240,10 +1236,12 @@ window.Webflow.push(() => {
         w.button.classList.remove('active');
       }
     });
+    currentWindowIndex = window2.index;
+    isNewWindow = false;
     window2.button.classList.add('active');
     populateCheckoutChoices(window2);
-    populateInputValues(window2);
     populateSelectorValues(window2);
+    populateInputValues(window2);
     populateSteps(window2);
   };
 
@@ -1296,7 +1294,12 @@ window.Webflow.push(() => {
         changeSelectorVisibility(selectors.inicio, true);
         break;
       case 'tecido':
-        isEstore ? updateProductsCMSFilter('Estore') : updateProductsCMSFilter('Cortina');
+        selectorValues.inicio === 'Estore Japonês'
+          ? updateProductsCMSFilter('Cortina')
+          : isEstore
+            ? updateProductsCMSFilter('Estore')
+            : updateProductsCMSFilter('Cortina');
+        setTimeout(() => {}, 2000);
         selectProduct(selectorValues.tecido);
         updateHeadingSubtitles('tecido');
         changeSelectorVisibility(simulatorHeadings.step1, true);
@@ -1601,7 +1604,7 @@ window.Webflow.push(() => {
           },
         ];
       }
-      if (window2.inicio === 'Estore') {
+      if (window2.inicio.startsWith('Estore')) {
         // Create priced items with their respective subitems
         items = [
           {
@@ -1779,7 +1782,7 @@ window.Webflow.push(() => {
         txtContent += `    Modelo de calha: ${window2.tipo}\n`;
         txtContent += `    Suporte da calha: ${window2.suporte}\n\n`;
       }
-      if (window2.inicio === 'Estore') {
+      if (window2.inicio.startsWith('Estore')) {
         txtContent += `Janela ${index + 1} - ${window2.medidas} CM: ${windowTotal.toFixed(2)}€\n\n`;
         txtContent += `  Estore: ${tecido.toFixed(2)}€\n`;
         txtContent += `    Modelo de estore: ${window2.tecido}\n\n`;
@@ -2067,7 +2070,7 @@ window.Webflow.push(() => {
     cards.forEach((card) => {
       card.addEventListener('click', () => {
         const productType = card.getElementsByTagName('h1')[0].textContent;
-        activateCard(card, selectors.inicio);
+        activateCard(card);
         cards.forEach((cardFromList) => {
           if (cardFromList !== card) {
             deactivateCard(cardFromList);
@@ -2295,7 +2298,7 @@ window.Webflow.push(() => {
       selectorValues.email = emailInput.value;
       selectorValues.contacto = contactoSwitch.checked;
       const txtBytes = await generateTxt();
-      sendQuoteDataWhenDownload(txtBytes);
+      // sendQuoteDataWhenDownload(txtBytes);
       const { blob, pdfDoc, link } = await generateAndDownloadPdfLIB();
       files.push({ blob: blob, pdf: pdfDoc, link: link });
       files[files.length - 1].link.click();
@@ -2339,6 +2342,10 @@ window.Webflow.push(() => {
   // PRICE CALCULATIONS
   // ------------------
   const calculateUsedWidth = (window2) => {
+    if (window2.inicio === 'Estore Japonês') {
+      const width = window2.medidas ? parseInt(window2.medidas.split(' X ')[0]) : 0;
+      return width;
+    }
     const usedWidth = MANUFACTURING_CONSTANTS.usedWidths.find((usedWidth2) => {
       return window2.tipo === usedWidth2.name;
     });
@@ -2361,6 +2368,10 @@ window.Webflow.push(() => {
     if (window2.inicio === 'Estore') {
       productPrice = prices.product;
     }
+    if (window2.inicio === 'Estore Japonês') {
+      productPrice =
+        prices.product * ((usedWidth + MANUFACTURING_CONSTANTS.bainhaPrice.widthMargin) / 100);
+    }
     return { product: productPrice, calha: calhaPrice };
   };
 
@@ -2368,7 +2379,14 @@ window.Webflow.push(() => {
     if (window2.inicio === 'Estore') {
       return 0;
     }
-    const manufacturingPrice = MANUFACTURING_CONSTANTS.manufacturingPrices.find(
+    if (window2.inicio === 'Estore Japonês') {
+      const width = window2.medidas.split(' X ')[0];
+      const height = window2.medidas.split(' X ')[1];
+      const area = (parseInt(width) / 100) * (parseInt(height) / 100);
+      return area ? area * MANUFACTURING_CONSTANTS.manufacturingPrices.japaneseBlind : 0;
+    }
+
+    const manufacturingPrice = MANUFACTURING_CONSTANTS.manufacturingPrices.curtains.find(
       (price) => window2.tipo === price.name
     );
     if (manufacturingPrice) {
@@ -2388,7 +2406,7 @@ window.Webflow.push(() => {
     if (window2.inicio === 'Cortina' && window2.tecido.startsWith('9')) {
       return 0;
     }
-    if (window2.inicio === 'Estore') {
+    if (window2.inicio.startsWith('Estore')) {
       return 0;
     }
     if (window2.bainha) {
