@@ -2322,7 +2322,7 @@ window.Webflow.push(() => {
       selectorValues.contacto = contactoSwitch.checked;
       selectorValues.vendedor = vendedorText?.textContent;
       const txtBytes = await generateTxt();
-      // sendQuoteDataWhenDownload(txtBytes);
+      sendQuoteDataWhenDownload(txtBytes);
       const { blob, pdfDoc, link } = await generateAndDownloadPdfLIB();
       files.push({ blob: blob, pdf: pdfDoc, link: link });
       files[files.length - 1].link.click();
