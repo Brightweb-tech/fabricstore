@@ -21,6 +21,9 @@ window.Webflow.push(() => {
     Chumbo: 'CH',
   };
   const productSizes = {
+    estoresJaponeses: {
+      width: [80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340, 360, 380, 400],
+    },
     estores: {
       width: [
         80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260,
@@ -332,8 +335,18 @@ window.Webflow.push(() => {
         ? parseFloat(productsData[reference].price)
         : productsData[reference].price;
 
-    if (window2.inicio.startsWith('Estore')) {
+    if (window2.inicio === 'Estore') {
       return { product: productPrice, calha: 0 };
+    }
+
+    if (window2.inicio === 'Estore Japonês') {
+      const calhaReference = getCalhaReferenceForEstoreJapones(width);
+      const calhaPrice = !productsData[calhaReference]
+        ? 0
+        : typeof productsData[calhaReference].price === 'string'
+          ? parseFloat(productsData[calhaReference].price)
+          : productsData[calhaReference].price;
+      return { product: productPrice, calha: calhaPrice };
     }
 
     const calhaMultiplier = ((width / MANUFACTURING_CONSTANTS.maxCalhaWidth) | 0) + 1;
@@ -606,6 +619,11 @@ window.Webflow.push(() => {
     const closestWidth = productSizes.estores.width.find((w) => w >= width);
     const closestHeight = productSizes.estores.height.find((h) => h >= height);
     return `${product}${closestHeight}${closestWidth}`;
+  };
+
+  const getCalhaReferenceForEstoreJapones = (width) => {
+    const closestWidth = productSizes.estoresJaponeses.width.find((w) => w >= width);
+    return `ROMANETE${closestWidth}`;
   };
 
   const getVariableCalhaReference = (product, type, color, width, isWallMounted) => {
@@ -1653,12 +1671,28 @@ window.Webflow.push(() => {
           },
         ];
       }
-      if (window2.inicio.startsWith('Estore')) {
+      if (window2.inicio === 'Estore') {
         // Create priced items with their respective subitems
         items = [
           {
             label: `Estore`,
             price: tecido,
+            subItems: [{ label: `Modelo de estore: ${window2.tecido}` }],
+          },
+          {
+            label: `Instalação`,
+            price: instalacao,
+            subItems: [],
+          },
+        ];
+      }
+
+      if (window2.inicio === 'Estore Japonês') {
+        // Create priced items with their respective subitems
+        items = [
+          {
+            label: `Estore Japonês`,
+            price: tecido + calha,
             subItems: [{ label: `Modelo de estore: ${window2.tecido}` }],
           },
           {
@@ -1831,9 +1865,14 @@ window.Webflow.push(() => {
         txtContent += `    Modelo de calha: ${window2.tipo}\n`;
         txtContent += `    Suporte da calha: ${window2.suporte}\n\n`;
       }
-      if (window2.inicio.startsWith('Estore')) {
+      if (window2.inicio === 'Estore') {
         txtContent += `Janela ${index + 1} - ${window2.medidas} CM: ${windowTotal.toFixed(2)}€\n\n`;
         txtContent += `  Estore: ${tecido.toFixed(2)}€\n`;
+        txtContent += `    Modelo de estore: ${window2.tecido}\n\n`;
+      }
+      if (window2.inicio === 'Estore Japonês') {
+        txtContent += `Janela ${index + 1} - ${window2.medidas} CM: ${windowTotal.toFixed(2)}€\n\n`;
+        txtContent += `  Estore: ${tecido.toFixed(2) + calha.toFixed(2)}€\n`;
         txtContent += `    Modelo de estore: ${window2.tecido}\n\n`;
       }
       txtContent += `  Instalação: ${instalacao.toFixed(2)}€\n\n`;
@@ -2424,6 +2463,7 @@ window.Webflow.push(() => {
     if (window2.inicio === 'Estore Japonês') {
       productPrice =
         prices.product * ((usedWidth + MANUFACTURING_CONSTANTS.bainhaPrice.widthMargin) / 100);
+      calhaPrice = prices.calha;
     }
     return { product: productPrice, calha: calhaPrice };
   };
@@ -2517,30 +2557,6 @@ window.Webflow.push(() => {
       calha: materialPrice.calha,
       instalacao: instalationPrice,
       total: result,
-    };
-  };
-
-  const calculateWindowPriceTxt = (window2) => {
-    const totalWidth = calculateUsedWidth(window2);
-    const materialPrice = calculateMaterialPrice(window2, totalWidth);
-    const manufacturingPrice = calculateManufacturingPrice(window2, totalWidth);
-    const bainhaPrice = calculateBainhaPrice(window2, totalWidth);
-    const instalationPrice = calculateInstalationPrice(window2);
-    const result =
-      materialPrice.product +
-      manufacturingPrice +
-      bainhaPrice +
-      materialPrice.calha +
-      instalationPrice;
-    window2.totalPrice = result;
-    return {
-      usedWidth: totalWidth,
-      productPrice: materialPrice.product,
-      manufacturingPrice,
-      bainhaPrice,
-      calhaPrice: materialPrice.calha,
-      instalationPrice,
-      windowTotal: result,
     };
   };
 
