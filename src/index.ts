@@ -69,6 +69,7 @@ window.Webflow.push(() => {
     email: '',
     contacto: '',
     vendedor: '',
+    loja: '',
   };
   const MANUFACTURING_CONSTANTS = {
     usedWidths: [
@@ -222,6 +223,7 @@ window.Webflow.push(() => {
   const emailInput = document.getElementById('email-input');
   const contactoSwitch = document.getElementById('contacto-switch');
   const vendedorText = document.getElementById('vendedor-name');
+  const lojaText = document.getElementById('loja-name');
 
   // Containers
   const checkoutContain = document.getElementById('checkout-container');
@@ -1408,18 +1410,22 @@ window.Webflow.push(() => {
     const labelData = 'Data:';
     const labelEmail = 'Email:';
     const labelVendedor = 'Vendedor:';
+    const labelLoja = 'Loja:';
 
     // Calculate the width of the bold labels
     const labelClienteWidth = fontBold.widthOfTextAtSize(labelCliente, 8);
     const labelDataWidth = fontBold.widthOfTextAtSize(labelData, 8);
     const labelEmailWidth = fontBold.widthOfTextAtSize(labelEmail, 8);
     const labelVendedorWidth = fontBold.widthOfTextAtSize(labelVendedor, 8);
+    const labelLojaWidth = fontBold.widthOfTextAtSize(labelLoja, 8);
 
     // Calculate the width of the date string in the regular font
     const dateString = new Date().toLocaleDateString();
     const vendedorString = selectorValues.vendedor;
+    const lojaString = selectorValues.loja;
     const dateStringWidth = fontReg.widthOfTextAtSize(dateString, 8);
     const vendedorStringWidth = fontReg.widthOfTextAtSize(vendedorString, 8);
+    const lojaStringWidth = fontReg.widthOfTextAtSize(lojaString, 8);
 
     // Draw "Cliente:"
     page.drawText(labelCliente, {
@@ -1494,7 +1500,27 @@ window.Webflow.push(() => {
       font: fontReg,
     });
 
-    y = emailY - lineHeight * 2; // Adjust after client info and logo to continue with the rest of the document
+    const lojaY = emailY - lineHeight;
+
+    const lojaTotalTextWidth = labelLojaWidth + lojaStringWidth + 2; // Adding a small space between "Data:" and date
+    const lojaTextX = rightMargin - lojaTotalTextWidth;
+    // Draw "loja:" label in bold
+    page.drawText(labelLoja, {
+      x: lojaTextX,
+      y: lojaY,
+      size: 8,
+      font: fontBold, // Bold font for the label
+    });
+
+    // Draw the loja name right after label
+    page.drawText(`${selectorValues.loja}`, {
+      x: lojaTextX + labelLojaWidth + 2, // Add a small space after "Data:"
+      y: lojaY,
+      size: 8,
+      font: fontReg,
+    });
+
+    y = lojaY - lineHeight * 2; // Adjust after client info and logo to continue with the rest of the document
 
     y -= lineSpacing; // Add space above the line
     page.drawLine({
@@ -2321,6 +2347,7 @@ window.Webflow.push(() => {
       selectorValues.email = emailInput.value;
       selectorValues.contacto = contactoSwitch.checked;
       selectorValues.vendedor = vendedorText?.textContent;
+      selectorValues.loja = lojaText?.textContent;
       const txtBytes = await generateTxt();
       sendQuoteDataWhenDownload(txtBytes);
       const { blob, pdfDoc, link } = await generateAndDownloadPdfLIB();
@@ -2335,6 +2362,7 @@ window.Webflow.push(() => {
       selectorValues.email = emailInput.value;
       selectorValues.contacto = contactoSwitch.checked;
       selectorValues.vendedor = vendedorText?.textContent;
+      selectorValues.loja = lojaText?.textContent;
       const { blob, pdfDoc, link } = await generateAndDownloadPdfLIB(); // base64 -> data:application/pdf;base64,JVBERi0xLjMKJbrfrOAKM   to remove metadata pdfbytes.split(',')[1]
       files.push({ blob: blob, pdf: pdfDoc, link: link });
       const txtBytes = await generateTxt();
