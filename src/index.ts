@@ -581,6 +581,31 @@ window.Webflow.push(() => {
           activateNextBtn(true);
           return true;
         }
+        if (selectorValues.inicio === 'Estore Japonês') {
+          if (
+            parseInt(larguraInput?.value) > MANUFACTURING_CONSTANTS.maxWindowWidthEstores ||
+            parseInt(alturaInput?.value) > MANUFACTURING_CONSTANTS.maxWindowHeightEstores
+          ) {
+            larguraMinErrorEstore.style.display = 'none';
+            alturaMinErrorEstore.style.display = 'none';
+            parseInt(larguraInput?.value) > MANUFACTURING_CONSTANTS.maxWindowWidthEstores
+              ? (larguraMaxErrorEstore.style.display = 'block')
+              : (larguraMaxErrorEstore.style.display = 'none');
+            parseInt(alturaInput?.value) > MANUFACTURING_CONSTANTS.maxWindowHeightEstores
+              ? (alturaMaxErrorEstore.style.display = 'block')
+              : (alturaMaxErrorEstore.style.display = 'none');
+            activateNextBtn(false);
+            return false; // Error Maximum value exceeded
+          }
+          larguraMaxErrorCortina.style.display = 'none';
+          alturaMaxErrorCortina.style.display = 'none';
+          larguraMinErrorEstore.style.display = 'none';
+          alturaMinErrorEstore.style.display = 'none';
+          larguraMaxErrorEstore.style.display = 'none';
+          alturaMaxErrorEstore.style.display = 'none';
+          activateNextBtn(true);
+          return true;
+        }
         larguraMaxErrorCortina.style.display = 'none';
         alturaMaxErrorCortina.style.display = 'none';
         larguraMinErrorEstore.style.display = 'none';
@@ -2253,6 +2278,7 @@ window.Webflow.push(() => {
   const addOnChangeMedidasInputs = () => {
     larguraInput?.addEventListener('input', (event) => {
       if (larguraInput?.value === '' || alturaInput?.value === '') {
+        activateNextBtn(false);
         return;
       }
       validateSelector() &&
@@ -2264,6 +2290,7 @@ window.Webflow.push(() => {
 
     alturaInput?.addEventListener('input', (event) => {
       if (larguraInput?.value === '' || alturaInput?.value === '') {
+        activateNextBtn(false);
         return;
       }
       validateSelector() &&
