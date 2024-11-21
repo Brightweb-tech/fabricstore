@@ -112,6 +112,10 @@ window.Webflow.push(() => {
       price: 3.5,
       widthMargin: 20,
     },
+    bainhaEstoreJaponesPrice: {
+      price: 3.5,
+      widthMargin: 30,
+    },
     uniao: {
       maxLength: 400,
       price: 8.6,
@@ -2436,7 +2440,8 @@ window.Webflow.push(() => {
     }
     if (window2.inicio === 'Estore Japonês') {
       productPrice =
-        prices.product * ((usedWidth + MANUFACTURING_CONSTANTS.bainhaPrice.widthMargin) / 100);
+        prices.product *
+        ((usedWidth + MANUFACTURING_CONSTANTS.bainhaEstoreJaponesPrice.widthMargin) / 100);
       calhaPrice = prices.calha;
     }
     return { product: productPrice, calha: calhaPrice };
