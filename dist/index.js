@@ -17,6 +17,9 @@
       Chumbo: "CH"
     };
     const productSizes = {
+      estoresJaponeses: {
+        width: [80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340, 360, 380, 400]
+      },
       estores: {
         width: [
           80,
@@ -86,6 +89,7 @@
     const selectedColors = [];
     const files = [];
     const windows = [];
+    let currentWindowIndex = 0;
     let currentStep = "inicio";
     const selectorValues = {
       inicio: "",
@@ -99,7 +103,9 @@
       instalacao: "",
       nome: "",
       email: "",
-      contacto: ""
+      contacto: "",
+      vendedor: "",
+      loja: ""
     };
     const MANUFACTURING_CONSTANTS = {
       usedWidths: [
@@ -108,35 +114,42 @@
         { name: "Macho Juntos", widthRatio: 3 },
         { name: "Pregas", widthRatio: 2.5 }
       ],
-      manufacturingPrices: [
-        {
-          name: "Franzido",
-          blackout: 9,
-          normal: 8,
-          alinhado: 8
-        },
-        {
-          name: "Ondas",
-          blackout: 8.5,
-          normal: 7.5,
-          alinhado: 7.5
-        },
-        {
-          name: "Macho Juntos",
-          normal: 12.5,
-          blackout: 13.5,
-          alinhado: 12.5
-        },
-        {
-          name: "Pregas",
-          normal: 12.5,
-          blackout: 13.5,
-          alinhado: 12.5
-        }
-      ],
+      manufacturingPrices: {
+        japaneseBlind: 20,
+        curtains: [
+          {
+            name: "Franzido",
+            blackout: 9,
+            normal: 8,
+            alinhado: 8
+          },
+          {
+            name: "Ondas",
+            blackout: 8.5,
+            normal: 7.5,
+            alinhado: 7.5
+          },
+          {
+            name: "Macho Juntos",
+            normal: 12.5,
+            blackout: 13.5,
+            alinhado: 12.5
+          },
+          {
+            name: "Pregas",
+            normal: 12.5,
+            blackout: 13.5,
+            alinhado: 12.5
+          }
+        ]
+      },
       bainhaPrice: {
         price: 3.5,
         widthMargin: 20
+      },
+      bainhaEstoreJaponesPrice: {
+        price: 3.5,
+        widthMargin: 30
       },
       uniao: {
         maxLength: 400,
@@ -223,6 +236,8 @@
     const nomeInput = document.getElementById("nome-input");
     const emailInput = document.getElementById("email-input");
     const contactoSwitch = document.getElementById("contacto-switch");
+    const vendedorText = document.getElementById("vendedor-name");
+    const lojaText = document.getElementById("loja-name");
     const checkoutContain = document.getElementById("checkout-container");
     const newWindowContain = document.getElementById("new-window-contain");
     const checkoutFormContain = document.getElementById("checkout-input-contain");
@@ -291,7 +306,7 @@
       const calha = calhaDetails ? calhaDetails[0] : null;
       const calhaColor = calhaDetails ? calhaDetails[1] : null;
       const width = window2.medidas ? window2.medidas.split(" X ")[0] : 0;
-      if (window2.inicio === "Cortina") {
+      if (window2.inicio === "Cortina" || window2.inicio === "Estore Japon\xEAs") {
         reference = `${product}${color}`;
       }
       if (window2.inicio === "Estore") {
@@ -301,6 +316,11 @@
       productPrice = typeof productsData[reference].price === "string" ? parseFloat(productsData[reference].price) : productsData[reference].price;
       if (window2.inicio === "Estore") {
         return { product: productPrice, calha: 0 };
+      }
+      if (window2.inicio === "Estore Japon\xEAs") {
+        const calhaReference2 = getCalhaReferenceForEstoreJapones(width);
+        const calhaPrice2 = !productsData[calhaReference2] ? 0 : typeof productsData[calhaReference2].price === "string" ? parseFloat(productsData[calhaReference2].price) : productsData[calhaReference2].price;
+        return { product: productPrice, calha: calhaPrice2 };
       }
       const calhaMultiplier = (width / MANUFACTURING_CONSTANTS.maxCalhaWidth | 0) + 1;
       const calhaWidth = width <= MANUFACTURING_CONSTANTS.maxCalhaWidth ? width : width / calhaMultiplier;
@@ -319,10 +339,6 @@
     const fetchProducts = () => {
       fetch(
         "https://docs.google.com/spreadsheets/d/e/2PACX-1vRnpR16s-LlJCttzFQBqDmgLYSIGtTKbBKbDGUXfvjwGHR2W3u66qn4TV8DkHr2280Oru6V4QVgFYJV/pub?output=csv"
-        // 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRnpR16s-LlJCttzFQBqDmgLYSIGtTKbBKbDGUXfvjwGHR2W3u66qn4TV8DkHr2280Oru6V4QVgFYJV/pub?gid=0&single=true&output=csv'
-        // 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSCprbghTI2dhOxsCMkcEHhI-DE5pOb5RnOKO3KPd5-ntAORtuPTuFonSvs9s4-ANy_VCezuEdcZ8pg/pub?gid=0&single=true&output=csv'
-        // 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSCprbghTI2dhOxsCMkcEHhI-DE5pOb5RnOKO3KPd5-ntAORtuPTuFonSvs9s4-ANy_VCezuEdcZ8pg/export?format=csv&gid=0&single=true'
-        // `https://docs.google.com/spreadsheets/d/1hkgiYOVj33yY6b--bJaNPZOvHFvQ4klM402z0xp-gjE/export?format=csv&gid=0&single=true`
       ).then((response) => response.text()).then((csvData) => {
         const lines = csvData.trim().split("\n");
         const headers = lines[0].split(",");
@@ -359,7 +375,7 @@
     };
     const populateSelectorValues = (window2) => {
       if (window2.inicio === "Cortina") {
-        updateSelectorValue(selectors.inicio, "Cortina");
+        updateSelectorValue(selectors.inicio, window2.inicio);
         updateSelectorValue(selectors.tecido, window2.tecido);
         updateSelectorValue(selectors.tipo, window2.tipo);
         updateSelectorValue(selectors.bainha, window2.bainha);
@@ -368,16 +384,30 @@
         updateSelectorValue(selectors.suporte, window2.suporte);
         updateSelectorValue(selectors.instalacao, window2.instalacao);
       }
-      if (window2.inicio === "Estore") {
-        updateSelectorValue(selectors.inicio, "Estore");
+      if (window2.inicio.startsWith("Estore")) {
+        updateSelectorValue(selectors.inicio, window2.inicio);
         updateSelectorValue(selectors.tecido, window2.tecido);
         updateSelectorValue(selectors.medidas, window2.medidas);
         updateSelectorValue(selectors.correcao, window2.correcao);
         updateSelectorValue(selectors.instalacao, window2.instalacao);
       }
     };
+    const updateValues = () => {
+      if (!isNewWindow) {
+        windows[currentWindowIndex].inicio = selectorValues.inicio;
+        windows[currentWindowIndex].bainha = selectorValues.bainha;
+        windows[currentWindowIndex].tecido = selectorValues.tecido;
+        windows[currentWindowIndex].tipo = selectorValues.tipo;
+        windows[currentWindowIndex].medidas = selectorValues.medidas;
+        windows[currentWindowIndex].correcao = selectorValues.correcao;
+        windows[currentWindowIndex].calha = selectorValues.calha;
+        windows[currentWindowIndex].suporte = selectorValues.suporte;
+        windows[currentWindowIndex].instalacao = selectorValues.instalacao;
+      }
+    };
     const storeValues = () => {
       const newWindow = {
+        index: windows.length,
         inicio: selectorValues.inicio,
         bainha: selectorValues.bainha,
         tecido: selectorValues.tecido,
@@ -396,6 +426,7 @@
       resetValues();
       resetInputs();
       resetSteps();
+      currentWindowIndex = windows.length;
       navigateFromCheckoutToStep("inicio");
       isNewWindow = true;
     };
@@ -467,6 +498,24 @@
             activateNextBtn(true);
             return true;
           }
+          if (selectorValues.inicio === "Estore Japon\xEAs") {
+            if (parseInt(larguraInput?.value) > MANUFACTURING_CONSTANTS.maxWindowWidthEstores || parseInt(alturaInput?.value) > MANUFACTURING_CONSTANTS.maxWindowHeightEstores) {
+              larguraMinErrorEstore.style.display = "none";
+              alturaMinErrorEstore.style.display = "none";
+              parseInt(larguraInput?.value) > MANUFACTURING_CONSTANTS.maxWindowWidthEstores ? larguraMaxErrorEstore.style.display = "block" : larguraMaxErrorEstore.style.display = "none";
+              parseInt(alturaInput?.value) > MANUFACTURING_CONSTANTS.maxWindowHeightEstores ? alturaMaxErrorEstore.style.display = "block" : alturaMaxErrorEstore.style.display = "none";
+              activateNextBtn(false);
+              return false;
+            }
+            larguraMaxErrorCortina.style.display = "none";
+            alturaMaxErrorCortina.style.display = "none";
+            larguraMinErrorEstore.style.display = "none";
+            alturaMinErrorEstore.style.display = "none";
+            larguraMaxErrorEstore.style.display = "none";
+            alturaMaxErrorEstore.style.display = "none";
+            activateNextBtn(true);
+            return true;
+          }
           larguraMaxErrorCortina.style.display = "none";
           alturaMaxErrorCortina.style.display = "none";
           larguraMinErrorEstore.style.display = "none";
@@ -497,6 +546,10 @@
       const closestWidth = productSizes.estores.width.find((w) => w >= width);
       const closestHeight = productSizes.estores.height.find((h) => h >= height);
       return `${product}${closestHeight}${closestWidth}`;
+    };
+    const getCalhaReferenceForEstoreJapones = (width) => {
+      const closestWidth = productSizes.estoresJaponeses.width.find((w) => w >= width);
+      return `ROMANETE${closestWidth}`;
     };
     const getVariableCalhaReference = (product, type, color, width, isWallMounted) => {
       if (product === "KS") {
@@ -565,6 +618,9 @@
       if (productType === "Calha") {
         calhaRadioBtn?.click();
       }
+      if (productType === "Estore Japon\xEAs") {
+        cortinaRadioBtn?.click();
+      }
     };
     const resetInputs = () => {
       const inicioCards = document.querySelectorAll("[id^='inicio-card']");
@@ -603,7 +659,7 @@
     const selectProduct = (value) => {
       const productCards = document.querySelectorAll("[id^='tecido-card']");
       productCards.forEach((card) => {
-        if (getProductFromCard(card).startsWith(value)) {
+        if (getProductFromCard(card).split("-")[0].startsWith(value.split("-")[0])) {
           activateCard(card);
         } else {
           deactivateCard(card);
@@ -660,7 +716,7 @@
         selectSuporte(window2.suporte);
         instalacaoInput.checked = window2.instalacao;
       }
-      if (window2.inicio === "Estore") {
+      if (window2.inicio.startsWith("Estore")) {
         selectInicio(window2.inicio);
         selectProduct(window2.tecido);
         larguraInput.value = window2.medidas.split(" X ")[0];
@@ -747,7 +803,7 @@
         updateHeadingSubtitles(step);
         switch (step) {
           case "tecido":
-            isEstore ? updateProductsCMSFilter("Estore") : updateProductsCMSFilter("Cortina");
+            selectorValues.inicio === "Estore Japon\xEAs" ? updateProductsCMSFilter("Cortina") : isEstore ? updateProductsCMSFilter("Estore") : updateProductsCMSFilter("Cortina");
             changeSelectorVisibility(simulatorHeadings.step1, true);
             changeSelectorVisibility(selectors.tecido, true);
             break;
@@ -781,7 +837,7 @@
         larguraInputDescrE.style.display = "none";
         alturaInputDescrE.style.display = "none";
       }
-      if (selectorValues.inicio === "Estore") {
+      if (selectorValues.inicio === "Estore" || selectorValues.inicio === "Estore Japon\xEAs") {
         larguraInputDescrC.style.display = "none";
         alturaInputDescrC.style.display = "none";
         larguraInputDescrE.style.display = "block";
@@ -1010,6 +1066,8 @@
       }
     };
     const navigateToCheckout = () => {
+      if (!isNewWindow)
+        updateValues();
       simContainer.style.display = "none";
       selectWindow(windows[windows.length - 1]);
       toggleSteps();
@@ -1029,7 +1087,7 @@
         checkoutChoices.suporte.textContent = "Suporte de " + window2.suporte;
         checkoutChoices.instalacao.textContent = windows[0].instalacao ? "Com Instala\xE7\xE3o" : "Sem Instala\xE7\xE3o";
       }
-      if (window2.inicio === "Estore") {
+      if (window2.inicio.startsWith("Estore")) {
         checkoutInfoEstore.style.display = "flex";
         checkoutInfoCortina.style.display = "none";
         checkoutChoices.estoreProduto.textContent = window2.tecido;
@@ -1047,7 +1105,7 @@
         markStepAsCompleted("calha");
         markStepAsCompleted("instalacao");
       }
-      if (window2.inicio === "Estore") {
+      if (window2.inicio.startsWith("Estore")) {
         markStepAsCompleted("tecido");
         markStepAsCompleted("medidas");
         markStepAsCompleted("instalacao");
@@ -1059,10 +1117,12 @@
           w.button.classList.remove("active");
         }
       });
+      currentWindowIndex = window2.index;
+      isNewWindow = false;
       window2.button.classList.add("active");
       populateCheckoutChoices(window2);
-      populateInputValues(window2);
       populateSelectorValues(window2);
+      populateInputValues(window2);
       populateSteps(window2);
     };
     const navigateFromCheckoutToStep = (step) => {
@@ -1095,7 +1155,9 @@
           changeSelectorVisibility(selectors.inicio, true);
           break;
         case "tecido":
-          isEstore ? updateProductsCMSFilter("Estore") : updateProductsCMSFilter("Cortina");
+          selectorValues.inicio === "Estore Japon\xEAs" ? updateProductsCMSFilter("Cortina") : isEstore ? updateProductsCMSFilter("Estore") : updateProductsCMSFilter("Cortina");
+          setTimeout(() => {
+          }, 2e3);
           selectProduct(selectorValues.tecido);
           updateHeadingSubtitles("tecido");
           changeSelectorVisibility(simulatorHeadings.step1, true);
@@ -1154,7 +1216,10 @@
       const imageBytes = await response.arrayBuffer();
       return imageBytes;
     };
-    const buildPDFHeader = async () => {
+    const capitalizeFirstLetter = (string) => {
+      if (!string)
+        return "";
+      return string.charAt(0).toUpperCase() + string.slice(1);
     };
     const generateAndDownloadPdfLIB = async () => {
       const { PDFDocument: PDFDocument2, rgb } = PDFLib;
@@ -1192,11 +1257,19 @@
       const labelCliente = "Cliente:";
       const labelData = "Data:";
       const labelEmail = "Email:";
-      const dateString = (/* @__PURE__ */ new Date()).toLocaleDateString();
+      const labelVendedor = "Vendedor:";
+      const labelLoja = "Loja:";
       const labelClienteWidth = fontBold.widthOfTextAtSize(labelCliente, 8);
       const labelDataWidth = fontBold.widthOfTextAtSize(labelData, 8);
       const labelEmailWidth = fontBold.widthOfTextAtSize(labelEmail, 8);
+      const labelVendedorWidth = fontBold.widthOfTextAtSize(labelVendedor, 8);
+      const labelLojaWidth = fontBold.widthOfTextAtSize(labelLoja, 8);
+      const dateString = (/* @__PURE__ */ new Date()).toLocaleDateString();
+      const vendedorString = selectorValues.vendedor;
+      const lojaString = capitalizeFirstLetter(selectorValues.loja);
       const dateStringWidth = fontReg.widthOfTextAtSize(dateString, 8);
+      const vendedorStringWidth = fontReg.widthOfTextAtSize(vendedorString, 8);
+      const lojaStringWidth = fontReg.widthOfTextAtSize(lojaString, 8);
       page.drawText(labelCliente, {
         x,
         y: clientY,
@@ -1241,7 +1314,40 @@
         size: 8,
         font: fontReg
       });
-      y = emailY - lineHeight * 2;
+      const vendedorTotalTextWidth = labelVendedorWidth + vendedorStringWidth + 2;
+      const vendedorTextX = rightMargin - vendedorTotalTextWidth;
+      page.drawText(labelVendedor, {
+        x: vendedorTextX,
+        y: emailY,
+        size: 8,
+        font: fontBold
+        // Bold font for the label
+      });
+      page.drawText(`${selectorValues.vendedor}`, {
+        x: vendedorTextX + labelVendedorWidth + 2,
+        // Add a small space after "Data:"
+        y: emailY,
+        size: 8,
+        font: fontReg
+      });
+      const lojaY = emailY - lineHeight;
+      const lojaTotalTextWidth = labelLojaWidth + lojaStringWidth + 2;
+      const lojaTextX = rightMargin - lojaTotalTextWidth;
+      page.drawText(labelLoja, {
+        x: lojaTextX,
+        y: lojaY,
+        size: 8,
+        font: fontBold
+        // Bold font for the label
+      });
+      page.drawText(`${lojaString}`, {
+        x: lojaTextX + labelLojaWidth + 2,
+        // Add a small space after "Data:"
+        y: lojaY,
+        size: 8,
+        font: fontReg
+      });
+      y = lojaY - lineHeight * 2;
       y -= lineSpacing;
       page.drawLine({
         start: { x, y },
@@ -1262,7 +1368,7 @@
       });
       y -= lineSpacing + lineHeight;
       windows.forEach(async (window2, index) => {
-        if (y < 414) {
+        if (y < 264 + footerY && window2.inicio === "Cortina" || y < 102 + footerY && window2.inicio.startsWith("Estore")) {
           page.drawLine({
             start: { x, y: footerY - 4 * lineHeight },
             end: { x: rightMargin, y: footerY - 4 * lineHeight },
@@ -1367,6 +1473,20 @@
             }
           ];
         }
+        if (window2.inicio === "Estore Japon\xEAs") {
+          items = [
+            {
+              label: `Estore Japon\xEAs`,
+              price: tecido + calha,
+              subItems: [{ label: `Modelo de estore: ${window2.tecido}` }]
+            },
+            {
+              label: `Instala\xE7\xE3o`,
+              price: instalacao,
+              subItems: []
+            }
+          ];
+        }
         items.forEach((item) => {
           page.drawText(`  - ${item.label}`, { x, y, size: 8, font: fontBold });
           page.drawText(`${item.price.toFixed(2)}\u20AC`, { x: rightMargin - 100, y, size: 8, fontReg });
@@ -1389,6 +1509,52 @@
         });
         y -= lineSpacing + lineHeight;
       });
+      if (y < 38 + footerY) {
+        page.drawLine({
+          start: { x, y: footerY - 4 * lineHeight },
+          end: { x: rightMargin, y: footerY - 4 * lineHeight },
+          thickness: 0.5,
+          color: rgb(0, 0, 0)
+        });
+        y -= lineSpacing + lineHeight;
+        const footerText2 = "www.fabricstore.pt";
+        const totalPages2 = pdfDoc.getPageCount();
+        const pages2 = pdfDoc.getPages();
+        const currentPageNumber2 = pages2.indexOf(page) + 1;
+        const paginationText2 = `Pag. ${currentPageNumber2} de ${totalPages2 + 1}`;
+        const paginationWidth2 = fontReg.widthOfTextAtSize(paginationText2, 8);
+        const paginationCenterX2 = (page.getWidth() - paginationWidth2) / 2;
+        page.drawText(footerText2, { x, y: footerY - 5 * lineHeight, size: 10, fontReg });
+        page.drawText(paginationText2, {
+          x: paginationCenterX2,
+          y: footerY - 5 * lineHeight,
+          size: 8,
+          fontReg
+        });
+        const newPage = pdfDoc.addPage([595.28, 841.89]);
+        page = newPage;
+        y = 800;
+        y = emailY - lineHeight * 2;
+        y -= lineSpacing;
+        page.drawLine({
+          start: { x, y },
+          end: { x: rightMargin, y },
+          thickness: 0.5,
+          color: rgb(0, 0, 0)
+        });
+        y -= lineSpacing + lineHeight;
+        page.drawText("Descri\xE7\xE3o", { x, y, size: 8, font: fontBold });
+        page.drawText("Pre\xE7o", { x: rightMargin - 100, y, size: 8, font: fontBold });
+        y -= lineHeight - 4;
+        y -= lineSpacing;
+        page.drawLine({
+          start: { x, y },
+          end: { x: rightMargin, y },
+          thickness: 0.5,
+          color: rgb(0, 0, 0)
+        });
+        y -= lineSpacing + lineHeight;
+      }
       const correctionLabel = !windows[0].correcao ? "Facultadas pelo cliente" : "Sim";
       page.drawText("Retifica\xE7\xE3o de medidas:", { x, y, size: 8, font: fontBold });
       page.drawText(correctionLabel, {
@@ -1409,8 +1575,100 @@
         color: rgb(0, 0, 0)
       });
       y -= lineSpacing + lineHeight * 2;
+      if (y < 38 + footerY) {
+        page.drawLine({
+          start: { x, y: footerY - 4 * lineHeight },
+          end: { x: rightMargin, y: footerY - 4 * lineHeight },
+          thickness: 0.5,
+          color: rgb(0, 0, 0)
+        });
+        y -= lineSpacing + lineHeight;
+        const footerText2 = "www.fabricstore.pt";
+        const totalPages2 = pdfDoc.getPageCount();
+        const pages2 = pdfDoc.getPages();
+        const currentPageNumber2 = pages2.indexOf(page) + 1;
+        const paginationText2 = `Pag. ${currentPageNumber2} de ${totalPages2 + 1}`;
+        const paginationWidth2 = fontReg.widthOfTextAtSize(paginationText2, 8);
+        const paginationCenterX2 = (page.getWidth() - paginationWidth2) / 2;
+        page.drawText(footerText2, { x, y: footerY - 5 * lineHeight, size: 10, fontReg });
+        page.drawText(paginationText2, {
+          x: paginationCenterX2,
+          y: footerY - 5 * lineHeight,
+          size: 8,
+          fontReg
+        });
+        const newPage = pdfDoc.addPage([595.28, 841.89]);
+        page = newPage;
+        y = 800;
+        y = emailY - lineHeight * 2;
+        y -= lineSpacing;
+        page.drawLine({
+          start: { x, y },
+          end: { x: rightMargin, y },
+          thickness: 0.5,
+          color: rgb(0, 0, 0)
+        });
+        y -= lineSpacing + lineHeight;
+        page.drawText("Descri\xE7\xE3o", { x, y, size: 8, font: fontBold });
+        page.drawText("Pre\xE7o", { x: rightMargin - 100, y, size: 8, font: fontBold });
+        y -= lineHeight - 4;
+        y -= lineSpacing;
+        page.drawLine({
+          start: { x, y },
+          end: { x: rightMargin, y },
+          thickness: 0.5,
+          color: rgb(0, 0, 0)
+        });
+        y -= lineSpacing + lineHeight;
+      }
       page.drawText("Total:", { x: rightMargin - 150, y, size: 10, font: fontBold });
       page.drawText(`${total.toFixed(2)}\u20AC`, { x: rightMargin - 100, y, size: 10, fontBold });
+      if (y < 108 + footerY) {
+        page.drawLine({
+          start: { x, y: footerY - 4 * lineHeight },
+          end: { x: rightMargin, y: footerY - 4 * lineHeight },
+          thickness: 0.5,
+          color: rgb(0, 0, 0)
+        });
+        y -= lineSpacing + lineHeight;
+        const footerText2 = "www.fabricstore.pt";
+        const totalPages2 = pdfDoc.getPageCount();
+        const pages2 = pdfDoc.getPages();
+        const currentPageNumber2 = pages2.indexOf(page) + 1;
+        const paginationText2 = `Pag. ${currentPageNumber2} de ${totalPages2 + 1}`;
+        const paginationWidth2 = fontReg.widthOfTextAtSize(paginationText2, 8);
+        const paginationCenterX2 = (page.getWidth() - paginationWidth2) / 2;
+        page.drawText(footerText2, { x, y: footerY - 5 * lineHeight, size: 10, fontReg });
+        page.drawText(paginationText2, {
+          x: paginationCenterX2,
+          y: footerY - 5 * lineHeight,
+          size: 8,
+          fontReg
+        });
+        const newPage = pdfDoc.addPage([595.28, 841.89]);
+        page = newPage;
+        y = 800;
+        y = emailY - lineHeight * 2;
+        y -= lineSpacing;
+        page.drawLine({
+          start: { x, y },
+          end: { x: rightMargin, y },
+          thickness: 0.5,
+          color: rgb(0, 0, 0)
+        });
+        y -= lineSpacing + lineHeight;
+        page.drawText("Descri\xE7\xE3o", { x, y, size: 8, font: fontBold });
+        page.drawText("Pre\xE7o", { x: rightMargin - 100, y, size: 8, font: fontBold });
+        y -= lineHeight - 4;
+        y -= lineSpacing;
+        page.drawLine({
+          start: { x, y },
+          end: { x: rightMargin, y },
+          thickness: 0.5,
+          color: rgb(0, 0, 0)
+        });
+        y -= lineSpacing + lineHeight;
+      }
       y -= lineHeight * 4;
       page.drawText("Observa\xE7\xF5es:", {
         x,
@@ -1525,6 +1783,16 @@
 
 `;
           txtContent += `  Estore: ${tecido.toFixed(2)}\u20AC
+`;
+          txtContent += `    Modelo de estore: ${window2.tecido}
+
+`;
+        }
+        if (window2.inicio === "Estore Japon\xEAs") {
+          txtContent += `Janela ${index + 1} - ${window2.medidas} CM: ${windowTotal.toFixed(2)}\u20AC
+
+`;
+          txtContent += `  Estore: ${tecido.toFixed(2) + calha.toFixed(2)}\u20AC
 `;
           txtContent += `    Modelo de estore: ${window2.tecido}
 
@@ -1760,7 +2028,7 @@ ${correctionLabel} ${correctionPrice.toFixed(2)}\u20AC
       cards.forEach((card) => {
         card.addEventListener("click", () => {
           const productType = card.getElementsByTagName("h1")[0].textContent;
-          activateCard(card, selectors.inicio);
+          activateCard(card);
           cards.forEach((cardFromList) => {
             if (cardFromList !== card) {
               deactivateCard(cardFromList);
@@ -1902,6 +2170,7 @@ ${correctionLabel} ${correctionPrice.toFixed(2)}\u20AC
     const addOnChangeMedidasInputs = () => {
       larguraInput?.addEventListener("input", (event) => {
         if (larguraInput?.value === "" || alturaInput?.value === "") {
+          activateNextBtn(false);
           return;
         }
         validateSelector() && updateSelectorValue(selectors.medidas, `${larguraInput?.value} X ${alturaInput?.value}`);
@@ -1911,6 +2180,7 @@ ${correctionLabel} ${correctionPrice.toFixed(2)}\u20AC
       });
       alturaInput?.addEventListener("input", (event) => {
         if (larguraInput?.value === "" || alturaInput?.value === "") {
+          activateNextBtn(false);
           return;
         }
         validateSelector() && updateSelectorValue(selectors.medidas, `${larguraInput?.value} X ${alturaInput?.value}`);
@@ -1962,6 +2232,10 @@ ${correctionLabel} ${correctionPrice.toFixed(2)}\u20AC
         selectorValues.nome = nomeInput.value;
         selectorValues.email = emailInput.value;
         selectorValues.contacto = contactoSwitch.checked;
+        selectorValues.vendedor = vendedorText?.textContent;
+        selectorValues.loja = lojaText?.textContent;
+        const txtBytes = await generateTxt();
+        sendQuoteDataWhenDownload(txtBytes);
         const { blob, pdfDoc, link } = await generateAndDownloadPdfLIB();
         files.push({ blob, pdf: pdfDoc, link });
         files[files.length - 1].link.click();
@@ -1972,6 +2246,8 @@ ${correctionLabel} ${correctionPrice.toFixed(2)}\u20AC
         selectorValues.nome = nomeInput.value;
         selectorValues.email = emailInput.value;
         selectorValues.contacto = contactoSwitch.checked;
+        selectorValues.vendedor = vendedorText?.textContent;
+        selectorValues.loja = lojaText?.textContent;
         const { blob, pdfDoc, link } = await generateAndDownloadPdfLIB();
         files.push({ blob, pdf: pdfDoc, link });
         const txtBytes = await generateTxt();
@@ -1998,6 +2274,10 @@ ${correctionLabel} ${correctionPrice.toFixed(2)}\u20AC
       nextButton.addEventListener("click", advanceStep);
     };
     const calculateUsedWidth = (window2) => {
+      if (window2.inicio === "Estore Japon\xEAs") {
+        const width = window2.medidas ? parseInt(window2.medidas.split(" X ")[0]) : 0;
+        return width;
+      }
       const usedWidth = MANUFACTURING_CONSTANTS.usedWidths.find((usedWidth2) => {
         return window2.tipo === usedWidth2.name;
       });
@@ -2018,13 +2298,23 @@ ${correctionLabel} ${correctionPrice.toFixed(2)}\u20AC
       if (window2.inicio === "Estore") {
         productPrice = prices.product;
       }
+      if (window2.inicio === "Estore Japon\xEAs") {
+        productPrice = prices.product * ((usedWidth + MANUFACTURING_CONSTANTS.bainhaEstoreJaponesPrice.widthMargin) / 100);
+        calhaPrice = prices.calha;
+      }
       return { product: productPrice, calha: calhaPrice };
     };
     const calculateManufacturingPrice = (window2, usedWidth) => {
       if (window2.inicio === "Estore") {
         return 0;
       }
-      const manufacturingPrice = MANUFACTURING_CONSTANTS.manufacturingPrices.find(
+      if (window2.inicio === "Estore Japon\xEAs") {
+        const width = window2.medidas.split(" X ")[0];
+        const height = window2.medidas.split(" X ")[1];
+        const area = parseInt(width) / 100 * (parseInt(height) / 100);
+        return area ? area * MANUFACTURING_CONSTANTS.manufacturingPrices.japaneseBlind : 0;
+      }
+      const manufacturingPrice = MANUFACTURING_CONSTANTS.manufacturingPrices.curtains.find(
         (price) => window2.tipo === price.name
       );
       if (manufacturingPrice) {
@@ -2040,7 +2330,7 @@ ${correctionLabel} ${correctionPrice.toFixed(2)}\u20AC
       if (window2.inicio === "Cortina" && window2.tecido.startsWith("9")) {
         return 0;
       }
-      if (window2.inicio === "Estore") {
+      if (window2.inicio.startsWith("Estore")) {
         return 0;
       }
       if (window2.bainha) {
@@ -2078,24 +2368,6 @@ ${correctionLabel} ${correctionPrice.toFixed(2)}\u20AC
         calha: materialPrice.calha,
         instalacao: instalationPrice,
         total: result
-      };
-    };
-    const calculateWindowPriceTxt = (window2) => {
-      const totalWidth = calculateUsedWidth(window2);
-      const materialPrice = calculateMaterialPrice(window2, totalWidth);
-      const manufacturingPrice = calculateManufacturingPrice(window2, totalWidth);
-      const bainhaPrice = calculateBainhaPrice(window2, totalWidth);
-      const instalationPrice = calculateInstalationPrice(window2);
-      const result = materialPrice.product + manufacturingPrice + bainhaPrice + materialPrice.calha + instalationPrice;
-      window2.totalPrice = result;
-      return {
-        usedWidth: totalWidth,
-        productPrice: materialPrice.product,
-        manufacturingPrice,
-        bainhaPrice,
-        calhaPrice: materialPrice.calha,
-        instalationPrice,
-        windowTotal: result
       };
     };
     const isValidEmail = (email) => {
@@ -2171,6 +2443,32 @@ ${correctionLabel} ${correctionPrice.toFixed(2)}\u20AC
         downloadButtonContain?.classList.remove("inactive");
       }
     };
+    const sendQuoteDataWhenDownload = async (base64TxtPromise) => {
+      let txtFile = null;
+      try {
+        const base64Txt = await base64TxtPromise;
+        txtFile = await blobToBase64(base64Txt);
+      } catch {
+        console.error("Failed to load txt");
+        txtFile = null;
+      }
+      const templateParamsTxt = {
+        name: selectorValues.nome,
+        email: selectorValues.email,
+        check: selectorValues.contacto ? "Aceita" : "N\xE3o aceita",
+        file: txtFile,
+        to_company_email: "contact@fabricstore.pt",
+        reply_to: "contact@fabricstore.pt"
+      };
+      emailjs.send("service_fabricstore", "template_quote_txt", templateParamsTxt).then(
+        function(response) {
+          console.log("TXT DL SUCCESS!", response.status, response.text);
+        },
+        function(error) {
+          console.log("TXT DL FAILED...", error);
+        }
+      );
+    };
     const sendQuoteEmail = async (name, email, allowsContact, base64PdfPromise, base64TxtPromise, downloadLink) => {
       let pdfFile = null;
       let txtFile = null;
@@ -2204,13 +2502,14 @@ ${correctionLabel} ${correctionPrice.toFixed(2)}\u20AC
       };
       emailjs.send("service_fabricstore", "template_quote_pdf", templateParamsPdf).then(
         function(response) {
+          console.log("PDF EMAIL SUCCESS!", response.status, response.text);
           userDetailsForm.style.display = "none";
           feedbackMessage.style.display = "none";
           feedbackSuccess.textContent = "Obrigado pelo seu contacto!";
           feedbackSuccess.style.display = "block";
         },
         function(error) {
-          console.log("FAILED...", error);
+          console.log("PDF EMAIL FAILED...", error);
           feedbackSuccess.style.display = "none";
           feedbackMessage.textContent = "Aconteceu um erro durante o envio. Tente novamente ou entre em contacto connosco.";
           feedbackMessage.style.display = "block";
@@ -2218,16 +2517,10 @@ ${correctionLabel} ${correctionPrice.toFixed(2)}\u20AC
       );
       emailjs.send("service_fabricstore", "template_quote_txt", templateParamsTxt).then(
         function(response) {
-          userDetailsForm.style.display = "none";
-          feedbackMessage.style.display = "none";
-          feedbackSuccess.textContent = "Obrigado pelo seu contacto!";
-          feedbackSuccess.style.display = "block";
+          console.log("TXT SUCCESS!", response.status, response.text);
         },
         function(error) {
-          console.log("FAILED...", error);
-          feedbackSuccess.style.display = "none";
-          feedbackMessage.textContent = "Aconteceu um erro durante o envio. Tente novamente ou entre em contacto connosco.";
-          feedbackMessage.style.display = "block";
+          console.log("TXT FAILED...", error);
         }
       );
     };

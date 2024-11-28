@@ -1597,7 +1597,16 @@ window.Webflow.push(() => {
     y -= lineSpacing + lineHeight;
 
     windows.forEach(async (window2, index) => {
-      if (y < 414) {
+      // height of Cortinas = 264
+      // height of Estore Japoneses = 102
+      // height of Estore = 102
+      // Correçao and Total = 38
+      // spacing above observações = 48
+      // Observações = 60
+      if (
+        (y < 264 + footerY && window2.inicio === 'Cortina') ||
+        (y < 102 + footerY && window2.inicio.startsWith('Estore'))
+      ) {
         page.drawLine({
           start: { x: x, y: footerY - 4 * lineHeight },
           end: { x: rightMargin, y: footerY - 4 * lineHeight },
@@ -1768,6 +1777,59 @@ window.Webflow.push(() => {
       y -= lineSpacing + lineHeight;
     });
 
+    if (y < 38 + footerY) {
+      page.drawLine({
+        start: { x: x, y: footerY - 4 * lineHeight },
+        end: { x: rightMargin, y: footerY - 4 * lineHeight },
+        thickness: 0.5,
+        color: rgb(0, 0, 0),
+      });
+      y -= lineSpacing + lineHeight;
+      const footerText = 'www.fabricstore.pt';
+      const totalPages = pdfDoc.getPageCount();
+      const pages = pdfDoc.getPages();
+      const currentPageNumber = pages.indexOf(page) + 1;
+      const paginationText = `Pag. ${currentPageNumber} de ${totalPages + 1}`;
+      const paginationWidth = fontReg.widthOfTextAtSize(paginationText, 8);
+      const paginationCenterX = (page.getWidth() - paginationWidth) / 2;
+
+      page.drawText(footerText, { x: x, y: footerY - 5 * lineHeight, size: 10, fontReg });
+      page.drawText(paginationText, {
+        x: paginationCenterX,
+        y: footerY - 5 * lineHeight,
+        size: 8,
+        fontReg,
+      });
+
+      // Add new page when reaching the end
+      const newPage = pdfDoc.addPage([595.28, 841.89]);
+      page = newPage;
+      y = 800;
+
+      y = emailY - lineHeight * 2; // Adjust after client info and logo to continue with the rest of the document
+
+      y -= lineSpacing; // Add space above the line
+      page.drawLine({
+        start: { x: x, y: y },
+        end: { x: rightMargin, y: y },
+        thickness: 0.5,
+        color: rgb(0, 0, 0),
+      });
+      y -= lineSpacing + lineHeight; // Add space below the line and account for text
+
+      page.drawText('Descrição', { x: x, y, size: 8, font: fontBold });
+      page.drawText('Preço', { x: rightMargin - 100, y, size: 8, font: fontBold });
+      y -= lineHeight - 4;
+
+      y -= lineSpacing;
+      page.drawLine({
+        start: { x: x, y: y },
+        end: { x: rightMargin, y: y },
+        thickness: 0.5,
+        color: rgb(0, 0, 0),
+      });
+      y -= lineSpacing + lineHeight;
+    }
     // Draw Correction
     const correctionLabel = !windows[0].correcao ? 'Facultadas pelo cliente' : 'Sim';
     page.drawText('Retificação de medidas:', { x, y, size: 8, font: fontBold });
@@ -1792,12 +1854,120 @@ window.Webflow.push(() => {
     });
     y -= lineSpacing + lineHeight * 2;
 
+    if (y < 38 + footerY) {
+      page.drawLine({
+        start: { x: x, y: footerY - 4 * lineHeight },
+        end: { x: rightMargin, y: footerY - 4 * lineHeight },
+        thickness: 0.5,
+        color: rgb(0, 0, 0),
+      });
+      y -= lineSpacing + lineHeight;
+      const footerText = 'www.fabricstore.pt';
+      const totalPages = pdfDoc.getPageCount();
+      const pages = pdfDoc.getPages();
+      const currentPageNumber = pages.indexOf(page) + 1;
+      const paginationText = `Pag. ${currentPageNumber} de ${totalPages + 1}`;
+      const paginationWidth = fontReg.widthOfTextAtSize(paginationText, 8);
+      const paginationCenterX = (page.getWidth() - paginationWidth) / 2;
+
+      page.drawText(footerText, { x: x, y: footerY - 5 * lineHeight, size: 10, fontReg });
+      page.drawText(paginationText, {
+        x: paginationCenterX,
+        y: footerY - 5 * lineHeight,
+        size: 8,
+        fontReg,
+      });
+
+      // Add new page when reaching the end
+      const newPage = pdfDoc.addPage([595.28, 841.89]);
+      page = newPage;
+      y = 800;
+
+      y = emailY - lineHeight * 2; // Adjust after client info and logo to continue with the rest of the document
+
+      y -= lineSpacing; // Add space above the line
+      page.drawLine({
+        start: { x: x, y: y },
+        end: { x: rightMargin, y: y },
+        thickness: 0.5,
+        color: rgb(0, 0, 0),
+      });
+      y -= lineSpacing + lineHeight; // Add space below the line and account for text
+
+      page.drawText('Descrição', { x: x, y, size: 8, font: fontBold });
+      page.drawText('Preço', { x: rightMargin - 100, y, size: 8, font: fontBold });
+      y -= lineHeight - 4;
+
+      y -= lineSpacing;
+      page.drawLine({
+        start: { x: x, y: y },
+        end: { x: rightMargin, y: y },
+        thickness: 0.5,
+        color: rgb(0, 0, 0),
+      });
+      y -= lineSpacing + lineHeight;
+    }
+
     // Draw Total
     page.drawText('Total:', { x: rightMargin - 150, y, size: 10, font: fontBold });
     page.drawText(`${total.toFixed(2)}€`, { x: rightMargin - 100, y, size: 10, fontBold });
-    y -= lineHeight * 4;
+
+    if (y < 108 + footerY) {
+      page.drawLine({
+        start: { x: x, y: footerY - 4 * lineHeight },
+        end: { x: rightMargin, y: footerY - 4 * lineHeight },
+        thickness: 0.5,
+        color: rgb(0, 0, 0),
+      });
+      y -= lineSpacing + lineHeight;
+      const footerText = 'www.fabricstore.pt';
+      const totalPages = pdfDoc.getPageCount();
+      const pages = pdfDoc.getPages();
+      const currentPageNumber = pages.indexOf(page) + 1;
+      const paginationText = `Pag. ${currentPageNumber} de ${totalPages + 1}`;
+      const paginationWidth = fontReg.widthOfTextAtSize(paginationText, 8);
+      const paginationCenterX = (page.getWidth() - paginationWidth) / 2;
+
+      page.drawText(footerText, { x: x, y: footerY - 5 * lineHeight, size: 10, fontReg });
+      page.drawText(paginationText, {
+        x: paginationCenterX,
+        y: footerY - 5 * lineHeight,
+        size: 8,
+        fontReg,
+      });
+
+      // Add new page when reaching the end
+      const newPage = pdfDoc.addPage([595.28, 841.89]);
+      page = newPage;
+      y = 800;
+
+      y = emailY - lineHeight * 2; // Adjust after client info and logo to continue with the rest of the document
+
+      y -= lineSpacing; // Add space above the line
+      page.drawLine({
+        start: { x: x, y: y },
+        end: { x: rightMargin, y: y },
+        thickness: 0.5,
+        color: rgb(0, 0, 0),
+      });
+      y -= lineSpacing + lineHeight; // Add space below the line and account for text
+
+      page.drawText('Descrição', { x: x, y, size: 8, font: fontBold });
+      page.drawText('Preço', { x: rightMargin - 100, y, size: 8, font: fontBold });
+      y -= lineHeight - 4;
+
+      y -= lineSpacing;
+      page.drawLine({
+        start: { x: x, y: y },
+        end: { x: rightMargin, y: y },
+        thickness: 0.5,
+        color: rgb(0, 0, 0),
+      });
+      y -= lineSpacing + lineHeight;
+    }
 
     //Observações
+    y -= lineHeight * 4;
     page.drawText('Observações:', {
       x: x,
       y: y,
