@@ -1415,6 +1415,11 @@ window.Webflow.push(() => {
     return imageBytes;
   };
 
+  const capitalizeFirstLetter = (string) => {
+    if (!string) return ''; // Handle empty or null strings
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
   const generateAndDownloadPdfLIB = async () => {
     const { PDFDocument, rgb } = PDFLib;
     const pdfDoc = await PDFDocument.create();
@@ -1469,7 +1474,7 @@ window.Webflow.push(() => {
     // Calculate the width of the date string in the regular font
     const dateString = new Date().toLocaleDateString();
     const vendedorString = selectorValues.vendedor;
-    const lojaString = selectorValues.loja;
+    const lojaString = capitalizeFirstLetter(selectorValues.loja);
     const dateStringWidth = fontReg.widthOfTextAtSize(dateString, 8);
     const vendedorStringWidth = fontReg.widthOfTextAtSize(vendedorString, 8);
     const lojaStringWidth = fontReg.widthOfTextAtSize(lojaString, 8);
@@ -1560,7 +1565,7 @@ window.Webflow.push(() => {
     });
 
     // Draw the loja name right after label
-    page.drawText(`${selectorValues.loja}`, {
+    page.drawText(`${lojaString}`, {
       x: lojaTextX + labelLojaWidth + 2, // Add a small space after "Data:"
       y: lojaY,
       size: 8,
