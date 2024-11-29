@@ -1420,6 +1420,34 @@ window.Webflow.push(() => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
 
+  const writePdfFooters = (footerY, lineHeight, rightMargin, rgb, x, pdfDoc, fontReg) => {
+    const totalPages = pdfDoc.getPageCount();
+    const footerText = 'www.fabricstore.pt';
+    const pages = pdfDoc.getPages();
+
+    pages.forEach((page) => {
+      const currentPageNumber = pages.indexOf(page) + 1;
+      const paginationText = `Pag. ${currentPageNumber} de ${totalPages}`;
+      const paginationWidth = fontReg.widthOfTextAtSize(paginationText, 8);
+      const paginationCenterX = (page.getWidth() - paginationWidth) / 2;
+
+      page.drawLine({
+        start: { x: x, y: footerY - 4 * lineHeight },
+        end: { x: rightMargin, y: footerY - 4 * lineHeight },
+        thickness: 0.5,
+        color: rgb(0, 0, 0),
+      });
+
+      page.drawText(footerText, { x: x, y: footerY - 5 * lineHeight, size: 10, fontReg });
+      page.drawText(paginationText, {
+        x: paginationCenterX,
+        y: footerY - 5 * lineHeight,
+        size: 8,
+        fontReg,
+      });
+    });
+  };
+
   const generateAndDownloadPdfLIB = async () => {
     const { PDFDocument, rgb } = PDFLib;
     const pdfDoc = await PDFDocument.create();
@@ -1600,36 +1628,13 @@ window.Webflow.push(() => {
       // height of Cortinas = 264
       // height of Estore Japoneses = 102
       // height of Estore = 102
-      // Correçao and Total = 38
-      // spacing above observações = 48
-      // Observações = 60
+      // height Correçao and Total = 38
+      // height spacing above observações = 48
+      // height Observações = 60
       if (
         (y < 264 + footerY && window2.inicio === 'Cortina') ||
         (y < 102 + footerY && window2.inicio.startsWith('Estore'))
       ) {
-        page.drawLine({
-          start: { x: x, y: footerY - 4 * lineHeight },
-          end: { x: rightMargin, y: footerY - 4 * lineHeight },
-          thickness: 0.5,
-          color: rgb(0, 0, 0),
-        });
-        y -= lineSpacing + lineHeight;
-        const footerText = 'www.fabricstore.pt';
-        const totalPages = pdfDoc.getPageCount();
-        const pages = pdfDoc.getPages();
-        const currentPageNumber = pages.indexOf(page) + 1;
-        const paginationText = `Pag. ${currentPageNumber} de ${totalPages + 1}`;
-        const paginationWidth = fontReg.widthOfTextAtSize(paginationText, 8);
-        const paginationCenterX = (page.getWidth() - paginationWidth) / 2;
-
-        page.drawText(footerText, { x: x, y: footerY - 5 * lineHeight, size: 10, fontReg });
-        page.drawText(paginationText, {
-          x: paginationCenterX,
-          y: footerY - 5 * lineHeight,
-          size: 8,
-          fontReg,
-        });
-
         // Add new page when reaching the end
         const newPage = pdfDoc.addPage([595.28, 841.89]);
         page = newPage;
@@ -1778,29 +1783,6 @@ window.Webflow.push(() => {
     });
 
     if (y < 38 + footerY) {
-      page.drawLine({
-        start: { x: x, y: footerY - 4 * lineHeight },
-        end: { x: rightMargin, y: footerY - 4 * lineHeight },
-        thickness: 0.5,
-        color: rgb(0, 0, 0),
-      });
-      y -= lineSpacing + lineHeight;
-      const footerText = 'www.fabricstore.pt';
-      const totalPages = pdfDoc.getPageCount();
-      const pages = pdfDoc.getPages();
-      const currentPageNumber = pages.indexOf(page) + 1;
-      const paginationText = `Pag. ${currentPageNumber} de ${totalPages + 1}`;
-      const paginationWidth = fontReg.widthOfTextAtSize(paginationText, 8);
-      const paginationCenterX = (page.getWidth() - paginationWidth) / 2;
-
-      page.drawText(footerText, { x: x, y: footerY - 5 * lineHeight, size: 10, fontReg });
-      page.drawText(paginationText, {
-        x: paginationCenterX,
-        y: footerY - 5 * lineHeight,
-        size: 8,
-        fontReg,
-      });
-
       // Add new page when reaching the end
       const newPage = pdfDoc.addPage([595.28, 841.89]);
       page = newPage;
@@ -1855,29 +1837,6 @@ window.Webflow.push(() => {
     y -= lineSpacing + lineHeight * 2;
 
     if (y < 38 + footerY) {
-      page.drawLine({
-        start: { x: x, y: footerY - 4 * lineHeight },
-        end: { x: rightMargin, y: footerY - 4 * lineHeight },
-        thickness: 0.5,
-        color: rgb(0, 0, 0),
-      });
-      y -= lineSpacing + lineHeight;
-      const footerText = 'www.fabricstore.pt';
-      const totalPages = pdfDoc.getPageCount();
-      const pages = pdfDoc.getPages();
-      const currentPageNumber = pages.indexOf(page) + 1;
-      const paginationText = `Pag. ${currentPageNumber} de ${totalPages + 1}`;
-      const paginationWidth = fontReg.widthOfTextAtSize(paginationText, 8);
-      const paginationCenterX = (page.getWidth() - paginationWidth) / 2;
-
-      page.drawText(footerText, { x: x, y: footerY - 5 * lineHeight, size: 10, fontReg });
-      page.drawText(paginationText, {
-        x: paginationCenterX,
-        y: footerY - 5 * lineHeight,
-        size: 8,
-        fontReg,
-      });
-
       // Add new page when reaching the end
       const newPage = pdfDoc.addPage([595.28, 841.89]);
       page = newPage;
@@ -1913,29 +1872,6 @@ window.Webflow.push(() => {
     page.drawText(`${total.toFixed(2)}€`, { x: rightMargin - 100, y, size: 10, fontBold });
 
     if (y < 108 + footerY) {
-      page.drawLine({
-        start: { x: x, y: footerY - 4 * lineHeight },
-        end: { x: rightMargin, y: footerY - 4 * lineHeight },
-        thickness: 0.5,
-        color: rgb(0, 0, 0),
-      });
-      y -= lineSpacing + lineHeight;
-      const footerText = 'www.fabricstore.pt';
-      const totalPages = pdfDoc.getPageCount();
-      const pages = pdfDoc.getPages();
-      const currentPageNumber = pages.indexOf(page) + 1;
-      const paginationText = `Pag. ${currentPageNumber} de ${totalPages + 1}`;
-      const paginationWidth = fontReg.widthOfTextAtSize(paginationText, 8);
-      const paginationCenterX = (page.getWidth() - paginationWidth) / 2;
-
-      page.drawText(footerText, { x: x, y: footerY - 5 * lineHeight, size: 10, fontReg });
-      page.drawText(paginationText, {
-        x: paginationCenterX,
-        y: footerY - 5 * lineHeight,
-        size: 8,
-        fontReg,
-      });
-
       // Add new page when reaching the end
       const newPage = pdfDoc.addPage([595.28, 841.89]);
       page = newPage;
@@ -2006,30 +1942,8 @@ window.Webflow.push(() => {
     });
 
     y -= lineSpacing;
-    page.drawLine({
-      start: { x: x, y: footerY - 4 * lineHeight },
-      end: { x: rightMargin, y: footerY - 4 * lineHeight },
-      thickness: 0.5,
-      color: rgb(0, 0, 0),
-    });
-    y -= lineSpacing + lineHeight;
 
-    const footerText = 'www.fabricstore.pt';
-    const totalPages = pdfDoc.getPageCount();
-    const pages = pdfDoc.getPages();
-    const currentPageNumber = pages.indexOf(page) + 1;
-    const paginationText = `Pag. ${currentPageNumber} de ${totalPages}`;
-    const paginationWidth = fontReg.widthOfTextAtSize(paginationText, 8);
-    const paginationCenterX = (page.getWidth() - paginationWidth) / 2;
-
-    page.drawText(footerText, { x: x, y: footerY - 5 * lineHeight, size: 10, fontReg });
-    page.drawText(paginationText, {
-      x: paginationCenterX,
-      y: footerY - 5 * lineHeight,
-      size: 8,
-      fontReg,
-    });
-
+    writePdfFooters(footerY, lineHeight, rightMargin, rgb, x, pdfDoc, fontReg);
     // Save the PDF
     const pdfBytes = await pdfDoc.save();
     const blob = new Blob([pdfBytes], { type: 'application/pdf' });
@@ -2088,10 +2002,7 @@ window.Webflow.push(() => {
     txtContent += `Total: ${total.toFixed(2)}€\n\n`;
     // Create and download the txt file
     const txtBlob = new Blob([txtContent], { type: 'text/plain' });
-    // const txtLink = document.createElement('a');
-    // txtLink.href = URL.createObjectURL(txtBlob);
-    // txtLink.download = 'Orcamento_Fabric-Store.txt';
-    // txtLink.click();
+
     return txtBlob;
   };
 
