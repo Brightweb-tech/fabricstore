@@ -32,6 +32,7 @@ window.Webflow.push(() => {
       height: [80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320],
     },
     calhas: {
+      'VARAO-P': [120, 140, 160, 180, 200, 220, 240, 260, 300, 320, 340, 360, 400, 440, 500, 600],
       '5000-B': [120, 140, 160, 180, 200, 220, 240, 260, 300, 320, 340, 360, 400, 440, 500, 600],
       '5000-I': [120, 140, 160, 180, 200, 220, 240, 260, 300, 320, 340, 360, 400, 440, 500, 600],
       '5000-BZ': [120, 140, 160, 180, 200, 220, 240, 260, 300, 320, 340, 360, 400, 440, 500, 600],
@@ -272,6 +273,7 @@ window.Webflow.push(() => {
   const cortinaRadioBtn = document.getElementById('cortina-radio-btn');
   const estoreRadioBtn = document.getElementById('estore-radio-btn');
   const calhaRadioBtn = document.getElementById('calha-radio-btn');
+  const varaoRadioBtn = document.getElementById('varao-radio-btn');
 
   // ----------------------------
   //          FUNCTIONS
@@ -652,6 +654,10 @@ window.Webflow.push(() => {
   };
 
   const getVariableCalhaReference = (product, type, color, width, isWallMounted) => {
+    if (type === 'Ilhós') {
+      const closestWidth2 = productSizes.calhas[`${product}-${color}`]?.find((w) => w >= width);
+      return `${product}${closestWidth2}${color}`;
+    }
     if (product === 'KS') {
       if (isWallMounted) {
         const closestWidth3 = productSizes.calhas[product]?.find((w) => w >= width);
@@ -725,8 +731,8 @@ window.Webflow.push(() => {
     if (productType === 'Calha') {
       calhaRadioBtn?.click();
     }
-    if (productType === 'Estore Japonês') {
-      cortinaRadioBtn?.click();
+    if (productType === 'Varão') {
+      varaoRadioBtn?.click();
     }
   };
 
@@ -964,7 +970,9 @@ window.Webflow.push(() => {
           changeSelectorVisibility(selectors.medidas, true);
           break;
         case 'calha':
-          updateProductsCMSFilter('calha');
+          selectorValues.tipo === 'Ilhós'
+            ? updateProductsCMSFilter('Varão')
+            : updateProductsCMSFilter('Calha');
           changeSelectorVisibility(simulatorHeadings.step4, true);
           changeSelectorVisibility(selectors.tecido, true);
           break;
@@ -1067,7 +1075,9 @@ window.Webflow.push(() => {
             changeSelectorVisibility(selectors.medidas, false);
             if (windows.length > 0) {
               if (isNewWindow) activateNextBtn(false);
-              updateProductsCMSFilter('Calha');
+              selectorValues.tipo === 'Ilhós'
+                ? updateProductsCMSFilter('Varão')
+                : updateProductsCMSFilter('Calha');
               markStepAsCompleted('medidas');
               markStepAsActive('calha');
               changeSelectorVisibility(simulatorHeadings.step3, false);
@@ -1083,7 +1093,9 @@ window.Webflow.push(() => {
           }
           break;
         case 'correcao':
-          updateProductsCMSFilter('Calha');
+          selectorValues.tipo === 'Ilhós'
+            ? updateProductsCMSFilter('Varão')
+            : updateProductsCMSFilter('Calha');
           markStepAsCompleted('medidas');
           markStepAsActive('calha');
           changeSelectorVisibility(simulatorHeadings.step3, false);
@@ -1097,11 +1109,20 @@ window.Webflow.push(() => {
         case 'calha':
           if (validateSelector()) {
             changeSelectorVisibility(selectors.tecido, false);
-            if (isNewWindow) activateNextBtn(false);
-            clearSuporteRadioBtns();
-            updateHeadingSubtitles('suporte');
-            changeSelectorVisibility(selectors.suporte, true);
-            currentStep = 'suporte';
+            if (selectorValues.tipo === 'Ilhós') {
+              activateNextBtn(true);
+              changeSelectorVisibility(simulatorHeadings.step4, false);
+              updateHeadingSubtitles('instalacao');
+              changeSelectorVisibility(simulatorHeadings.step5, true);
+              changeSelectorVisibility(selectors.instalacao, true);
+              currentStep = 'instalacao';
+            } else {
+              if (isNewWindow) activateNextBtn(false);
+              clearSuporteRadioBtns();
+              updateHeadingSubtitles('suporte');
+              changeSelectorVisibility(selectors.suporte, true);
+              currentStep = 'suporte';
+            }
           }
           break;
         case 'suporte':
@@ -1363,7 +1384,9 @@ window.Webflow.push(() => {
         changeSelectorVisibility(selectors.medidas, true);
         break;
       case 'calha':
-        updateProductsCMSFilter('Calha');
+        selectorValues.tipo === 'Ilhós'
+          ? updateProductsCMSFilter('Varão')
+          : updateProductsCMSFilter('Calha');
         updateHeadingSubtitles('calha');
         changeSelectorVisibility(simulatorHeadings.step4, true);
         changeSelectorVisibility(selectors.tecido, true);
@@ -1642,11 +1665,15 @@ window.Webflow.push(() => {
             ],
           },
           {
-            label: `Calha`,
+            label: `${window2.tipo === 'Ilhós' ? 'Varão' : 'Calha'}`,
             price: calha,
             subItems: [
-              { label: `Modelo de calha: ${window2.calha}` },
-              { label: `Suporte da calha: ${window2.suporte}` },
+              {
+                label: `${window2.tipo === 'Ilhós' ? 'Modelo de varão' : 'Modelo de calha'}: ${window2.calha}`,
+              },
+              {
+                label: `${window2.tipo === 'Ilhós' ? 'Suporte de varão' : 'Suporte da calha'}: ${window2.tipo === 'Ilhós' ? 'Parede' : window2.suporte}`,
+              },
             ],
           },
           {
