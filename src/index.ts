@@ -64,6 +64,7 @@ window.Webflow.push(() => {
     tecido: '',
     tipo: '',
     bainha: '',
+    forma: '',
     medidas: '',
     correcao: '',
     calha: '',
@@ -124,6 +125,8 @@ window.Webflow.push(() => {
     },
     prolongadores: 3.7,
     roletesPrice: 5,
+    minWindowWidthToalhas: 80,
+    maxWindowWidthToalhas: 300,
     minWindowWidthEstores: 80,
     maxWindowWidthEstores: 300,
     minWindowHeightEstores: 80,
@@ -153,6 +156,7 @@ window.Webflow.push(() => {
   const simContainer = document.getElementById('sim-container');
   const cortinaSteps = document.getElementById('steps-cortina');
   const estoreSteps = document.getElementById('steps-estore');
+  const toalhaSteps = document.getElementById('steps-toalha');
 
   // Headings
   const simulatorHeadings = {
@@ -163,6 +167,9 @@ window.Webflow.push(() => {
     step2: document.getElementById('simulator-heading-2'),
     step2t: document.getElementById('tipo-description'),
     step2b: document.getElementById('bainha-description'),
+    step2toalha: document.getElementById('simulator-heading-2-toalha'),
+    step2f: document.getElementById('forma-description'),
+    step2bt: document.getElementById('bainha-toalha-description'),
     step3: document.getElementById('simulator-heading-3'),
     step3m: document.getElementById('medidas-description'),
     step3c: document.getElementById('correcao-description'),
@@ -178,6 +185,7 @@ window.Webflow.push(() => {
     inicio: document.getElementById('inicio-selector'),
     tecido: document.getElementById('tecido-selector'),
     tipo: document.getElementById('tipo-selector'),
+    forma: document.getElementById('forma-selector'),
     bainha: document.getElementById('bainha-selector'),
     medidas: document.getElementById('medidas-selector'),
     correcao: document.getElementById('correcao-selector'),
@@ -194,6 +202,8 @@ window.Webflow.push(() => {
   // Inputs
   const larguraInput = document.getElementById('largura-input');
   const alturaInput = document.getElementById('altura-input');
+  const larguraContain = document.getElementById('largura-contain');
+  const alturaContain = document.getElementById('altura-contain');
   const correcaoInput = document.querySelector('#correcao-switch');
   const bainhaInput = document.querySelector('#bainha');
   const tectoRadioBtn = document.getElementById('tecto-radio-btn');
@@ -218,6 +228,8 @@ window.Webflow.push(() => {
     instalacao: document.getElementById('step-instalacao'),
     medidasEstore: document.getElementById('step-medidas-estore'),
     instalacaoEstore: document.getElementById('step-instalacao-estore'),
+    medidasToalha: document.getElementById('step-medidas-estore'),
+    instalacaoToalha: document.getElementById('step-instalacao-estore'),
   };
 
   // CHECKOUT ELEMENTS
@@ -287,6 +299,7 @@ window.Webflow.push(() => {
     addOnClickToInicioCards();
     addOnClickToTecidoCards();
     addOnClickToTipoCards();
+    addOnClickToFormaCards();
     addOnClickBainha();
     addOnClickCorrecao();
     addOnClickInstalacao();
@@ -519,11 +532,33 @@ window.Webflow.push(() => {
         }
         activateNextBtn(true);
         return true;
-      case 'medidas':
-        if (larguraInput?.value === '' || alturaInput?.value === '') {
+      case 'forma':
+        if (selectorValues.forma === '') {
           activateNextBtn(false);
           return false;
         }
+        activateNextBtn(true);
+        return true;
+      case 'medidas':
+        if (
+          selectorValues.inicio === 'Toalha' &&
+          (selectorValues.forma === 'Quadrada' || selectorValues.forma === 'Redonda')
+        ) {
+          if (parseInt(larguraInput?.value) > MANUFACTURING_CONSTANTS.maxWindowWidthToalhas) {
+            larguraMaxErrorEstore.style.display = 'block';
+            activateNextBtn(false);
+            return false;
+          }
+          if (parseInt(larguraInput?.value) < MANUFACTURING_CONSTANTS.minWindowWidthToalhas) {
+            larguraMinErrorEstore.style.display = 'block';
+            activateNextBtn(false);
+            return false;
+          }
+        }
+        // if (larguraInput?.value === '' || alturaInput?.value === '') {
+        //   activateNextBtn(false);
+        //   return false;
+        // }
         if (selectorValues.inicio === 'Cortina') {
           // If Maximum value is exceeded
           if (
@@ -548,7 +583,7 @@ window.Webflow.push(() => {
           activateNextBtn(true);
           return true;
         }
-        if (selectorValues.inicio === 'Estore') {
+        if (selectorValues.inicio === 'Estore' || selectorValues.inicio === 'Toalha') {
           // If Minimum value is exceeded
           if (
             parseInt(larguraInput?.value) < MANUFACTURING_CONSTANTS.minWindowWidthEstores ||
@@ -725,7 +760,7 @@ window.Webflow.push(() => {
     if (productType === 'Estore') {
       estoreRadioBtn?.click();
     }
-    if (productType === 'Cortina') {
+    if (productType === 'Cortina' || productType === 'Toalha') {
       cortinaRadioBtn?.click();
     }
     if (productType === 'Calha') {
@@ -873,9 +908,17 @@ window.Webflow.push(() => {
       simulatorHeadings.step2t.style.display = 'flex';
       simulatorHeadings.step2b.style.display = 'none';
     }
-    if (step === 'bainha') {
+    if (step === 'bainha' && selectorValues.inicio === 'Cortina') {
       simulatorHeadings.step2t.style.display = 'none';
       simulatorHeadings.step2b.style.display = 'flex';
+    }
+    if (step === 'forma') {
+      simulatorHeadings.step2bt.style.display = 'none';
+      simulatorHeadings.step2f.style.display = 'flex';
+    }
+    if (step === 'bainha' && selectorValues.inicio === 'Toalha') {
+      simulatorHeadings.step2bt.style.display = 'flex';
+      simulatorHeadings.step2f.style.display = 'none';
     }
     if (step === 'medidas') {
       simulatorHeadings.step3m.style.display = 'flex';
@@ -987,6 +1030,19 @@ window.Webflow.push(() => {
     }
   };
 
+  const updateMedidasFieldsVisibility = () => {
+    if (
+      selectorValues.inicio === 'Toalha' &&
+      (selectorValues.forma === 'Quadrada' || selectorValues.forma === 'Redonda')
+    ) {
+      if (larguraContain) larguraContain.style.display = 'flex';
+      if (alturaContain) alturaContain.style.display = 'none';
+    } else {
+      if (larguraContain) larguraContain.style.display = 'flex';
+      if (alturaContain) alturaContain.style.display = 'flex';
+    }
+  };
+
   const updateMedidasDescriptions = () => {
     if (selectorValues.inicio === 'Cortina') {
       larguraInputDescrC.style.display = 'block';
@@ -995,6 +1051,20 @@ window.Webflow.push(() => {
       alturaInputDescrE.style.display = 'none';
     }
     if (selectorValues.inicio === 'Estore' || selectorValues.inicio === 'Estore Japonês') {
+      larguraInputDescrC.style.display = 'none';
+      alturaInputDescrC.style.display = 'none';
+      larguraInputDescrE.style.display = 'block';
+      alturaInputDescrE.style.display = 'block';
+    }
+    if (
+      selectorValues.inicio === 'Toalha' &&
+      (selectorValues.forma === 'Quadrada' || selectorValues.forma === 'Redonda')
+    ) {
+      larguraInputDescrC.style.display = 'none';
+      alturaInputDescrC.style.display = 'none';
+      larguraInputDescrE.style.display = 'block';
+      alturaInputDescrE.style.display = 'none';
+    } else if (selectorValues.inicio === 'Toalha') {
       larguraInputDescrC.style.display = 'none';
       alturaInputDescrC.style.display = 'none';
       larguraInputDescrE.style.display = 'block';
@@ -1028,6 +1098,7 @@ window.Webflow.push(() => {
             changeSelectorVisibility(simulatorHeadings.step2, true);
             changeSelectorVisibility(selectors.tipo, true);
             updateMedidasDescriptions();
+            updateMedidasFieldsVisibility();
             currentStep = 'tipo';
           }
           break;
@@ -1157,6 +1228,158 @@ window.Webflow.push(() => {
           navigateToCheckout();
           break;
       }
+    } else if (selectorValues.inicio === 'Toalha') {
+      switch (currentStep) {
+        case 'inicio':
+          if (validateSelector()) {
+            toggleSteps('Toalha');
+            changeSelectorVisibility(selectors.inicio, false);
+            updateHeadingSubtitles('tecido');
+            if (isNewWindow) activateNextBtn(false);
+            changeSelectorVisibility(selectors.tecido, true);
+            currentStep = 'tecido';
+          }
+          break;
+        case 'tecido':
+          if (validateSelector()) {
+            updateHeadingSubtitles('tecido');
+            markStepAsCompleted('tecido');
+            markStepAsActive('tipo');
+            changeSelectorVisibility(simulatorHeadings.step1, false);
+            if (isNewWindow) activateNextBtn(false);
+            changeSelectorVisibility(selectors.tecido, false);
+            updateHeadingSubtitles('forma');
+            changeSelectorVisibility(simulatorHeadings.step2toalha, true);
+            changeSelectorVisibility(selectors.forma, true);
+            currentStep = 'forma';
+          }
+          break;
+        case 'forma':
+          if (validateSelector()) {
+            changeSelectorVisibility(selectors.forma, false);
+            updateHeadingSubtitles('bainha');
+            changeSelectorVisibility(selectors.bainha, true);
+            updateMedidasDescriptions();
+            updateMedidasFieldsVisibility();
+            currentStep = 'bainha';
+          }
+          break;
+        case 'bainha':
+          updateSelectorValue(
+            selectors.bainha,
+            `${selectorValues.bainha ? selectorValues.bainha : false}`
+          );
+          markStepAsCompleted('tipo');
+          markStepAsActive('medidas');
+          changeSelectorVisibility(simulatorHeadings.step2toalha, false);
+          changeSelectorVisibility(selectors.bainha, false);
+          if (isNewWindow) activateNextBtn(false);
+          updateHeadingSubtitles('medidas');
+          changeSelectorVisibility(simulatorHeadings.step3, true);
+          changeSelectorVisibility(selectors.medidas, true);
+          currentStep = 'medidas';
+          break;
+        case 'medidas':
+          if (validateSelector()) {
+            selectorValues.inicio === 'Toalha' &&
+            (selectorValues.forma === 'Quadrada' || selectorValues.forma === 'Redonda')
+              ? updateSelectorValue(selectors.medidas, `${larguraInput?.value}`)
+              : updateSelectorValue(
+                  selectors.medidas,
+                  `${larguraInput?.value} X ${alturaInput?.value}`
+                );
+            changeSelectorVisibility(selectors.medidas, false);
+            changeSelectorVisibility(simulatorHeadings.step3, false);
+            // if (windows.length > 0) {
+            //   if (isNewWindow) activateNextBtn(false);
+            //   selectorValues.tipo === 'Ilh\xF3s'
+            //     ? updateProductsCMSFilter('Var\xE3o')
+            //     : updateProductsCMSFilter('Calha');
+            //   markStepAsCompleted('medidas');
+            //   markStepAsActive('calha');
+            //   changeSelectorVisibility(simulatorHeadings.step3, false);
+            //   changeSelectorVisibility(simulatorHeadings.step3, false);
+            //   updateHeadingSubtitles('calha');
+            //   changeSelectorVisibility(simulatorHeadings.step4, true);
+            //   changeSelectorVisibility(selectors.tecido, true);
+            //   currentStep = 'calha';
+            // } else {
+            //   updateHeadingSubtitles('correcao');
+            //   changeSelectorVisibility(selectors.correcao, true);
+            //   currentStep = 'correcao';
+            // }
+            if (isNewWindow) {
+              storeValues();
+              createWindowBtnCheckout();
+            }
+            navigateToCheckout();
+          }
+          break;
+        case 'correcao':
+          selectorValues.tipo === 'Ilh\xF3s'
+            ? updateProductsCMSFilter('Var\xE3o')
+            : updateProductsCMSFilter('Calha');
+          markStepAsCompleted('medidas');
+          markStepAsActive('calha');
+          changeSelectorVisibility(simulatorHeadings.step3, false);
+          changeSelectorVisibility(selectors.correcao, false);
+          if (isNewWindow) activateNextBtn(false);
+          updateHeadingSubtitles('calha');
+          changeSelectorVisibility(simulatorHeadings.step4, true);
+          changeSelectorVisibility(selectors.tecido, true);
+          currentStep = 'calha';
+          break;
+        case 'calha':
+          if (validateSelector()) {
+            changeSelectorVisibility(selectors.tecido, false);
+            if (selectorValues.tipo === 'Ilh\xF3s') {
+              activateNextBtn(true);
+              changeSelectorVisibility(simulatorHeadings.step4, false);
+              updateHeadingSubtitles('instalacao');
+              changeSelectorVisibility(simulatorHeadings.step5, true);
+              changeSelectorVisibility(selectors.instalacao, true);
+              currentStep = 'instalacao';
+            } else {
+              if (isNewWindow) activateNextBtn(false);
+              clearSuporteRadioBtns();
+              updateHeadingSubtitles('suporte');
+              changeSelectorVisibility(selectors.suporte, true);
+              currentStep = 'suporte';
+            }
+          }
+          break;
+        case 'suporte':
+          updateSelectorValue(selectors.suporte, paredeRadioBtn?.checked ? 'Parede' : 'Tecto');
+          if (validateSelector()) {
+            markStepAsCompleted('calha');
+            markStepAsActive('instalacao');
+            changeSelectorVisibility(simulatorHeadings.step4, false);
+            changeSelectorVisibility(selectors.suporte, false);
+            updateHeadingSubtitles('instalacao');
+            if (windows.length > 0) {
+              if (isNewWindow) {
+                storeValues();
+                createWindowBtnCheckout();
+              }
+              navigateToCheckout();
+            } else {
+              changeSelectorVisibility(simulatorHeadings.step5, true);
+              changeSelectorVisibility(selectors.instalacao, true);
+              currentStep = 'instalacao';
+            }
+          }
+          break;
+        case 'instalacao':
+          markStepAsCompleted('instalacao');
+          changeSelectorVisibility(simulatorHeadings.step5, false);
+          changeSelectorVisibility(selectors.instalacao, false);
+          if (isNewWindow) {
+            storeValues();
+            createWindowBtnCheckout();
+          }
+          navigateToCheckout();
+          break;
+      }
     } else {
       switch (currentStep) {
         case 'inicio':
@@ -1176,6 +1399,7 @@ window.Webflow.push(() => {
             changeSelectorVisibility(simulatorHeadings.step1, false);
             changeSelectorVisibility(selectors.tecido, false);
             updateMedidasDescriptions();
+            updateMedidasFieldsVisibility();
             if (isNewWindow) activateNextBtn(false);
             updateHeadingSubtitles('medidas');
             changeSelectorVisibility(simulatorHeadings.step3, true);
@@ -1990,14 +2214,22 @@ window.Webflow.push(() => {
     if (!productType) {
       cortinaSteps.style.display = 'none';
       estoreSteps.style.display = 'none';
+      toalhaSteps.style.display = 'none';
     }
     if (productType === 'Cortina') {
       cortinaSteps.style.display = 'flex';
       estoreSteps.style.display = 'none';
+      toalhaSteps.style.display = 'none';
     }
     if (productType === 'Estore') {
       cortinaSteps.style.display = 'none';
       estoreSteps.style.display = 'flex';
+      toalhaSteps.style.display = 'none';
+    }
+    if (productType === 'Toalha') {
+      cortinaSteps.style.display = 'none';
+      estoreSteps.style.display = 'none';
+      toalhaSteps.style.display = 'flex';
     }
   };
 
@@ -2348,6 +2580,22 @@ window.Webflow.push(() => {
     });
   };
 
+  const addOnClickToFormaCards = () => {
+    const cards = document.querySelectorAll("[id^='forma-card']");
+    cards.forEach((card) => {
+      card.addEventListener('click', () => {
+        activateCard(card);
+        cards.forEach((cardFromList) => {
+          if (cardFromList !== card) {
+            deactivateCard(cardFromList);
+          }
+        });
+        updateSelectorValue(selectors.forma, card.getElementsByTagName('h1')[0].textContent);
+        if (validateSelector()) activateNextBtn(true);
+      });
+    });
+  };
+
   const addOnClickBainha = () => {
     bainhaInput.addEventListener('change', function (event) {
       updateSelectorValue(selectors.bainha, bainhaInput.checked);
@@ -2371,9 +2619,19 @@ window.Webflow.push(() => {
 
   const addOnChangeMedidasInputs = () => {
     larguraInput?.addEventListener('input', (event) => {
-      if (larguraInput?.value === '' || alturaInput?.value === '') {
-        activateNextBtn(false);
-        return;
+      if (
+        selectorValues.inicio === 'Toalha' &&
+        (selectorValues.forma === 'Quadrada' || selectorValues.forma === 'Redonda')
+      ) {
+        if (larguraInput?.value === '') {
+          activateNextBtn(false);
+          return;
+        }
+      } else {
+        if (larguraInput?.value === '' || alturaInput?.value === '') {
+          activateNextBtn(false);
+          return;
+        }
       }
       validateSelector() &&
         updateSelectorValue(selectors.medidas, `${larguraInput?.value} X ${alturaInput?.value}`);
