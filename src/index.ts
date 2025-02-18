@@ -109,6 +109,41 @@ window.Webflow.push(() => {
           alinhado: 12.5,
         },
       ],
+      towels: {
+        circle: {
+          normal: [
+            { maxWidth: 200, price: 8 },
+            { maxWidth: 280, price: 10 },
+          ],
+        },
+        square: {
+          normal: [
+            { maxWidth: 150, price: 5 },
+            { maxWidth: 200, price: 6 },
+            { maxWidth: 250, price: 8 },
+            { maxWidth: 280, price: 9 },
+          ],
+          cantos: [
+            { maxWidth: 150, price: 6.5 },
+            { maxWidth: 200, price: 8 },
+            { maxWidth: 250, price: 10 },
+            { maxWidth: 280, price: 14 },
+          ],
+        },
+        retangle: {
+          normal: [
+            { maxWidth: 280, price: 5 },
+            { maxWidth: 400, price: 7 },
+            { maxWidth: 500, price: 8.5 },
+          ],
+          cantos: [
+            { maxWidth: 280, price: 8 },
+            { maxWidth: 400, price: 12.5 },
+            { maxWidth: 500, price: 14.5 },
+            { maxWidth: 600, price: 16.5 },
+          ],
+        },
+      }
     },
     bainhaPrice: {
       price: 3.5,
@@ -125,16 +160,31 @@ window.Webflow.push(() => {
     },
     prolongadores: 3.7,
     roletesPrice: 5,
-    minWindowWidthToalhas: 80,
-    maxWindowWidthToalhas: 300,
+
+    bainhaToalhas: {
+      normal: { price: 3.5, widthMargin: 20 },
+      cantos: { price: 5, widthMargin: 10 },
+    },
+
+    minWidthToalhas: 0,
+    maxWidthToalhas: 280,
+    minLengthToalhas: 0,
+    maxLengthToalhas: 4000,
+
+    minTowelMargin: 0,
+    maxTowelMargin: 75,
+
     minWindowWidthEstores: 80,
     maxWindowWidthEstores: 300,
     minWindowHeightEstores: 80,
     maxWindowHeightEstores: 300,
+
     maxWindowWidth: 650,
     maxWindowHeight: 280,
     maxCalhaWidth: 600,
+
     measuresCheckPrice: 30,
+
     instalation: [
       { maxWidth: 300, price: 35 },
       { maxWidth: 400, price: 40 },
@@ -202,19 +252,25 @@ window.Webflow.push(() => {
   // Inputs
   const larguraInput = document.getElementById('largura-input');
   const alturaInput = document.getElementById('altura-input');
+  const margemInput = document.getElementById('margem-input');
   const larguraContain = document.getElementById('largura-contain');
   const alturaContain = document.getElementById('altura-contain');
+  const margemContain = document.getElementById('margem-contain');
   const correcaoInput = document.querySelector('#correcao-switch');
   const bainhaInput = document.querySelector('#bainha');
   const tectoRadioBtn = document.getElementById('tecto-radio-btn');
   const paredeRadioBtn = document.getElementById('parede-radio-btn');
   const instalacaoInput = document.querySelector('#instalacao-switch');
+  const bainhaCards = document.getElementById('bainha-toalha');
+  const bainhaForm = document.getElementById('bainha-form');
 
   // Error Messages
   const larguraMinErrorEstore = document.getElementById('largura-min-error-estore');
   const alturaMinErrorEstore = document.getElementById('altura-min-error-estore');
   const larguraMaxErrorEstore = document.getElementById('largura-max-error-estore');
   const alturaMaxErrorEstore = document.getElementById('altura-max-error-estore');
+  const margemMinError = document.getElementById('margem-min-error');
+  const margemMaxError = document.getElementById('margem-max-error');
   const larguraMaxErrorCortina = document.getElementById('largura-error');
   const alturaMaxErrorCortina = document.getElementById('altura-error');
 
@@ -228,8 +284,9 @@ window.Webflow.push(() => {
     instalacao: document.getElementById('step-instalacao'),
     medidasEstore: document.getElementById('step-medidas-estore'),
     instalacaoEstore: document.getElementById('step-instalacao-estore'),
-    medidasToalha: document.getElementById('step-medidas-estore'),
-    instalacaoToalha: document.getElementById('step-instalacao-estore'),
+    medidasToalha: document.getElementById('step-medidas-toalha'),
+    forma: document.getElementById('step-forma-toalha'),
+    // instalacaoToalha: document.getElementById('step-instalacao-toalha'),
   };
 
   // CHECKOUT ELEMENTS
@@ -247,6 +304,7 @@ window.Webflow.push(() => {
   const checkoutFormContain = document.getElementById('checkout-input-contain');
   const checkoutInfoEstore = document.getElementById('checkout-info-estore');
   const checkoutInfoCortina = document.getElementById('checkout-info-cortina');
+  const checkoutInfoToalha = document.getElementById('checkout-info-toalha');
 
   // Buttons
   const newWindowButton = document.getElementById('new-window-btn');
@@ -270,6 +328,12 @@ window.Webflow.push(() => {
     estoreAltura: document.getElementById('checkout-altura-estore'),
     estoreCorrecao: document.getElementById('checkout-correcao-estore'),
     estoreInstalacao: document.getElementById('checkout-instalacao-estore'),
+    toalhaProduto: document.getElementById('checkout-produto-toalha'),
+    toalhaForma: document.getElementById('checkout-forma-toalha'),
+    toalhaBainha: document.getElementById('checkout-bainha-toalha'),
+    toalhaLargura: document.getElementById('checkout-largura-toalha'),
+    toalhaAltura: document.getElementById('checkout-altura-toalha'),
+    toalhaMargem: document.getElementById('checkout-margem-toalha'),
   };
 
   // Send Email Form
@@ -286,6 +350,8 @@ window.Webflow.push(() => {
   const estoreRadioBtn = document.getElementById('estore-radio-btn');
   const calhaRadioBtn = document.getElementById('calha-radio-btn');
   const varaoRadioBtn = document.getElementById('varao-radio-btn');
+  const toalhaRadioBtn = document.getElementById('toalha-radio-btn');
+
 
   // ----------------------------
   //          FUNCTIONS
@@ -300,6 +366,7 @@ window.Webflow.push(() => {
     addOnClickToTecidoCards();
     addOnClickToTipoCards();
     addOnClickToFormaCards();
+    addOnClickToBainhaCards();
     addOnClickBainha();
     addOnClickCorrecao();
     addOnClickInstalacao();
@@ -336,7 +403,7 @@ window.Webflow.push(() => {
     const calhaColor = calhaDetails ? calhaDetails[1] : null;
     const width = window2.medidas ? window2.medidas.split(' X ')[0] : 0;
 
-    if (window2.inicio === 'Cortina' || window2.inicio === 'Estore Japonês') {
+    if (window2.inicio === 'Cortina' || window2.inicio === 'Estore Japonês' || window2.inicio === 'Toalha') {
       reference = `${product}${color}`;
     }
 
@@ -349,6 +416,10 @@ window.Webflow.push(() => {
       typeof productsData[reference].price === 'string'
         ? parseFloat(productsData[reference].price)
         : productsData[reference].price;
+
+    if (window2.inicio === 'Toalha') {
+      return { product: productPrice, calha: 0 };
+    }
 
     if (window2.inicio === 'Estore') {
       return { product: productPrice, calha: 0 };
@@ -487,6 +558,7 @@ window.Webflow.push(() => {
       index: windows.length,
       inicio: selectorValues.inicio,
       bainha: selectorValues.bainha,
+      forma: selectorValues.forma,
       tecido: selectorValues.tecido,
       tipo: selectorValues.tipo,
       medidas: selectorValues.medidas,
@@ -540,20 +612,18 @@ window.Webflow.push(() => {
         activateNextBtn(true);
         return true;
       case 'medidas':
-        if (
-          selectorValues.inicio === 'Toalha' &&
-          (selectorValues.forma === 'Quadrada' || selectorValues.forma === 'Redonda')
-        ) {
-          if (parseInt(larguraInput?.value) > MANUFACTURING_CONSTANTS.maxWindowWidthToalhas) {
-            larguraMaxErrorEstore.style.display = 'block';
+        if (selectorValues.inicio === 'Toalha') {
+          if ((parseInt(larguraInput?.value) + (parseInt(margemInput?.value))) > MANUFACTURING_CONSTANTS.maxWidthToalhas) {
+            margemMaxError.style.display = 'block';
             activateNextBtn(false);
             return false;
           }
-          if (parseInt(larguraInput?.value) < MANUFACTURING_CONSTANTS.minWindowWidthToalhas) {
-            larguraMinErrorEstore.style.display = 'block';
+          if ((parseInt(larguraInput?.value) + (parseInt(margemInput?.value))) < MANUFACTURING_CONSTANTS.minWidthToalhas) {
+            margemMinError.style.display = 'block';
             activateNextBtn(false);
             return false;
           }
+
         }
         // if (larguraInput?.value === '' || alturaInput?.value === '') {
         //   activateNextBtn(false);
@@ -583,7 +653,7 @@ window.Webflow.push(() => {
           activateNextBtn(true);
           return true;
         }
-        if (selectorValues.inicio === 'Estore' || selectorValues.inicio === 'Toalha') {
+        if (selectorValues.inicio === 'Estore') {
           // If Minimum value is exceeded
           if (
             parseInt(larguraInput?.value) < MANUFACTURING_CONSTANTS.minWindowWidthEstores ||
@@ -653,6 +723,8 @@ window.Webflow.push(() => {
         alturaMinErrorEstore.style.display = 'none';
         larguraMaxErrorEstore.style.display = 'none';
         alturaMaxErrorEstore.style.display = 'none';
+        margemMaxError.style.display = 'none';
+        margemMinError.style.display = 'none';
         activateNextBtn(true);
         return true;
       case 'calha':
@@ -757,10 +829,13 @@ window.Webflow.push(() => {
   // -----------------------
 
   const updateProductsCMSFilter = (productType) => {
+    if (productType === 'Toalha') {
+      toalhaRadioBtn?.click();
+    }
     if (productType === 'Estore') {
       estoreRadioBtn?.click();
     }
-    if (productType === 'Cortina' || productType === 'Toalha') {
+    if (productType === 'Cortina') {
       cortinaRadioBtn?.click();
     }
     if (productType === 'Calha') {
@@ -1031,15 +1106,19 @@ window.Webflow.push(() => {
   };
 
   const updateMedidasFieldsVisibility = () => {
-    if (
-      selectorValues.inicio === 'Toalha' &&
-      (selectorValues.forma === 'Quadrada' || selectorValues.forma === 'Redonda')
-    ) {
-      if (larguraContain) larguraContain.style.display = 'flex';
-      if (alturaContain) alturaContain.style.display = 'none';
+    if (selectorValues.inicio === 'Toalha') {
+      if (selectorValues.forma === 'Quadrada' || selectorValues.forma === 'Redonda') {
+        if (larguraContain) larguraContain.style.display = 'flex';
+        if (alturaContain) alturaContain.style.display = 'none';
+      } else {
+        if (larguraContain) larguraContain.style.display = 'flex';
+        if (alturaContain) alturaContain.style.display = 'flex';
+      }
+      if (margemContain) margemContain.style.display = 'flex';
     } else {
       if (larguraContain) larguraContain.style.display = 'flex';
       if (alturaContain) alturaContain.style.display = 'flex';
+      if (margemContain) margemContain.style.display = 'none';
     }
   };
 
@@ -1078,6 +1157,7 @@ window.Webflow.push(() => {
       switch (currentStep) {
         case 'inicio':
           if (validateSelector()) {
+            updateProductsCMSFilter(selectorValues.inicio);
             toggleSteps('Cortina');
             changeSelectorVisibility(selectors.inicio, false);
             updateHeadingSubtitles('tecido');
@@ -1244,7 +1324,7 @@ window.Webflow.push(() => {
           if (validateSelector()) {
             updateHeadingSubtitles('tecido');
             markStepAsCompleted('tecido');
-            markStepAsActive('tipo');
+            markStepAsActive('forma');
             changeSelectorVisibility(simulatorHeadings.step1, false);
             if (isNewWindow) activateNextBtn(false);
             changeSelectorVisibility(selectors.tecido, false);
@@ -1257,7 +1337,7 @@ window.Webflow.push(() => {
         case 'forma':
           if (validateSelector()) {
             changeSelectorVisibility(selectors.forma, false);
-            updateHeadingSubtitles('bainha');
+            updateHeadingSubtitles('forma');
             changeSelectorVisibility(selectors.bainha, true);
             updateMedidasDescriptions();
             updateMedidasFieldsVisibility();
@@ -1265,11 +1345,11 @@ window.Webflow.push(() => {
           }
           break;
         case 'bainha':
-          updateSelectorValue(
-            selectors.bainha,
-            `${selectorValues.bainha ? selectorValues.bainha : false}`
-          );
-          markStepAsCompleted('tipo');
+          // updateSelectorValue(
+          //   selectors.bainha,
+          //   `${selectorValues.bainha ? selectorValues.bainha : false}`
+          // );
+          markStepAsCompleted('forma');
           markStepAsActive('medidas');
           changeSelectorVisibility(simulatorHeadings.step2toalha, false);
           changeSelectorVisibility(selectors.bainha, false);
@@ -1282,14 +1362,24 @@ window.Webflow.push(() => {
         case 'medidas':
           if (validateSelector()) {
             selectorValues.inicio === 'Toalha' &&
-            (selectorValues.forma === 'Quadrada' || selectorValues.forma === 'Redonda')
-              ? updateSelectorValue(selectors.medidas, `${larguraInput?.value}`)
+              (selectorValues.forma === 'Quadrada' || selectorValues.forma === 'Redonda')
+              ? updateSelectorValue(selectors.medidas, `${larguraInput?.value} X ${larguraInput?.value} X ${margemInput?.value}`)
               : updateSelectorValue(
-                  selectors.medidas,
-                  `${larguraInput?.value} X ${alturaInput?.value}`
-                );
+                selectors.medidas,
+                `${larguraInput?.value} X ${alturaInput?.value} X ${margemInput?.value}`
+              );
             changeSelectorVisibility(selectors.medidas, false);
             changeSelectorVisibility(simulatorHeadings.step3, false);
+            markStepAsCompleted('medidasToalha');
+            // markStepAsActive('instalacaoToalha');
+            // changeSelectorVisibility(simulatorHeadings.step5, true);
+            // changeSelectorVisibility(selectors.instalacao, true);
+            // currentStep = 'instalacaoToalha';
+            if (isNewWindow) {
+              storeValues();
+              createWindowBtnCheckout();
+            }
+            navigateToCheckout();
             // if (windows.length > 0) {
             //   if (isNewWindow) activateNextBtn(false);
             //   selectorValues.tipo === 'Ilh\xF3s'
@@ -1308,11 +1398,12 @@ window.Webflow.push(() => {
             //   changeSelectorVisibility(selectors.correcao, true);
             //   currentStep = 'correcao';
             // }
-            if (isNewWindow) {
-              storeValues();
-              createWindowBtnCheckout();
-            }
-            navigateToCheckout();
+
+            // if (isNewWindow) {
+            //   storeValues();
+            //   createWindowBtnCheckout();
+            // }
+            // navigateToCheckout();
           }
           break;
         case 'correcao':
@@ -1461,7 +1552,7 @@ window.Webflow.push(() => {
     if (!isNewWindow) updateValues();
     simContainer.style.display = 'none';
     selectWindow(windows[windows.length - 1]);
-    toggleSteps();
+    toggleSteps("");
     checkoutContain.style.display = 'flex';
   };
 
@@ -1470,8 +1561,9 @@ window.Webflow.push(() => {
 
   const populateCheckoutChoices = (window2) => {
     if (window2.inicio === 'Cortina') {
-      checkoutInfoEstore.style.display = 'none';
       checkoutInfoCortina.style.display = 'flex';
+      checkoutInfoEstore.style.display = 'none';
+      checkoutInfoToalha.style.display = 'none';
       checkoutChoices.tecido.textContent = window2.tecido;
       checkoutChoices.tipo.textContent = window2.tipo;
       checkoutChoices.bainha.textContent =
@@ -1495,6 +1587,7 @@ window.Webflow.push(() => {
     if (window2.inicio.startsWith('Estore')) {
       checkoutInfoEstore.style.display = 'flex';
       checkoutInfoCortina.style.display = 'none';
+      checkoutInfoToalha.style.display = 'none';
       checkoutChoices.estoreProduto.textContent = window2.tecido;
       checkoutChoices.estoreLargura.textContent = window2.medidas.split(' X ')[0] + 'cm';
       checkoutChoices.estoreAltura.textContent = window2.medidas.split(' X ')[1] + 'cm';
@@ -1504,6 +1597,18 @@ window.Webflow.push(() => {
       checkoutChoices.estoreInstalacao.textContent = windows[0].instalacao
         ? 'Com Instala\xE7\xE3o'
         : 'Sem Instala\xE7\xE3o';
+    }
+
+    if (window2.inicio === 'Toalha') {
+      checkoutInfoToalha.style.display = 'flex';
+      checkoutInfoCortina.style.display = 'none';
+      checkoutInfoEstore.style.display = 'none';
+      checkoutChoices.toalhaProduto.textContent = window2.tecido;
+      checkoutChoices.toalhaForma.textContent = window2.forma;
+      checkoutChoices.toalhaBainha.textContent = window2.bainha
+      checkoutChoices.toalhaLargura.textContent = window2.medidas.split(' X ')[0] + 'cm';
+      checkoutChoices.toalhaAltura.textContent = window2.medidas.split(' X ')[1] + 'cm';
+      checkoutChoices.toalhaMargem.textContent = window2.medidas.split(' X ')[2] + 'cm';
     }
   };
 
@@ -1540,10 +1645,11 @@ window.Webflow.push(() => {
   const navigateFromCheckoutToStep = (step) => {
     checkoutContain.style.display = 'none';
     if (isNewWindow) resetSteps();
-    toggleSteps();
+    toggleSteps("");
     simContainer.style.display = 'flex';
 
     let isEstore = false;
+    let isToalha = false;
 
     if (
       step === 'estoreLargura' ||
@@ -1554,6 +1660,10 @@ window.Webflow.push(() => {
       selectorValues.inicio === 'Estore'
     ) {
       isEstore = true;
+    }
+
+    if (selectorValues.inicio === 'Toalha') {
+      isToalha = true;
     }
 
     if (
@@ -1577,7 +1687,7 @@ window.Webflow.push(() => {
       step = 'tecido';
     }
 
-    isEstore ? toggleSteps('Estore') : toggleSteps('Cortina');
+    isEstore ? toggleSteps('Estore') : isToalha ? toggleSteps("Toalha") : toggleSteps('Cortina');
 
     switch (step) {
       case 'inicio':
@@ -1591,7 +1701,7 @@ window.Webflow.push(() => {
           : isEstore
             ? updateProductsCMSFilter('Estore')
             : updateProductsCMSFilter('Cortina');
-        setTimeout(() => {}, 2000);
+        setTimeout(() => { }, 2000);
         selectProduct(selectorValues.tecido);
         updateHeadingSubtitles('tecido');
         changeSelectorVisibility(simulatorHeadings.step1, true);
@@ -1601,6 +1711,22 @@ window.Webflow.push(() => {
         updateHeadingSubtitles('tipo');
         changeSelectorVisibility(simulatorHeadings.step2, true);
         changeSelectorVisibility(selectors.tipo, true);
+        break;
+      case 'toalhaProduto':
+        updateProductsCMSFilter('Toalha'); // TODO: Change to Toalha filter
+        updateHeadingSubtitles('tecido');
+        changeSelectorVisibility(simulatorHeadings.step1, true);
+        changeSelectorVisibility(selectors.tecido, true);
+        break;
+      case 'toalhaForma':
+        updateHeadingSubtitles('forma');
+        changeSelectorVisibility(simulatorHeadings.step2toalha, true);
+        changeSelectorVisibility(selectors.forma, true);
+        break;
+      case 'toalhaMedidas':
+        updateHeadingSubtitles('medidas');
+        changeSelectorVisibility(simulatorHeadings.step3, true);
+        changeSelectorVisibility(selectors.medidas, true);
         break;
       case 'medidas':
         updateHeadingSubtitles('medidas');
@@ -1632,6 +1758,10 @@ window.Webflow.push(() => {
     if (currentStep === 'inicio') {
       return markStepAsActive('tecido');
     }
+    if (currentStep === 'toalhaProduto') {
+      currentStep = 'tecido';
+    }
+
     if (isEstore) {
       if (step === 'medidas' || step === 'correcao') {
         markStepAsActive('medidasEstore');
@@ -1640,6 +1770,7 @@ window.Webflow.push(() => {
         markStepAsActive('instalacaoEstore');
       }
     }
+
     isNewWindow = false;
     markStepAsActive(step);
     // markStepAsActive(step);
@@ -1854,12 +1985,54 @@ window.Webflow.push(() => {
         tecido,
         calha,
         instalacao,
-        total: windowTotal,
+        total: windowTotal
       } = calculateWindowPrice(window2);
 
       total += windowTotal;
 
-      // Draw Window Description
+      // // Draw Window Description
+      // page.drawText(`Janela ${index + 1} -`, { x, y, size: 8, font: fontBold });
+
+      // // Draw the rest of the text in regular font
+      // page.drawText(` ${window2.medidas} CM`, {
+      //   x: x + fontBold.widthOfTextAtSize(`Janela ${index + 1} -`, 8),
+      //   y,
+      //   size: 8,
+      //   font: fontReg,
+      // });
+      // y -= lineHeight;
+
+      let items = [];
+
+      if (window2.inicio === 'Toalha') {
+        // Draw Window Description
+        page.drawText(`Toalha ${index + 1} -`, { x, y, size: 8, font: fontBold });
+
+        // Draw the rest of the text in regular font
+        page.drawText(` ${window2.medidas} CM`, {
+          x: x + fontBold.widthOfTextAtSize(`Janela ${index + 1} -`, 8),
+          y,
+          size: 8,
+          font: fontReg,
+        });
+        y -= lineHeight;
+        // Create priced items with their respective subitems
+        items = [
+          {
+            label: `Toalha`,
+            price: tecido,
+            subItems: [
+              { label: `Tipo de tecido: ${window2.tecido}` },
+              { label: `Forna da toalha: ${window2.tipo}` },
+              {
+                label: `Baínha: ${window2.bainha}`,
+              },
+            ],
+          },
+        ];
+      }
+      if (window2.inicio === 'Cortina') {
+        // Draw Window Description
       page.drawText(`Janela ${index + 1} -`, { x, y, size: 8, font: fontBold });
 
       // Draw the rest of the text in regular font
@@ -1870,9 +2043,6 @@ window.Webflow.push(() => {
         font: fontReg,
       });
       y -= lineHeight;
-
-      let items = [];
-      if (window2.inicio === 'Cortina') {
         // Create priced items with their respective subitems
         items = [
           {
@@ -1882,9 +2052,8 @@ window.Webflow.push(() => {
               { label: `Tipo de tecido: ${window2.tecido}` },
               { label: `Modelo de cortina: ${window2.tipo}` },
               {
-                label: `Baínha de chumbo: ${
-                  window2.tecido.startsWith('9') ? 'Incluída' : window2.bainha ? 'Sim' : 'Não'
-                }`,
+                label: `Baínha de chumbo: ${window2.tecido.startsWith('9') ? 'Incluída' : window2.bainha ? 'Sim' : 'Não'
+                  }`,
               },
             ],
           },
@@ -1908,6 +2077,17 @@ window.Webflow.push(() => {
         ];
       }
       if (window2.inicio === 'Estore') {
+        // Draw Window Description
+      page.drawText(`Janela ${index + 1} -`, { x, y, size: 8, font: fontBold });
+
+      // Draw the rest of the text in regular font
+      page.drawText(` ${window2.medidas} CM`, {
+        x: x + fontBold.widthOfTextAtSize(`Janela ${index + 1} -`, 8),
+        y,
+        size: 8,
+        font: fontReg,
+      });
+      y -= lineHeight;
         // Create priced items with their respective subitems
         items = [
           {
@@ -1924,6 +2104,17 @@ window.Webflow.push(() => {
       }
 
       if (window2.inicio === 'Estore Japonês') {
+        // Draw Window Description
+      page.drawText(`Janela ${index + 1} -`, { x, y, size: 8, font: fontBold });
+
+      // Draw the rest of the text in regular font
+      page.drawText(` ${window2.medidas} CM`, {
+        x: x + fontBold.widthOfTextAtSize(`Janela ${index + 1} -`, 8),
+        y,
+        size: 8,
+        font: fontReg,
+      });
+      y -= lineHeight;
         // Create priced items with their respective subitems
         items = [
           {
@@ -2152,9 +2343,8 @@ window.Webflow.push(() => {
         txtContent += `  Cortinado: ${tecido.toFixed(2)}€\n`;
         txtContent += `    Tipo de tecido: ${window2.tecido}\n`;
         txtContent += `    Modelo de Cortina: ${window2.tipo}\n`;
-        txtContent += `    Baínha de chumbo: ${
-          window2.tecido.startsWith('9') ? 'Incluída' : window2.bainha ? 'Sim' : 'Não'
-        }\n\n`;
+        txtContent += `    Baínha de chumbo: ${window2.tecido.startsWith('9') ? 'Incluída' : window2.bainha ? 'Sim' : 'Não'
+          }\n\n`;
         txtContent += `  Calha: ${calha.toFixed(2)}€\n`;
         txtContent += `    Modelo de calha: ${window2.tipo}\n`;
         txtContent += `    Suporte da calha: ${window2.suporte}\n\n`;
@@ -2168,6 +2358,15 @@ window.Webflow.push(() => {
         txtContent += `Janela ${index + 1} - ${window2.medidas} CM: ${windowTotal.toFixed(2)}€\n\n`;
         txtContent += `  Estore: ${parseFloat(tecido.toFixed(2)) + parseFloat(calha.toFixed(2))}€\n`;
         txtContent += `    Modelo de estore: ${window2.tecido}\n\n`;
+      }
+      if (window2.inicio === 'Toalha') {
+        txtContent += `Toalha ${index + 1} - ${window2.medidas} CM: ${windowTotal.toFixed(2)}€\n\n`;
+        txtContent += `  Toalha: ${tecido.toFixed(2)}€\n`;
+        txtContent += `    Tecido: ${window2.tecido}\n`;
+        txtContent += `    Forma: ${window2.forma}\n`;
+        txtContent += `    Largura: ${window2.medidas.split(' X ')[0]}cm\n`;
+        txtContent += `    Altura: ${window2.medidas.split(' X ')[1]}cm\n`;
+        txtContent += `    Margem: ${window2.medidas.split(' X ')[2]}cm\n`;
       }
       txtContent += `  Instalação: ${instalacao.toFixed(2)}€\n\n`;
     });
@@ -2322,14 +2521,24 @@ window.Webflow.push(() => {
       steps.medidasEstore.getElementsByClassName('step_description')[0].innerHTML +=
         `${selectorValues.correcao ? '<br>c/Verifica\xE7\xE3o' : '<br>s/Verifica\xE7\xE3o'}`;
     }
+    if (step === 'medidasToalha') {
+      steps.medidasToalha?.classList.remove('active');
+      steps.medidasToalha?.classList.remove('next');
+      steps.medidasToalha?.classList.add('done');
+      steps.medidasToalha?.getElementsByClassName('step_number')[0].classList.remove('active');
+      selectorValues.forma === "Redonda" || selectorValues.forma === "Quadrada" ? steps.medidasToalha.getElementsByClassName('step_description')[0].textContent =
+        `${larguraInput?.value} X ${larguraInput?.value} X ${margemInput?.value} cm` : steps.medidasToalha.getElementsByClassName('step_description')[0].textContent =
+      `${larguraInput?.value} X ${alturaInput?.value} X ${margemInput?.value} cm`;
+    }
     if (step === 'tipo') {
-      steps[step].getElementsByClassName('step_description')[0].innerHTML += `${
-        selectorValues.bainha ? '<br>c/Ba\xEDnha de Chumbo' : '<br>s/Ba\xEDnha de Chumbo'
-      }`;
+      steps[step].getElementsByClassName('step_description')[0].innerHTML += `${selectorValues.bainha ? '<br>c/Ba\xEDnha de Chumbo' : '<br>s/Ba\xEDnha de Chumbo'
+        }`;
     }
   };
 
-  const markStepAsActive = (step) => {
+  const markStepAsActive = (targetStep) => {
+
+    const step = targetStep === "toalhaProduto" ? "tecido" : targetStep;
     steps[step].classList.remove('next');
     steps[step].classList.add('active');
     steps[step].getElementsByClassName('step_number')[0].classList.add('active');
@@ -2453,6 +2662,15 @@ window.Webflow.push(() => {
     );
   };
 
+  const toggleBainhaForProduct = (productType) => {
+    if (productType === 'Toalha') {
+      bainhaCards.style.display = 'flex';
+      bainhaForm.style.display = 'none';
+    } else {
+      bainhaCards.style.display = 'none';
+      bainhaForm.style.display = 'block';
+    }
+  }
   // EVENT LISTENERS
   // ---------------
   const addOnClickToInicioCards = () => {
@@ -2467,6 +2685,7 @@ window.Webflow.push(() => {
           }
         });
         updateProductsCMSFilter(productType);
+        toggleBainhaForProduct(productType);
         updateSelectorValue(selectors.inicio, productType);
         if (validateSelector()) activateNextBtn(true);
       });
@@ -2596,6 +2815,22 @@ window.Webflow.push(() => {
     });
   };
 
+  const addOnClickToBainhaCards = () => {
+    const cards = document.querySelectorAll("[id^='bainha-card']");
+    cards.forEach((card) => {
+      card.addEventListener('click', () => {
+        activateCard(card);
+        cards.forEach((cardFromList) => {
+          if (cardFromList !== card) {
+            deactivateCard(cardFromList);
+          }
+        });
+        updateSelectorValue(selectors.bainha, card.getElementsByTagName('h1')[0].textContent);
+        if (validateSelector()) activateNextBtn(true);
+      });
+    });
+  };
+
   const addOnClickBainha = () => {
     bainhaInput.addEventListener('change', function (event) {
       updateSelectorValue(selectors.bainha, bainhaInput.checked);
@@ -2618,14 +2853,44 @@ window.Webflow.push(() => {
   };
 
   const addOnChangeMedidasInputs = () => {
-    larguraInput?.addEventListener('input', (event) => {
-      if (
-        selectorValues.inicio === 'Toalha' &&
-        (selectorValues.forma === 'Quadrada' || selectorValues.forma === 'Redonda')
-      ) {
-        if (larguraInput?.value === '') {
+    margemInput?.addEventListener('input', (event) => {
+      if (selectorValues.inicio === 'Toalha') {
+        if ((selectorValues.forma === 'Quadrada' || selectorValues.forma === 'Redonda')) {
+          if (larguraInput?.value === '' || margemInput?.value === '') {
+            activateNextBtn(false);
+            return;
+          }
+        } else {
+          if (larguraInput?.value === '' || alturaInput?.value === '' || margemInput?.value === '') {
+            activateNextBtn(false);
+            return;
+          }
+        }
+      } else {
+        if (larguraInput?.value === '' || alturaInput?.value === '') {
           activateNextBtn(false);
           return;
+        }
+      }
+      validateSelector() &&
+        updateSelectorValue(selectors.medidas, `${larguraInput?.value} X ${alturaInput?.value}`);
+      if (!(larguraInput?.value === '') && !(alturaInput?.value === '')) {
+        validateSelector() ? activateNextBtn(true) : activateNextBtn(false);
+      }
+    });
+
+    larguraInput?.addEventListener('input', (event) => {
+      if (selectorValues.inicio === 'Toalha') {
+        if ((selectorValues.forma === 'Quadrada' || selectorValues.forma === 'Redonda')) {
+          if (larguraInput?.value === '' || margemInput?.value === '') {
+            activateNextBtn(false);
+            return;
+          }
+        } else {
+          if (larguraInput?.value === '' || alturaInput?.value === '' || margemInput?.value === '') {
+            activateNextBtn(false);
+            return;
+          }
         }
       } else {
         if (larguraInput?.value === '' || alturaInput?.value === '') {
@@ -2641,9 +2906,16 @@ window.Webflow.push(() => {
     });
 
     alturaInput?.addEventListener('input', (event) => {
-      if (larguraInput?.value === '' || alturaInput?.value === '') {
-        activateNextBtn(false);
-        return;
+      if (selectorValues.inicio === 'Toalha') {
+        if (larguraInput?.value === '' || alturaInput?.value === '' || margemInput?.value === '') {
+          activateNextBtn(false);
+          return;
+        }
+      } else {
+        if (larguraInput?.value === '' || alturaInput?.value === '') {
+          activateNextBtn(false);
+          return;
+        }
       }
       validateSelector() &&
         updateSelectorValue(selectors.medidas, `${larguraInput?.value} X ${alturaInput?.value}`);
@@ -2716,7 +2988,7 @@ window.Webflow.push(() => {
       selectorValues.email = emailInput.value;
       selectorValues.contacto = contactoSwitch.checked;
       const txtBytes = await generateTxt();
-      sendQuoteDataWhenDownload(txtBytes);
+      // sendQuoteDataWhenDownload(txtBytes); // Remove after dev
       const { blob, pdfDoc, link } = await generateAndDownloadPdfLIB();
       files.push({ blob: blob, pdf: pdfDoc, link: link });
       files[files.length - 1].link.click();
@@ -2760,6 +3032,23 @@ window.Webflow.push(() => {
   // PRICE CALCULATIONS
   // ------------------
   const calculateUsedWidth = (window2) => {
+    if (window2.inicio === 'Toalha') {
+      const medidasValues = window2.medidas.split(' X ');
+      const [width, height, margin] = medidasValues.map((value) => parseInt(value));
+      //check which one is the biggest
+      const biggest = Math.max(width, height);
+      const smallest = Math.min(width, height);
+      const bainha = window2.bainha.includes('Cantos') ? MANUFACTURING_CONSTANTS.bainhaToalhas.cantos.widthMargin : MANUFACTURING_CONSTANTS.bainhaToalhas.normal.widthMargin
+
+      if (biggest + margin + bainha < MANUFACTURING_CONSTANTS.maxWidthToalhas) {
+        return biggest + margin + bainha;
+      } else {
+        return smallest + margin + bainha;
+      }
+
+      return parseInt(window2.medidas.split(' X ')[0]);
+      // return parseInt(window2.medidas.split(' X ')[0]);
+    }
     if (window2.inicio === 'Estore Japonês') {
       const width = window2.medidas ? parseInt(window2.medidas.split(' X ')[0]) : 0;
       return width;
@@ -2779,6 +3068,9 @@ window.Webflow.push(() => {
     let productPrice = 0,
       calhaPrice = 0;
     const prices = getProductPrice(window2);
+    if (window2.inicio === 'Toalha') {
+      productPrice = prices.product * (usedWidth / 100);
+    }
     if (window2.inicio === 'Cortina') {
       productPrice = prices.product * (usedWidth / 100);
       calhaPrice = prices.calha;
@@ -2796,6 +3088,17 @@ window.Webflow.push(() => {
   };
 
   const calculateManufacturingPrice = (window2, usedWidth) => {
+
+    if (window2.inicio === 'Toalha') {
+      ;
+      const shape = window2.forma === "Redonda" ? "circle" : window2.forma === "Quadrada" ? "square" : "retangle";
+      const bainha = window2.bainha.includes('Cantos') ? "cantos" : "normal";
+      const manufacturingPrice = MANUFACTURING_CONSTANTS.manufacturingPrices.towels[shape][bainha].find(
+        (priceDetails) => usedWidth <= priceDetails.maxWidth);
+
+      return manufacturingPrice ? manufacturingPrice.price * (usedWidth / 100) : 0;
+    }
+
     if (window2.inicio === 'Estore') {
       return 0;
     }
@@ -2814,8 +3117,8 @@ window.Webflow.push(() => {
       return window2.tecido.startsWith('8') // Blackout
         ? manufacturingPrice.blackout * (usedWidth / 100)
         : // : (window2.tecido.startsWith('120') || window2.tecido.startsWith('122')) &&
-          window2.tecido.startsWith('9') && // Alinhado
-            (window2.tipo === 'Ondas' || window2.tipo === 'Franzido')
+        window2.tecido.startsWith('9') && // Alinhado
+          (window2.tipo === 'Ondas' || window2.tipo === 'Franzido')
           ? manufacturingPrice.alinhado * (usedWidth / 100)
           : manufacturingPrice.normal * (usedWidth / 100);
     }
@@ -2823,6 +3126,7 @@ window.Webflow.push(() => {
   };
 
   const calculateBainhaPrice = (window2, usedWidth) => {
+    if (window2.inicio === 'Toalha') return 0;
     if (window2.inicio === 'Cortina' && window2.tecido.startsWith('9')) {
       return 0;
     }
@@ -2836,10 +3140,12 @@ window.Webflow.push(() => {
   };
 
   const calculateMeasuresCheckPrice = (window2) => {
+    if (window2.inicio === 'Toalha') return 0;
     return !window2.correcao ? 0 : MANUFACTURING_CONSTANTS.measuresCheckPrice;
   };
 
   const calculateInstalationPrice = (window2) => {
+    if (window2.inicio === 'Toalha') return 0;
     if (!windows[0].instalacao) {
       return 0;
     }
