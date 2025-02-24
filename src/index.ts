@@ -162,10 +162,10 @@ window.Webflow.push(() => {
     roletesPrice: 5,
 
     bainhaToalhas: {
-      normal: { price: 3.5, widthMargin: 20 },
-      cantos: { price: 5, widthMargin: 10 },
+      normal: { price: 3.5, widthMargin: 10 },
+      cantos: { price: 5, widthMargin: 15 },
     },
-
+    maxWidthToalhasNoPriceIncrease: 170,
     minWidthToalhas: 0,
     maxWidthToalhas: 280,
     minLengthToalhas: 0,
@@ -351,6 +351,11 @@ window.Webflow.push(() => {
   const calhaRadioBtn = document.getElementById('calha-radio-btn');
   const varaoRadioBtn = document.getElementById('varao-radio-btn');
   const toalhaRadioBtn = document.getElementById('toalha-radio-btn');
+  // const primaryClearBtn = document.getElementById('primary-clear-btn');
+  // const secondaryClearBtn = document.getElementById('secondary-clear-btn');
+  const clearAllBtn = document.getElementById('clear-all-btn');
+  const clearAllBtnTxt = document.getElementById('clear-all-txt');
+
 
 
   // ----------------------------
@@ -830,22 +835,68 @@ window.Webflow.push(() => {
 
   const updateProductsCMSFilter = (productType) => {
     if (productType === 'Toalha') {
-      toalhaRadioBtn?.click();
+      // primaryClearBtn?.click();
+      // secondaryClearBtn?.click();
+      clearAllBtnTxt?.click();
+      setTimeout(() => {
+        toalhaRadioBtn?.click();
+      }, 300);
     }
     if (productType === 'Estore') {
-      estoreRadioBtn?.click();
+      // primaryClearBtn?.click();
+      // secondaryClearBtn?.click();
+      clearAllBtnTxt?.click();
+      setTimeout(() => {
+        estoreRadioBtn?.click();
+      }, 300);
+      // estoreRadioBtn?.click();
     }
-    if (productType === 'Cortina') {
-      cortinaRadioBtn?.click();
+    if (productType === 'Cortina' || productType === 'Estore Japonês') {
+      // primaryClearBtn?.click();
+      // secondaryClearBtn?.click();
+      clearAllBtnTxt?.click();
+      setTimeout(() => {
+        cortinaRadioBtn?.click();
+      }, 300);
+      // cortinaRadioBtn?.click();
     }
     if (productType === 'Calha') {
-      calhaRadioBtn?.click();
+      // primaryClearBtn?.click();
+      // secondaryClearBtn?.click();
+      clearAllBtnTxt?.click();
+      setTimeout(() => {
+        calhaRadioBtn?.click();
+      }, 300);
+      // calhaRadioBtn?.click();
     }
     if (productType === 'Varão') {
-      varaoRadioBtn?.click();
+      // primaryClearBtn?.click();
+      // secondaryClearBtn?.click();
+      clearAllBtnTxt?.click();
+      setTimeout(() => {
+        varaoRadioBtn?.click();
+      }, 300);
+      // varaoRadioBtn?.click();
     }
+    // fsCMSFilterConfig();
   };
+  const fsCMSFilterConfig = () => {
+    window.fsAttributes = window.fsAttributes || [];
+    window.fsAttributes.push([
+      'cmsfilter',
+      (filterInstances) => {
+        console.log('cmsfilter Successfully loaded!');
 
+        // The callback passes a `filterInstances` array with all the `CMSFilters` instances on the page.
+        const [filterInstance] = filterInstances;
+
+        // The `renderitems` event runs whenever the list renders items after filtering.
+        filterInstance.listInstance.on('renderitems', (renderedItems) => {
+          console.log(renderedItems);
+        });
+      },
+    ]);
+  }
   // INPUTS HANDLERS
   // ---------------
 
@@ -2033,16 +2084,16 @@ window.Webflow.push(() => {
       }
       if (window2.inicio === 'Cortina') {
         // Draw Window Description
-      page.drawText(`Janela ${index + 1} -`, { x, y, size: 8, font: fontBold });
+        page.drawText(`Janela ${index + 1} -`, { x, y, size: 8, font: fontBold });
 
-      // Draw the rest of the text in regular font
-      page.drawText(` ${window2.medidas} CM`, {
-        x: x + fontBold.widthOfTextAtSize(`Janela ${index + 1} -`, 8),
-        y,
-        size: 8,
-        font: fontReg,
-      });
-      y -= lineHeight;
+        // Draw the rest of the text in regular font
+        page.drawText(` ${window2.medidas} CM`, {
+          x: x + fontBold.widthOfTextAtSize(`Janela ${index + 1} -`, 8),
+          y,
+          size: 8,
+          font: fontReg,
+        });
+        y -= lineHeight;
         // Create priced items with their respective subitems
         items = [
           {
@@ -2078,16 +2129,16 @@ window.Webflow.push(() => {
       }
       if (window2.inicio === 'Estore') {
         // Draw Window Description
-      page.drawText(`Janela ${index + 1} -`, { x, y, size: 8, font: fontBold });
+        page.drawText(`Janela ${index + 1} -`, { x, y, size: 8, font: fontBold });
 
-      // Draw the rest of the text in regular font
-      page.drawText(` ${window2.medidas} CM`, {
-        x: x + fontBold.widthOfTextAtSize(`Janela ${index + 1} -`, 8),
-        y,
-        size: 8,
-        font: fontReg,
-      });
-      y -= lineHeight;
+        // Draw the rest of the text in regular font
+        page.drawText(` ${window2.medidas} CM`, {
+          x: x + fontBold.widthOfTextAtSize(`Janela ${index + 1} -`, 8),
+          y,
+          size: 8,
+          font: fontReg,
+        });
+        y -= lineHeight;
         // Create priced items with their respective subitems
         items = [
           {
@@ -2105,16 +2156,16 @@ window.Webflow.push(() => {
 
       if (window2.inicio === 'Estore Japonês') {
         // Draw Window Description
-      page.drawText(`Janela ${index + 1} -`, { x, y, size: 8, font: fontBold });
+        page.drawText(`Janela ${index + 1} -`, { x, y, size: 8, font: fontBold });
 
-      // Draw the rest of the text in regular font
-      page.drawText(` ${window2.medidas} CM`, {
-        x: x + fontBold.widthOfTextAtSize(`Janela ${index + 1} -`, 8),
-        y,
-        size: 8,
-        font: fontReg,
-      });
-      y -= lineHeight;
+        // Draw the rest of the text in regular font
+        page.drawText(` ${window2.medidas} CM`, {
+          x: x + fontBold.widthOfTextAtSize(`Janela ${index + 1} -`, 8),
+          y,
+          size: 8,
+          font: fontReg,
+        });
+        y -= lineHeight;
         // Create priced items with their respective subitems
         items = [
           {
@@ -3040,10 +3091,10 @@ window.Webflow.push(() => {
       const smallest = Math.min(width, height);
       const bainha = window2.bainha.includes('Cantos') ? MANUFACTURING_CONSTANTS.bainhaToalhas.cantos.widthMargin : MANUFACTURING_CONSTANTS.bainhaToalhas.normal.widthMargin
 
-      if (biggest + margin + bainha < MANUFACTURING_CONSTANTS.maxWidthToalhas) {
-        return biggest + margin + bainha;
+      if (biggest + (2 * margin) + bainha <= MANUFACTURING_CONSTANTS.maxWidthToalhas) {
+        return smallest + (2 * margin) + bainha;
       } else {
-        return smallest + margin + bainha;
+        return biggest + (2 * margin) + bainha;
       }
 
       return parseInt(window2.medidas.split(' X ')[0]);
@@ -3090,13 +3141,33 @@ window.Webflow.push(() => {
   const calculateManufacturingPrice = (window2, usedWidth) => {
 
     if (window2.inicio === 'Toalha') {
-      ;
+      
       const shape = window2.forma === "Redonda" ? "circle" : window2.forma === "Quadrada" ? "square" : "retangle";
       const bainha = window2.bainha.includes('Cantos') ? "cantos" : "normal";
-      const manufacturingPrice = MANUFACTURING_CONSTANTS.manufacturingPrices.towels[shape][bainha].find(
-        (priceDetails) => usedWidth <= priceDetails.maxWidth);
+      
+      const prices = MANUFACTURING_CONSTANTS.manufacturingPrices.towels[shape][bainha];
+      // TODO: if smallest > 170 go into the next price.
 
-      return manufacturingPrice ? manufacturingPrice.price * (usedWidth / 100) : 0;
+      const manufacturingPrice = prices.find((priceDetails) => usedWidth <= priceDetails.maxWidth);
+
+      const medidasValues = window2.medidas.split(' X ');
+      const [width, height, margin] = medidasValues.map((value) => parseInt(value));
+      //check which one is the biggest
+      const biggest = Math.max(width, height);
+      const smallest = Math.min(width, height);
+      const bainhaWidth = window2.bainha.includes('Cantos') ? MANUFACTURING_CONSTANTS.bainhaToalhas.cantos.widthMargin : MANUFACTURING_CONSTANTS.bainhaToalhas.normal.widthMargin
+
+      if (smallest + (2 * margin) + bainhaWidth <= MANUFACTURING_CONSTANTS.maxWidthToalhasNoPriceIncrease) {
+        return manufacturingPrice ? manufacturingPrice.price : 0;
+      } else {
+        const currentIndex = prices.findIndex((priceDetails) => usedWidth <= priceDetails.maxWidth);
+        const nextManufacturingPrice = currentIndex + 1 < prices.length ? prices[currentIndex + 1] : prices[currentIndex];
+
+        return nextManufacturingPrice ? nextManufacturingPrice.price : 0;
+      }
+
+      // return manufacturingPrice ? manufacturingPrice.price * (usedWidth / 100) : 0;
+      return manufacturingPrice ? manufacturingPrice.price : 0;
     }
 
     if (window2.inicio === 'Estore') {
