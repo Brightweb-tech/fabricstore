@@ -7,7 +7,7 @@ window.Webflow.push(() => {
   // ----------------------------
   // const logoUrl =
   //   'https://cdn.prod.website-files.com/66aadbd497db3d8c63799460/66e9c13dd03e9404b10a0393_fabric-store-logo.png';
-
+  const internalPath = "orcamento-confidencial";
   const logoUrl =
     'https://cdn.prod.website-files.com/66aadbd497db3d8c63799460/66f69f0aaa45e095bd2e0f3f_LOGOTIPO%20FABRICSTORE_color%201.png';
   // 'https://cdn.prod.website-files.com/66aadbd497db3d8c63799460/66eb5ac454e950633d646ea2_testlogo.jpg';
@@ -73,6 +73,8 @@ window.Webflow.push(() => {
     nome: '',
     email: '',
     contacto: '',
+    loja: '',
+    vendedor: ''
   };
   const MANUFACTURING_CONSTANTS = {
     usedWidths: [
@@ -298,6 +300,11 @@ window.Webflow.push(() => {
   const emailInput = document.getElementById('email-input');
   const contactoSwitch = document.getElementById('contacto-switch');
 
+  const vendedoresData = document.querySelector(".vendedores_data");
+  const lojasSelect = document.querySelector(".lojas_select");
+  const vendedoresSelect = document.querySelector(".vendedores_select");
+  // const vendedorOptions = vendedoresSelect?.querySelectorAll("option");
+
   // Containers
   const checkoutContain = document.getElementById('checkout-container');
   const newWindowContain = document.getElementById('new-window-contain');
@@ -385,6 +392,7 @@ window.Webflow.push(() => {
     addOnChangeMedidasInputs();
     addOnChangeSuporteRadioBtns();
     addOnChangeFormInputs();
+    addFilterVendedorByLojaSelectedValue()
   };
 
   const onInit = () => {
@@ -1865,6 +1873,11 @@ window.Webflow.push(() => {
     });
   };
 
+  const capitalizeFirstLetter = (string) => {
+    if (!string) return ''; // Handle empty or null strings
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
   const generateAndDownloadPdfLIB = async () => {
     const { PDFDocument, rgb } = PDFLib;
     const pdfDoc = await PDFDocument.create();
@@ -1906,16 +1919,23 @@ window.Webflow.push(() => {
     const labelCliente = 'Cliente:';
     const labelData = 'Data:';
     const labelEmail = 'Email:';
-
-    const dateString = new Date().toLocaleDateString();
+    const labelVendedor = 'Vendedor:';
+    const labelLoja = 'Loja:';
 
     // Calculate the width of the bold labels
     const labelClienteWidth = fontBold.widthOfTextAtSize(labelCliente, 8);
     const labelDataWidth = fontBold.widthOfTextAtSize(labelData, 8);
     const labelEmailWidth = fontBold.widthOfTextAtSize(labelEmail, 8);
+    const labelVendedorWidth = fontBold.widthOfTextAtSize(labelVendedor, 8);
+    const labelLojaWidth = fontBold.widthOfTextAtSize(labelLoja, 8);
 
     // Calculate the width of the date string in the regular font
+    const dateString = new Date().toLocaleDateString();
+    const vendedorString = selectorValues.vendedor;
+    const lojaString = capitalizeFirstLetter(selectorValues.loja);
     const dateStringWidth = fontReg.widthOfTextAtSize(dateString, 8);
+    const vendedorStringWidth = fontReg.widthOfTextAtSize(vendedorString, 8);
+    const lojaStringWidth = fontReg.widthOfTextAtSize(lojaString, 8);
 
     // Draw "Cliente:"
     page.drawText(labelCliente, {
@@ -1972,7 +1992,45 @@ window.Webflow.push(() => {
       font: fontReg,
     });
 
-    y = emailY - lineHeight * 2; // Adjust after client info and logo to continue with the rest of the document
+    const vendedorTotalTextWidth = labelVendedorWidth + vendedorStringWidth + 2; // Adding a small space between "Data:" and date
+    const vendedorTextX = rightMargin - vendedorTotalTextWidth;
+    // Draw "Vendedor:" label in bold
+    page.drawText(labelVendedor, {
+      x: vendedorTextX,
+      y: emailY,
+      size: 8,
+      font: fontBold, // Bold font for the label
+    });
+
+    // Draw the vendedor name right after label
+    page.drawText(`${selectorValues.vendedor}`, {
+      x: vendedorTextX + labelVendedorWidth + 2, // Add a small space after "Data:"
+      y: emailY,
+      size: 8,
+      font: fontReg,
+    });
+
+    const lojaY = emailY - lineHeight;
+
+    const lojaTotalTextWidth = labelLojaWidth + lojaStringWidth + 2; // Adding a small space between "Data:" and date
+    const lojaTextX = rightMargin - lojaTotalTextWidth;
+    // Draw "loja:" label in bold
+    page.drawText(labelLoja, {
+      x: lojaTextX,
+      y: lojaY,
+      size: 8,
+      font: fontBold, // Bold font for the label
+    });
+
+    // Draw the loja name right after label
+    page.drawText(`${lojaString}`, {
+      x: lojaTextX + labelLojaWidth + 2, // Add a small space after "Data:"
+      y: lojaY,
+      size: 8,
+      font: fontReg,
+    });
+
+    y = lojaY - lineHeight * 2; // Adjust after client info and logo to continue with the rest of the document
 
     y -= lineSpacing; // Add space above the line
     page.drawLine({
@@ -3038,6 +3096,12 @@ window.Webflow.push(() => {
       selectorValues.nome = nomeInput.value;
       selectorValues.email = emailInput.value;
       selectorValues.contacto = contactoSwitch.checked;
+
+      if (window.location.href.includes(internalPath)) {
+        selectorValues.loja = lojasSelect.value.trim();
+        selectorValues.vendedor = vendedoresSelect.value.trim();
+      }
+
       const txtBytes = await generateTxt();
       // sendQuoteDataWhenDownload(txtBytes); // Remove after dev
       const { blob, pdfDoc, link } = await generateAndDownloadPdfLIB();
@@ -3051,6 +3115,12 @@ window.Webflow.push(() => {
       selectorValues.nome = nomeInput.value;
       selectorValues.email = emailInput.value;
       selectorValues.contacto = contactoSwitch.checked;
+
+      if (window.location.href.includes(internalPath)) {
+        selectorValues.loja = lojasSelect.value.trim();
+        selectorValues.vendedor = vendedoresSelect.value.trim();
+      }
+
       const { blob, pdfDoc, link } = await generateAndDownloadPdfLIB(); // base64 -> data:application/pdf;base64,JVBERi0xLjMKJbrfrOAKM   to remove metadata pdfbytes.split(',')[1]
       files.push({ blob: blob, pdf: pdfDoc, link: link });
       const txtBytes = await generateTxt();
@@ -3079,6 +3149,57 @@ window.Webflow.push(() => {
   const addOnClickNextButton = () => {
     nextButton.addEventListener('click', advanceStep);
   };
+
+  const addFilterVendedorByLojaSelectedValue = () => {
+    let vendedoresArray = [];
+
+    const vendedoresInfo = vendedoresData.querySelectorAll(".vendedor_data")
+
+    vendedoresInfo.forEach(vendedor => {
+      vendedoresArray.push({
+        name: vendedor.querySelector(".vendedor_name").textContent.trim(),
+        loja: vendedor.querySelector(".vendedor_loja").textContent.trim()
+      })
+    })
+    // Store all vendedores with their corresponding lojas
+    // vendedoresData.forEach(item => {
+    //   const vendedorName = item.querySelector(".vendedor_name")?.textContent.trim();
+    //   const vendedorLoja = item.querySelector(".vendedor_loja")?.textContent.trim();
+
+    //   if (vendedorName && vendedorLoja) {
+    //     vendedoresArray.push({ name: vendedorName, loja: vendedorLoja });
+    //   }
+    // });
+
+    // Function to update the vendedores select based on selected loja
+    function updateVendedoresSelect(selectedLoja) {
+      // Clear current options
+      vendedoresSelect.innerHTML = "";
+
+      // Filter vendedores based on selected loja
+      const filteredVendedores = vendedoresArray.filter(v => v.loja === selectedLoja);
+
+      // Add a default empty option
+      const defaultOption = document.createElement("option");
+      defaultOption.value = "";
+      defaultOption.textContent = "Selecione um Vendedor";
+      vendedoresSelect.appendChild(defaultOption);
+
+      // Add filtered vendedores as options
+      filteredVendedores.forEach(v => {
+        const option = document.createElement("option");
+        option.value = v.name;
+        option.textContent = v.name;
+        vendedoresSelect.appendChild(option);
+      });
+    }
+
+    // Listen for changes in lojas_select
+    lojasSelect.addEventListener("change", function () {
+      const selectedLoja = lojasSelect.value.trim();
+      updateVendedoresSelect(selectedLoja);
+    });
+  }
 
   // PRICE CALCULATIONS
   // ------------------
@@ -3141,10 +3262,10 @@ window.Webflow.push(() => {
   const calculateManufacturingPrice = (window2, usedWidth) => {
 
     if (window2.inicio === 'Toalha') {
-      
+
       const shape = window2.forma === "Redonda" ? "circle" : window2.forma === "Quadrada" ? "square" : "retangle";
       const bainha = window2.bainha.includes('Cantos') ? "cantos" : "normal";
-      
+
       const prices = MANUFACTURING_CONSTANTS.manufacturingPrices.towels[shape][bainha];
       // TODO: if smallest > 170 go into the next price.
 
