@@ -1396,11 +1396,22 @@ window.Webflow.push(() => {
         case 'forma':
           if (validateSelector()) {
             changeSelectorVisibility(selectors.forma, false);
-            updateHeadingSubtitles('forma');
-            changeSelectorVisibility(selectors.bainha, true);
             updateMedidasDescriptions();
             updateMedidasFieldsVisibility();
-            currentStep = 'bainha';
+            if (isNewWindow) activateNextBtn(false);
+            if (selectorValues.forma === "Redonda") {
+              selectorValues.bainha = "Baínha Normal";
+              markStepAsCompleted('forma');
+              markStepAsActive('medidas');
+              changeSelectorVisibility(simulatorHeadings.step2toalha, false);
+              changeSelectorVisibility(simulatorHeadings.step3, true);
+              changeSelectorVisibility(selectors.medidas, true);
+              updateHeadingSubtitles('medidas');
+              currentStep = 'medidas';
+            } else {
+              changeSelectorVisibility(selectors.bainha, true);
+              currentStep = 'bainha';
+            }
           }
           break;
         case 'bainha':
