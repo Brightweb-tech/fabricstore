@@ -7,7 +7,7 @@ window.Webflow.push(() => {
   // ----------------------------
   // const logoUrl =
   //   'https://cdn.prod.website-files.com/66aadbd497db3d8c63799460/66e9c13dd03e9404b10a0393_fabric-store-logo.png';
-  const internalPath = "orcamento-confidencial";
+  const internalPath = "orcamento-interno";
   const logoUrl =
     'https://cdn.prod.website-files.com/66aadbd497db3d8c63799460/66f69f0aaa45e095bd2e0f3f_LOGOTIPO%20FABRICSTORE_color%201.png';
   // 'https://cdn.prod.website-files.com/66aadbd497db3d8c63799460/66eb5ac454e950633d646ea2_testlogo.jpg';
