@@ -875,6 +875,9 @@ window.Webflow.push(() => {
       setTimeout(() => {
         calhaRadioBtn?.click();
       }, 300);
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+      }, 1500);
       // calhaRadioBtn?.click();
     }
     if (productType === 'Varão') {
@@ -888,23 +891,23 @@ window.Webflow.push(() => {
     }
     // fsCMSFilterConfig();
   };
-  const fsCMSFilterConfig = () => {
-    window.fsAttributes = window.fsAttributes || [];
-    window.fsAttributes.push([
-      'cmsfilter',
-      (filterInstances) => {
-        console.log('cmsfilter Successfully loaded!');
+  // const fsCMSFilterConfig = () => {
+  //   window.fsAttributes = window.fsAttributes || [];
+  //   window.fsAttributes.push([
+  //     'cmsfilter',
+  //     (filterInstances) => {
+  //       console.log('cmsfilter Successfully loaded!');
 
-        // The callback passes a `filterInstances` array with all the `CMSFilters` instances on the page.
-        const [filterInstance] = filterInstances;
+  //       // The callback passes a `filterInstances` array with all the `CMSFilters` instances on the page.
+  //       const [filterInstance] = filterInstances;
 
-        // The `renderitems` event runs whenever the list renders items after filtering.
-        filterInstance.listInstance.on('renderitems', (renderedItems) => {
-          console.log(renderedItems);
-        });
-      },
-    ]);
-  }
+  //       // The `renderitems` event runs whenever the list renders items after filtering.
+  //       filterInstance.listInstance.on('renderitems', (renderedItems) => {
+  //         console.log(renderedItems);
+  //       });
+  //     },
+  //   ]);
+  // }
   // INPUTS HANDLERS
   // ---------------
 
