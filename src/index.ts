@@ -849,6 +849,7 @@ window.Webflow.push(() => {
       setTimeout(() => {
         toalhaRadioBtn?.click();
       }, 300);
+      resetSwiper();
     }
     if (productType === 'Estore') {
       // primaryClearBtn?.click();
@@ -857,6 +858,7 @@ window.Webflow.push(() => {
       setTimeout(() => {
         estoreRadioBtn?.click();
       }, 300);
+      resetSwiper();
       // estoreRadioBtn?.click();
     }
     if (productType === 'Cortina' || productType === 'Estore Japonês') {
@@ -866,6 +868,7 @@ window.Webflow.push(() => {
       setTimeout(() => {
         cortinaRadioBtn?.click();
       }, 300);
+      resetSwiper();
       // cortinaRadioBtn?.click();
     }
     if (productType === 'Calha') {
@@ -875,9 +878,7 @@ window.Webflow.push(() => {
       setTimeout(() => {
         calhaRadioBtn?.click();
       }, 300);
-      setTimeout(() => {
-        window.dispatchEvent(new Event('resize'));
-      }, 1500);
+      resetSwiper();
       // calhaRadioBtn?.click();
     }
     if (productType === 'Varão') {
@@ -887,6 +888,7 @@ window.Webflow.push(() => {
       setTimeout(() => {
         varaoRadioBtn?.click();
       }, 300);
+      resetSwiper();
       // varaoRadioBtn?.click();
     }
     // fsCMSFilterConfig();
@@ -2579,7 +2581,7 @@ window.Webflow.push(() => {
         {
           opacity: 1,
           duration: 0.8,
-          delay: 0.2,
+          delay: 0.4,
           ease: 'power2.inOut', // Added Power2 ease
           onStart: () => {
             selector.style.display = 'flex'; // Set display to flex before animation starts
